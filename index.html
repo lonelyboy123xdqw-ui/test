@@ -1527,8 +1527,7 @@
     </div>
   </div>
 
-  <!-- FIXED AUDIO PATH -->
-  <audio id="bgMusic" preload="auto" loop>
+  <audio id="bgMusic" preload="auto" loop playsinline>
     <source src="./song.mp3" type="audio/mpeg" />
     Your browser does not support the audio element.
   </audio>
@@ -1570,6 +1569,7 @@
     let isPlaying = false;
     let typedSequence = "";
     let lastTrail = 0;
+    let wantsMusic = false;
 
     window.addEventListener("load", () => {
       setTimeout(() => loader.classList.add("hide"), 2200);
@@ -1585,13 +1585,15 @@
 
     async function playMusic() {
       try {
+        bgMusic.muted = false;
         bgMusic.volume = 0.78;
-        bgMusic.currentTime = bgMusic.currentTime || 0;
         await bgMusic.play();
         setMusicUI(true);
+        return true;
       } catch (e) {
         console.log("Playback blocked:", e);
         musicStatus.textContent = "Tap play again";
+        return false;
       }
     }
 
@@ -1601,27 +1603,45 @@
     }
 
     enterMusicBtn.addEventListener("click", async () => {
+      wantsMusic = true;
+      musicStatus.textContent = "Starting music...";
+
+      const started = await playMusic();
+
       introOverlay.classList.add("hide");
-      await playMusic();
       heartExplosion(window.innerWidth / 2, window.innerHeight / 2);
-      toast("✨ Music started for you, Chokie");
+
+      if (started) {
+        toast("✨ Music started for you, Chokie");
+      } else {
+        toast("🎵 Tap the play button once more if needed");
+      }
     });
 
     enterSilentBtn.addEventListener("click", () => {
-      introOverlay.classList.add("hide");
+      wantsMusic = false;
       pauseMusic();
+      introOverlay.classList.add("hide");
       musicStatus.textContent = "Entered silently";
       toast("💫 Entered silently");
     });
 
-    playPauseBtn.addEventListener("click", () => {
-      if (bgMusic.paused) playMusic();
-      else pauseMusic();
+    playPauseBtn.addEventListener("click", async () => {
+      if (bgMusic.paused) {
+        wantsMusic = true;
+        const started = await playMusic();
+        if (!started) toast("🎵 Browser still blocked it — tap again");
+      } else {
+        pauseMusic();
+      }
     });
 
-    restartBtn.addEventListener("click", () => {
+    restartBtn.addEventListener("click", async () => {
       bgMusic.currentTime = 0;
-      if (bgMusic.paused) playMusic();
+      if (bgMusic.paused) {
+        wantsMusic = true;
+        await playMusic();
+      }
       heartExplosion(window.innerWidth - 100, window.innerHeight - 80);
     });
 
@@ -1636,6 +1656,10 @@
     bgMusic.addEventListener("play", () => setMusicUI(true));
     bgMusic.addEventListener("pause", () => {
       if (!bgMusic.ended) setMusicUI(false);
+    });
+    bgMusic.addEventListener("error", () => {
+      console.log("Audio file failed to load.");
+      musicStatus.textContent = "Audio failed to load";
     });
 
     function updateCountdown() {

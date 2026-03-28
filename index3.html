@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arcade of Us — Chapter 3</title>
+  <meta name="theme-color" content="#12071f" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@500;700;800;900&family=Sacramento&display=swap');
+
+    :root{
+      --bg:#08030f;
+      --bg2:#140822;
+      --bg3:#090312;
+      --pink:#ff61b3;
+      --pink2:#ff9fd9;
+      --purple:#8b5cff;
+      --violet:#c471ed;
+      --gold:#ffd76a;
+      --white:#ffffff;
+      --soft:rgba(255,255,255,.84);
+      --glass:rgba(255,255,255,.12);
+      --glass2:rgba(255,255,255,.06);
+      --border:rgba(255,255,255,.14);
+      --shadow:0 18px 50px rgba(0,0,0,.28);
+      --pinkShadow:0 14px 34px rgba(255,97,179,.16);
+      --radius:24px;
+    }
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html{scroll-behavior:smooth}
+
+    body{
+      font-family:'Poppins',sans-serif;
+      min-height:100vh;
+      color:#fff;
+      background:linear-gradient(135deg,var(--bg),var(--bg2),var(--bg3));
+      overflow-x:hidden;
+      opacity:1;
+      transition:opacity .6s ease;
+    }
+
+    button{font-family:inherit}
+    a{text-decoration:none;color:inherit}
+
+    /* Loader */
+    #loader{
+      position:fixed; inset:0; z-index:100000;
+      display:flex; align-items:center; justify-content:center;
+      background:linear-gradient(135deg,#05020a,#10061b);
+      transition:opacity .7s ease, visibility .7s ease;
+    }
+    #loader.hide{opacity:0; visibility:hidden; pointer-events:none}
+    .loader-box{width:min(92vw,520px); text-align:center; padding:28px}
+    .loader-heart{font-size:54px; margin-bottom:10px; animation:pulse 1.25s ease-in-out infinite}
+    .loader-title{font-size:clamp(1.4rem,2.8vw,2.1rem); font-weight:800; margin-bottom:10px}
+    .loader-sub{color:var(--soft); margin-bottom:18px}
+    .loader-track{height:10px; border-radius:999px; overflow:hidden; background:rgba(255,255,255,.08)}
+    .loader-fill{
+      height:100%; width:0%;
+      border-radius:999px;
+      background:linear-gradient(90deg,var(--pink),var(--purple),var(--gold));
+      animation:load 1.8s ease forwards;
+    }
+    @keyframes load{to{width:100%}}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+
+    /* Intro */
+    .intro{
+      position:fixed; inset:0; z-index:99999;
+      display:flex; align-items:center; justify-content:center;
+      padding:20px;
+      background:rgba(6,4,12,.78);
+      backdrop-filter:blur(12px);
+      transition:opacity .7s ease, visibility .7s ease;
+    }
+    .intro.hide{opacity:0; visibility:hidden; pointer-events:none}
+    .intro-card{
+      width:min(94vw,640px);
+      padding:38px 22px 24px;
+      text-align:center;
+      border-radius:30px;
+      background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.06));
+      border:1px solid rgba(255,255,255,.15);
+      box-shadow:var(--shadow);
+    }
+    .intro-badge{
+      display:inline-block;
+      padding:8px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);
+      font-size:.8rem;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+      margin-bottom:14px;
+      color:rgba(255,255,255,.9);
+    }
+    .intro-title{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(1.9rem,5vw,3rem);
+      margin-bottom:10px;
+      line-height:1.05;
+    }
+    .intro-title .glow{
+      background:linear-gradient(135deg,#fff,#ffdff1,#ffd76a);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .intro-text{
+      color:var(--soft);
+      line-height:1.75;
+      max-width:520px;
+      margin:0 auto 22px;
+      font-size:clamp(.98rem,1.8vw,1.05rem);
+    }
+    .intro-actions{
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    /* Buttons */
+    .btn{
+      border:none;
+      cursor:pointer;
+      transition:transform .22s ease, box-shadow .22s ease, background .22s ease;
+      font-weight:800;
+    }
+    .btn:active{transform:scale(.98)}
+    .btn-primary{
+      padding:15px 24px;
+      border-radius:999px;
+      color:#fff;
+      background:linear-gradient(135deg,var(--pink),var(--purple));
+      box-shadow:0 12px 30px rgba(255,97,179,.24);
+    }
+    .btn-secondary{
+      padding:15px 22px;
+      border-radius:999px;
+      color:#fff;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+    }
+    .btn:hover{transform:translateY(-2px)}
+
+    /* Background */
+    .bg{
+      position:fixed; inset:0; z-index:0;
+      background:
+        radial-gradient(circle at 18% 16%, rgba(255,97,179,.15), transparent 22%),
+        radial-gradient(circle at 82% 20%, rgba(139,92,255,.16), transparent 25%),
+        radial-gradient(circle at 50% 90%, rgba(255,215,106,.06), transparent 22%),
+        linear-gradient(135deg,#06020d,#130821 45%,#090312);
+    }
+
+    .aurora{
+      position:fixed; inset:0; z-index:1; pointer-events:none; overflow:hidden;
+    }
+    .aurora span{
+      position:absolute;
+      width:42vw; height:42vw;
+      border-radius:50%;
+      filter:blur(70px);
+      opacity:.22;
+      animation:float 18s ease-in-out infinite alternate;
+    }
+    .aurora .a1{left:-8%; top:-10%; background:radial-gradient(circle, rgba(255,97,179,.9), transparent 65%)}
+    .aurora .a2{right:-8%; top:12%; background:radial-gradient(circle, rgba(139,92,255,.9), transparent 65%); animation-duration:21s}
+    .aurora .a3{left:22%; bottom:-18%; background:radial-gradient(circle, rgba(255,215,106,.5), transparent 65%); animation-duration:20s}
+    @keyframes float{
+      0%{transform:translate(0,0) scale(1)}
+      100%{transform:translate(36px,-24px) scale(1.08)}
+    }
+
+    .stars{
+      position:fixed; inset:0; z-index:2; pointer-events:none;
+      background-image:
+        radial-gradient(2px 2px at 20px 30px,#fff,transparent),
+        radial-gradient(2px 2px at 90px 120px,#fff,transparent),
+        radial-gradient(2px 2px at 160px 60px,#fff,transparent),
+        radial-gradient(2px 2px at 260px 180px,#fff,transparent);
+      background-size:320px 320px;
+      opacity:.35;
+      animation:starsMove 120s linear infinite;
+    }
+    @keyframes starsMove{
+      from{transform:translateY(0)}
+      to{transform:translateY(-800px)}
+    }
+
+    .hearts{
+      position:fixed; inset:0; z-index:3; pointer-events:none; overflow:hidden;
+    }
+    .hearts span{
+      position:absolute;
+      bottom:-50px;
+      left:var(--x);
+      font-size:1.4rem;
+      opacity:0;
+      animation:rise 16s linear infinite;
+      animation-delay:var(--delay);
+    }
+    @keyframes rise{
+      0%{transform:translateY(0) translateX(0) scale(.8); opacity:0}
+      10%{opacity:.8}
+      100%{transform:translateY(-110vh) translateX(50px) scale(1.05); opacity:0}
+    }
+
+    /* Top pill */
+    .top-pill{
+      position:fixed;
+      top:14px; left:14px;
+      z-index:20;
+      padding:10px 14px;
+      border-radius:999px;
+      display:flex; align-items:center; gap:10px;
+      background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(12px);
+    }
+    .top-pill .name{
+      font-family:'Sacramento',cursive;
+      font-size:1.6rem;
+      line-height:1;
+    }
+    .top-pill .heart{
+      font-size:1.2rem;
+      animation:pulse 1.4s ease-in-out infinite;
+    }
+
+    /* Main */
+    .main{
+      position:relative;
+      z-index:10;
+      min-height:100vh;
+      padding:84px 16px 120px;
+    }
+
+    .container{
+      width:min(1140px, 100%);
+      margin:0 auto;
+    }
+
+    .hero{
+      text-align:center;
+      margin-bottom:22px;
+    }
+
+    .chapter-badge{
+      width:138px; height:138px;
+      margin:0 auto 18px;
+      position:relative;
+    }
+    .chapter-ring{
+      position:absolute; inset:0; border-radius:50%;
+      background:conic-gradient(from 0deg, var(--pink), var(--purple), var(--gold), var(--pink));
+      animation:spin 12s linear infinite;
+      box-shadow:0 16px 42px rgba(255,97,179,.18);
+    }
+    .chapter-inner{
+      position:absolute; inset:7px; border-radius:50%;
+      background:linear-gradient(135deg, rgba(24,8,40,.96), rgba(14,6,28,.96));
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+    }
+    @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+    .chapter-number{
+      font-family:'Playfair Display',serif;
+      font-size:3rem; font-weight:900; line-height:1;
+    }
+    .chapter-text{
+      font-size:.76rem; letter-spacing:.18em; font-weight:700;
+    }
+
+    .hero-title{
+      font-family:'Sacramento',cursive;
+      font-size:clamp(2.8rem,8vw,5.1rem);
+      line-height:1.1;
+      margin-bottom:10px;
+      text-shadow:0 0 14px rgba(255,255,255,.18), 0 0 30px rgba(255,97,179,.16);
+    }
+    .hero-title .shine{
+      background:linear-gradient(135deg,#fff8cf,#ffd76a,#ffbf47);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .hero-sub{
+      max-width:840px;
+      margin:0 auto;
+      color:var(--soft);
+      line-height:1.75;
+      font-size:clamp(.96rem,1.8vw,1.04rem);
+    }
+
+    /* Section */
+    .section{
+      margin-top:18px;
+      padding:22px;
+      border-radius:26px;
+      background:linear-gradient(135deg, rgba(255,255,255,.11), rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(14px);
+    }
+
+    .section-title{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(1.3rem,2.8vw,1.9rem);
+      margin-bottom:8px;
+    }
+    .section-sub{
+      color:var(--soft);
+      line-height:1.75;
+      margin-bottom:18px;
+    }
+
+    /* Story path header */
+    .story-path{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+      margin-bottom:18px;
+    }
+    .path-card{
+      padding:14px;
+      border-radius:18px;
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.12);
+      text-align:center;
+      font-size:.88rem;
+      color:rgba(255,255,255,.86);
+      transition:transform .18s ease, background .18s ease;
+    }
+    .path-card.active{
+      background:linear-gradient(135deg, rgba(255,97,179,.18), rgba(139,92,255,.12));
+      box-shadow:var(--pinkShadow);
+      color:#fff;
+    }
+
+    /* Arcade Layout */
+    .arcade-grid{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:16px;
+    }
+
+    .panel{
+      padding:18px;
+      border-radius:22px;
+      background:linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .panel-title{
+      font-weight:800;
+      font-size:1.08rem;
+      margin-bottom:8px;
+    }
+
+    .panel-sub{
+      color:rgba(255,255,255,.78);
+      line-height:1.7;
+      font-size:.92rem;
+      margin-bottom:14px;
+    }
+
+    /* Quiz */
+    .quiz-question{
+      font-size:1rem;
+      font-weight:700;
+      line-height:1.6;
+      margin-bottom:14px;
+    }
+    .quiz-answers{
+      display:grid;
+      gap:10px;
+    }
+    .answer-btn{
+      padding:13px 14px;
+      border-radius:16px;
+      text-align:left;
+      font-weight:700;
+      color:#fff;
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.12);
+      transition:transform .18s ease, background .18s ease;
+      cursor:pointer;
+    }
+    .answer-btn:hover{
+      transform:translateY(-2px);
+      background:rgba(255,255,255,.1);
+    }
+
+    /* Match game */
+    .match-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+    }
+    .match-card{
+      aspect-ratio:1/1;
+      border-radius:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1.5rem;
+      background:linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.12);
+      cursor:pointer;
+      user-select:none;
+      transition:transform .16s ease, background .16s ease;
+    }
+    .match-card:hover{transform:translateY(-2px)}
+    .match-card.revealed,
+    .match-card.matched{
+      background:linear-gradient(135deg, rgba(255,97,179,.22), rgba(139,92,255,.16));
+    }
+
+    /* Catch hearts */
+    .catch-wrap{
+      margin-top:8px;
+    }
+    .catch-area{
+      position:relative;
+      height:260px;
+      border-radius:18px;
+      overflow:hidden;
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .basket{
+      position:absolute;
+      bottom:12px;
+      left:50%;
+      transform:translateX(-50%);
+      width:84px;
+      height:20px;
+      border-radius:999px;
+      background:linear-gradient(135deg,var(--pink),var(--purple));
+      box-shadow:0 8px 18px rgba(255,97,179,.18);
+    }
+    .fall-heart{
+      position:absolute;
+      font-size:1.45rem;
+      user-select:none;
+      pointer-events:none;
+    }
+    .catch-controls{
+      display:flex;
+      gap:10px;
+      margin-top:12px;
+    }
+    .mini-btn{
+      width:46px; height:46px;
+      border:none; border-radius:50%;
+      color:#fff; font-size:1rem; cursor:pointer;
+      background:linear-gradient(135deg,var(--pink),var(--purple));
+    }
+
+    /* Right side */
+    .side-col{
+      display:grid;
+      gap:14px;
+    }
+    .mini{
+      padding:16px;
+      border-radius:22px;
+      background:linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .mini-title{
+      font-weight:800;
+      font-size:1rem;
+      margin-bottom:8px;
+    }
+    .progress-track{
+      height:10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      overflow:hidden;
+      margin-top:10px;
+    }
+    .progress-fill{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      background:linear-gradient(90deg,var(--pink),var(--purple),var(--gold));
+      transition:width .3s ease;
+    }
+    .score-line{
+      margin-top:10px;
+      font-weight:700;
+      color:#ffe2f1;
+      line-height:1.8;
+    }
+    .frag-box{
+      margin-top:12px;
+      display:grid;
+      gap:8px;
+    }
+    .fragment{
+      padding:10px 12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1);
+      color:rgba(255,255,255,.82);
+      font-size:.88rem;
+      line-height:1.65;
+    }
+
+    .ending{
+      display:none;
+      margin-top:10px;
+      padding:14px;
+      border-radius:16px;
+      background:linear-gradient(135deg, rgba(255,215,106,.08), rgba(255,97,179,.08));
+      border:1px solid rgba(255,255,255,.1);
+    }
+    .ending.show{display:block}
+    .ending-title{
+      font-family:'Playfair Display',serif;
+      font-size:1.14rem;
+      margin-bottom:8px;
+    }
+
+    .tabs{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:12px;
+    }
+    .tab-btn{
+      padding:10px 14px;
+      border-radius:999px;
+      border:none;
+      color:#fff;
+      cursor:pointer;
+      font-weight:700;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .tab-btn.active{
+      background:linear-gradient(135deg,var(--pink),var(--purple));
+    }
+    .tab-panel{display:none}
+    .tab-panel.active{display:block}
+
+    /* Nav */
+    .nav-row{
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:18px;
+    }
+    .nav-btn{
+      padding:15px 22px;
+      border-radius:999px;
+      color:#fff;
+      font-weight:800;
+      border:none;
+      cursor:pointer;
+      transition:transform .2s ease;
+    }
+    .nav-btn:hover{transform:translateY(-2px)}
+    .back-btn{
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+    }
+    .next-btn{
+      background:linear-gradient(135deg,var(--pink),var(--purple));
+      box-shadow:0 12px 30px rgba(255,97,179,.22);
+    }
+
+    /* Music */
+    .music-console{
+      position:fixed;
+      right:12px; bottom:12px;
+      z-index:50;
+      display:flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border-radius:20px;
+      background:linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(12px);
+      max-width:min(94vw, 410px);
+    }
+    .music-btn{
+      width:40px; height:40px; min-width:40px;
+      border:none; border-radius:50%;
+      cursor:pointer;
+      color:#fff;
+      background:linear-gradient(135deg,var(--pink),var(--purple));
+      font-size:1rem;
+    }
+    .music-btn.big{
+      width:48px; height:48px; min-width:48px;
+    }
+    .music-info{
+      min-width:120px;
+      flex:1;
+    }
+    .music-title{
+      font-size:.82rem;
+      font-weight:800;
+      margin-bottom:2px;
+    }
+    .music-status{
+      font-size:.74rem;
+      color:rgba(255,255,255,.78);
+    }
+    .visualizer{
+      display:flex;
+      align-items:flex-end;
+      gap:4px;
+      height:24px;
+    }
+    .visualizer span{
+      width:4px;
+      border-radius:4px;
+      background:linear-gradient(to top,var(--pink2),#fff);
+      animation:wave .9s ease-in-out infinite;
+      animation-play-state:paused;
+    }
+    .visualizer span:nth-child(1){height:8px;animation-delay:0s}
+    .visualizer span:nth-child(2){height:13px;animation-delay:.1s}
+    .visualizer span:nth-child(3){height:18px;animation-delay:.2s}
+    .visualizer span:nth-child(4){height:11px;animation-delay:.3s}
+    .visualizer span:nth-child(5){height:16px;animation-delay:.4s}
+    .visualizer.playing span{animation-play-state:running}
+    @keyframes wave{0%,100%{transform:scaleY(.55)}50%{transform:scaleY(1.25)}}
+
+    .toast{
+      position:fixed;
+      top:22px; left:50%;
+      transform:translateX(-50%);
+      z-index:99999;
+      padding:13px 20px;
+      border-radius:999px;
+      font-size:.9rem;
+      font-weight:700;
+      background:linear-gradient(135deg,var(--pink),var(--purple));
+      box-shadow:0 16px 38px rgba(255,97,179,.22);
+    }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .story-path{grid-template-columns:1fr 1fr}
+      .arcade-grid{grid-template-columns:1fr}
+    }
+
+    @media (max-width: 700px){
+      .main{padding:78px 12px 118px}
+      .story-path{grid-template-columns:1fr}
+      .match-grid{grid-template-columns:repeat(4,1fr)}
+      .intro-actions{flex-direction:column}
+      .btn-primary,.btn-secondary{width:100%}
+      .nav-row{flex-direction:column}
+      .nav-btn{width:100%}
+      .music-console{
+        left:10px; right:10px;
+        max-width:none;
+      }
+      .visualizer{display:none}
+    }
+
+    @media (max-width: 450px){
+      .match-grid{grid-template-columns:repeat(3,1fr)}
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *{
+        animation:none !important;
+        transition:none !important;
+        scroll-behavior:auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loader">
+    <div class="loader-box">
+      <div class="loader-heart">🎮</div>
+      <div class="loader-title">Loading Chapter 3...</div>
+      <div class="loader-sub">Welcome to the arcade of us.</div>
+      <div class="loader-track"><div class="loader-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="intro" id="introOverlay">
+    <div class="intro-card">
+      <div class="intro-badge">🎮 Chapter 3 • Arcade of Us</div>
+      <h1 class="intro-title">Play Our <span class="glow">Love Story</span> ✨</h1>
+      <p class="intro-text">
+        This chapter turns our memories into little games.
+        Answer, match, catch, and unlock the story fragments hidden for Chokie.
+      </p>
+      <div class="intro-actions">
+        <button id="enterMusicBtn" class="btn btn-primary">Enter With Music ✨</button>
+        <button id="enterSilentBtn" class="btn btn-secondary">Enter Silently</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg"></div>
+  <div class="aurora">
+    <span class="a1"></span>
+    <span class="a2"></span>
+    <span class="a3"></span>
+  </div>
+  <div class="stars"></div>
+
+  <div class="hearts">
+    <span style="--x:8%; --delay:0s;">💖</span>
+    <span style="--x:20%; --delay:2s;">💕</span>
+    <span style="--x:34%; --delay:4s;">💗</span>
+    <span style="--x:48%; --delay:1.5s;">💞</span>
+    <span style="--x:62%; --delay:3.2s;">💓</span>
+    <span style="--x:76%; --delay:5s;">💝</span>
+    <span style="--x:90%; --delay:2.8s;">❤️</span>
+  </div>
+
+  <div class="top-pill">
+    <span class="name">Sinta</span>
+    <span class="heart">💘</span>
+    <span class="name">Chokie</span>
+  </div>
+
+  <main class="main">
+    <div class="container">
+      <section class="hero">
+        <div class="chapter-badge">
+          <div class="chapter-ring"></div>
+          <div class="chapter-inner">
+            <div class="chapter-number">03</div>
+            <div class="chapter-text">CHAPTER</div>
+          </div>
+        </div>
+
+        <h1 class="hero-title">The <span class="shine">Arcade of Us</span></h1>
+        <p class="hero-sub">
+          Our story keeps getting more playful here. This chapter is made of choices, memories,
+          tiny challenges, and the kind of love that feels fun and meaningful at the same time.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Story Route 🎠</h2>
+        <p class="section-sub">
+          Move through the arcade in order: remember us, test us, match us, then catch the love.
+        </p>
+
+        <div class="story-path">
+          <div class="path-card active" id="path1">1. Love Quiz</div>
+          <div class="path-card" id="path2">2. Memory Match</div>
+          <div class="path-card" id="path3">3. Catch the Hearts</div>
+          <div class="path-card" id="path4">4. Final Fragment</div>
+        </div>
+
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="quizTab">Love Quiz</button>
+          <button class="tab-btn" data-tab="matchTab">Memory Match</button>
+          <button class="tab-btn" data-tab="catchTab">Catch Hearts</button>
+        </div>
+
+        <div class="arcade-grid">
+          <div>
+            <!-- QUIZ -->
+            <div class="panel tab-panel active" id="quizTab">
+              <div class="panel-title">Game 1 — Love Quiz 💌</div>
+              <div class="panel-sub">
+                A soft little quiz made from our story. Get answers right and unlock love fragments.
+              </div>
+              <div class="quiz-question" id="quizQuestion">Loading question...</div>
+              <div class="quiz-answers" id="quizAnswers"></div>
+            </div>
+
+            <!-- MATCH -->
+            <div class="panel tab-panel" id="matchTab">
+              <div class="panel-title">Game 2 — Memory Match 🃏</div>
+              <div class="panel-sub">
+                Flip the cards and find the matching symbols. Each match brings another piece of our story.
+              </div>
+              <div class="match-grid" id="matchGrid"></div>
+            </div>
+
+            <!-- CATCH -->
+            <div class="panel tab-panel" id="catchTab">
+              <div class="panel-title">Game 3 — Catch the Hearts 💖</div>
+              <div class="panel-sub">
+                Move the basket left and right. Catch enough hearts to finish the arcade chapter.
+              </div>
+
+              <div class="catch-wrap">
+                <div class="catch-area" id="catchArea">
+                  <div class="basket" id="basket"></div>
+                </div>
+                <div class="catch-controls">
+                  <button class="mini-btn" id="leftCatch">←</button>
+                  <button class="mini-btn" id="rightCatch">→</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="side-col">
+            <div class="mini">
+              <div class="mini-title">Arcade Progress</div>
+              <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+              <div class="score-line">
+                Quiz Score: <span id="quizScore">0</span><br>
+                Matches: <span id="matchScore">0</span>/6<br>
+                Hearts Caught: <span id="catchScore">0</span>
+              </div>
+            </div>
+
+            <div class="mini">
+              <div class="mini-title">Unlocked Story Fragments</div>
+              <div class="frag-box" id="fragmentBox">
+                <div class="fragment">Finish the games to reveal our story fragments...</div>
+              </div>
+            </div>
+
+            <div class="mini">
+              <div class="mini-title">Final Chapter Meaning</div>
+              <p style="color:rgba(255,255,255,.82); line-height:1.8;">
+                This chapter says love should also be playful. It should laugh, remember,
+                try again, and keep finding joy in the smallest things.
+              </p>
+
+              <div class="ending" id="endingBox">
+                <div class="ending-title">Arcade Cleared 💞</div>
+                <div id="endingText">
+                  You reached the end of this little game world. Every correct choice, every match,
+                  every caught heart says the same thing: I love making memories with you, Chokie.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <button class="nav-btn back-btn" id="backBtn">← Back to Chapter 2</button>
+          <button class="nav-btn next-btn" id="nextBtn">Continue to Chapter 4 →</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="music-console">
+    <button class="music-btn big" id="playPauseBtn">▶</button>
+    <button class="music-btn" id="restartBtn">↺</button>
+    <button class="music-btn" id="muteBtn">🔊</button>
+
+    <div class="music-info">
+      <div class="music-title">Chapter 3 Song</div>
+      <div class="music-status" id="musicStatus">Waiting for your touch</div>
+    </div>
+
+    <div class="visualizer" id="visualizer">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <audio id="bgMusic" preload="auto" loop>
+    <source src="./song3.mp3" type="audio/mpeg" />
+  </audio>
+
+  <script>
+    const loader = document.getElementById("loader");
+    const introOverlay = document.getElementById("introOverlay");
+
+    const enterMusicBtn = document.getElementById("enterMusicBtn");
+    const enterSilentBtn = document.getElementById("enterSilentBtn");
+
+    const bgMusic = document.getElementById("bgMusic");
+    const playPauseBtn = document.getElementById("playPauseBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const muteBtn = document.getElementById("muteBtn");
+    const musicStatus = document.getElementById("musicStatus");
+    const visualizer = document.getElementById("visualizer");
+
+    const fragmentBox = document.getElementById("fragmentBox");
+    const progressFill = document.getElementById("progressFill");
+
+    const quizQuestion = document.getElementById("quizQuestion");
+    const quizAnswers = document.getElementById("quizAnswers");
+    const quizScoreEl = document.getElementById("quizScore");
+
+    const matchGrid = document.getElementById("matchGrid");
+    const matchScoreEl = document.getElementById("matchScore");
+
+    const catchArea = document.getElementById("catchArea");
+    const basket = document.getElementById("basket");
+    const leftCatch = document.getElementById("leftCatch");
+    const rightCatch = document.getElementById("rightCatch");
+    const catchScoreEl = document.getElementById("catchScore");
+
+    const endingBox = document.getElementById("endingBox");
+    const path1 = document.getElementById("path1");
+    const path2 = document.getElementById("path2");
+    const path3 = document.getElementById("path3");
+    const path4 = document.getElementById("path4");
+
+    const backBtn = document.getElementById("backBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    const tabs = document.querySelectorAll(".tab-btn");
+    const panels = document.querySelectorAll(".tab-panel");
+
+    let isPlaying = false;
+
+    let quizIndex = 0;
+    let quizScore = 0;
+
+    let matchScore = 0;
+    let firstCard = null;
+    let secondCard = null;
+    let lockBoard = false;
+
+    let catchScore = 0;
+    let basketX = 0;
+    let catchUnlocked = false;
+
+    const fragments = [
+      "Every little moment with you becomes a memory worth keeping.",
+      "Even playful moments with you feel deeply beautiful.",
+      "Our love is not only soft — it is also fun and alive.",
+      "I want us to keep laughing together for a very long time.",
+      "You make my heart feel light, safe, and full at the same time.",
+      "This story keeps becoming my favorite place to live."
+    ];
+    let unlockedFragments = 0;
+
+    const quizData = [
+      {
+        q: "When did our first confession of love happen?",
+        a: ["February 6, 2025", "March 6, 2025", "February 14, 2025"],
+        c: 0
+      },
+      {
+        q: "Who is always your beloved?",
+        a: ["Sinta", "Moon", "Stars"],
+        c: 0
+      },
+      {
+        q: "What should love choose when something hurts?",
+        a: ["Silence", "Patience and communication", "Distance"],
+        c: 1
+      },
+      {
+        q: "What kind of love do we want to protect?",
+        a: ["Honest, patient, and real", "Confusing and cold", "Only easy love"],
+        c: 0
+      }
+    ];
+
+    function toast(message) {
+      const t = document.createElement("div");
+      t.className = "toast";
+      t.textContent = message;
+      document.body.appendChild(t);
+
+      t.animate(
+        [
+          { opacity: 0, transform: "translateX(-50%) translateY(-12px)" },
+          { opacity: 1, transform: "translateX(-50%) translateY(0)" },
+          { opacity: 1, transform: "translateX(-50%) translateY(0)" },
+          { opacity: 0, transform: "translateX(-50%) translateY(-12px)" }
+        ],
+        { duration: 2200, easing: "ease" }
+      ).onfinish = () => t.remove();
+    }
+
+    window.addEventListener("load", () => {
+      setTimeout(() => loader.classList.add("hide"), 1800);
+      setTimeout(() => toast("🎮 Welcome to the arcade of us"), 2100);
+    });
+
+    function setMusicUI(playing) {
+      isPlaying = playing;
+      playPauseBtn.textContent = playing ? "❚❚" : "▶";
+      musicStatus.textContent = playing ? "Now playing chapter 3 song" : "Paused";
+      visualizer.classList.toggle("playing", playing);
+    }
+
+    async function playMusic() {
+      try {
+        bgMusic.volume = 0.78;
+        await bgMusic.play();
+        setMusicUI(true);
+      } catch (e) {
+        console.log("Playback blocked:", e);
+        musicStatus.textContent = "Tap play again";
+      }
+    }
+
+    function pauseMusic() {
+      bgMusic.pause();
+      setMusicUI(false);
+    }
+
+    enterMusicBtn.addEventListener("click", async () => {
+      introOverlay.classList.add("hide");
+      await playMusic();
+      toast("✨ Chapter 3 song started");
+    });
+
+    enterSilentBtn.addEventListener("click", () => {
+      introOverlay.classList.add("hide");
+      pauseMusic();
+      musicStatus.textContent = "Entered silently";
+      toast("💫 Entered silently");
+    });
+
+    playPauseBtn.addEventListener("click", () => {
+      if (bgMusic.paused) playMusic();
+      else pauseMusic();
+    });
+
+    restartBtn.addEventListener("click", () => {
+      bgMusic.currentTime = 0;
+      if (bgMusic.paused) playMusic();
+      toast("🎵 Song restarted");
+    });
+
+    muteBtn.addEventListener("click", () => {
+      bgMusic.muted = !bgMusic.muted;
+      muteBtn.textContent = bgMusic.muted ? "🔇" : "🔊";
+      musicStatus.textContent = bgMusic.muted ? "Muted" : (isPlaying ? "Now playing chapter 3 song" : "Paused");
+    });
+
+    bgMusic.addEventListener("play", () => setMusicUI(true));
+    bgMusic.addEventListener("pause", () => {
+      if (!bgMusic.ended) setMusicUI(false);
+    });
+
+    /* Tabs */
+    tabs.forEach(btn => {
+      btn.addEventListener("click", () => {
+        tabs.forEach(b => b.classList.remove("active"));
+        panels.forEach(p => p.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById(btn.dataset.tab).classList.add("active");
+      });
+    });
+
+    /* Progress */
+    function updateOverallProgress() {
+      let progress = 0;
+      if (quizScore >= 3) progress += 33;
+      if (matchScore >= 6) progress += 33;
+      if (catchScore >= 8) progress += 34;
+      progressFill.style.width = `${progress}%`;
+
+      path1.classList.toggle("active", quizScore >= 0);
+      path2.classList.toggle("active", quizScore >= 3);
+      path3.classList.toggle("active", matchScore >= 6);
+      path4.classList.toggle("active", catchScore >= 8);
+
+      if (quizScore >= 3 && matchScore >= 6 && catchScore >= 8) {
+        endingBox.classList.add("show");
+      }
+    }
+
+    function unlockFragment() {
+      if (unlockedFragments >= fragments.length) return;
+      const frag = document.createElement("div");
+      frag.className = "fragment";
+      frag.textContent = fragments[unlockedFragments];
+      if (fragmentBox.children.length === 1 && fragmentBox.firstElementChild.textContent.includes("Finish the games")) {
+        fragmentBox.innerHTML = "";
+      }
+      fragmentBox.appendChild(frag);
+      unlockedFragments++;
+    }
+
+    /* QUIZ */
+    function loadQuiz() {
+      const item = quizData[quizIndex % quizData.length];
+      quizQuestion.textContent = item.q;
+      quizAnswers.innerHTML = "";
+
+      item.a.forEach((answer, index) => {
+        const btn = document.createElement("button");
+        btn.className = "answer-btn";
+        btn.textContent = answer;
+        btn.addEventListener("click", () => {
+          if (index === item.c) {
+            quizScore++;
+            quizScoreEl.textContent = quizScore;
+            unlockFragment();
+            toast("💖 Correct answer");
+          } else {
+            toast("✨ Still cute, try the next one");
+          }
+
+          quizIndex++;
+          if (quizScore >= 3) {
+            path2.classList.add("active");
+            document.querySelector('[data-tab="matchTab"]').click();
+          }
+          updateOverallProgress();
+          loadQuiz();
+        });
+        quizAnswers.appendChild(btn);
+      });
+    }
+    loadQuiz();
+
+    /* MATCH */
+    const matchSymbols = ['💖','💖','🌙','🌙','💌','💌','✨','✨','💕','💕','💋','💋']
+      .sort(() => Math.random() - 0.5);
+
+    function createMatchBoard() {
+      matchGrid.innerHTML = "";
+      matchSymbols.forEach(symbol => {
+        const card = document.createElement("button");
+        card.className = "match-card";
+        card.dataset.value = symbol;
+        card.textContent = "❔";
+
+        card.addEventListener("click", () => {
+          if (lockBoard || card.classList.contains("matched") || card === firstCard) return;
+
+          card.textContent = symbol;
+          card.classList.add("revealed");
+
+          if (!firstCard) {
+            firstCard = card;
+            return;
+          }
+
+          secondCard = card;
+          lockBoard = true;
+
+          if (firstCard.dataset.value === secondCard.dataset.value) {
+            firstCard.classList.add("matched");
+            secondCard.classList.add("matched");
+            matchScore++;
+            matchScoreEl.textContent = matchScore;
+            unlockFragment();
+            resetBoard();
+            if (matchScore >= 6) {
+              path3.classList.add("active");
+              document.querySelector('[data-tab="catchTab"]').click();
+              toast("🃏 Memory match cleared");
+            }
+            updateOverallProgress();
+          } else {
+            setTimeout(() => {
+              firstCard.textContent = "❔";
+              secondCard.textContent = "❔";
+              firstCard.classList.remove("revealed");
+              secondCard.classList.remove("revealed");
+              resetBoard();
+            }, 550);
+          }
+        });
+
+        matchGrid.appendChild(card);
+      });
+    }
+
+    function resetBoard() {
+      firstCard = null;
+      secondCard = null;
+      lockBoard = false;
+    }
+
+    createMatchBoard();
+
+    /* CATCH HEARTS */
+    function resetBasket() {
+      basketX = catchArea.clientWidth / 2 - 42;
+      basket.style.left = basketX + "px";
+      basket.style.transform = "none";
+    }
+
+    function moveBasket(dir) {
+      const max = catchArea.clientWidth - 84;
+      basketX += dir * 36;
+      if (basketX < 0) basketX = 0;
+      if (basketX > max) basketX = max;
+      basket.style.left = basketX + "px";
+    }
+
+    leftCatch.addEventListener("click", () => moveBasket(-1));
+    rightCatch.addEventListener("click", () => moveBasket(1));
+
+    let catchInterval = null;
+
+    function spawnHeart() {
+      if (catchScore >= 8) return;
+      const heart = document.createElement("div");
+      heart.className = "fall-heart";
+      heart.textContent = ['💖','💕','💗','💞'][Math.floor(Math.random() * 4)];
+      let x = Math.random() * (catchArea.clientWidth - 28);
+      let y = -28;
+      heart.style.left = x + "px";
+      heart.style.top = y + "px";
+      catchArea.appendChild(heart);
+
+      const fall = setInterval(() => {
+        y += 4;
+        heart.style.top = y + "px";
+
+        const basketRect = basket.getBoundingClientRect();
+        const heartRect = heart.getBoundingClientRect();
+
+        const hit =
+          heartRect.bottom >= basketRect.top &&
+          heartRect.left < basketRect.right &&
+          heartRect.right > basketRect.left;
+
+        if (hit) {
+          catchScore++;
+          catchScoreEl.textContent = catchScore;
+          heart.remove();
+          clearInterval(fall);
+          unlockFragment();
+          updateOverallProgress();
+
+          if (catchScore >= 8 && !catchUnlocked) {
+            catchUnlocked = true;
+            path4.classList.add("active");
+            toast("💞 Arcade chapter complete");
+          }
+        }
+
+        if (y > catchArea.clientHeight + 30) {
+          heart.remove();
+          clearInterval(fall);
+        }
+      }, 20);
+    }
+
+    function startCatchGame() {
+      resetBasket();
+      if (catchInterval) clearInterval(catchInterval);
+      catchInterval = setInterval(spawnHeart, 900);
+    }
+
+    startCatchGame();
+
+    /* KEYBOARD support on PC */
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") moveBasket(-1);
+      if (e.key === "ArrowRight") moveBasket(1);
+    });
+
+    /* Navigation */
+    backBtn.addEventListener("click", () => {
+      document.body.style.opacity = "0";
+      setTimeout(() => {
+        window.location.href = "index2.html";
+      }, 600);
+    });
+
+    nextBtn.addEventListener("click", () => {
+      document.body.style.opacity = "0";
+      setTimeout(() => {
+        window.location.href = "index4.html";
+      }, 600);
+    });
+
+    updateOverallProgress();
+
+    console.log("index3.html loaded");
+  </script>
+</body>
+</html>

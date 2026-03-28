@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>index5 | Dream Date Multiverse</title>
+  <meta name="theme-color" content="#130818" />
+  <style>
+    :root{
+      --bg1:#0d0613;
+      --bg2:#170a22;
+      --bg3:#261235;
+      --pink:#ff63c9;
+      --pink2:#ff9fe8;
+      --purple:#b36cff;
+      --purple2:#7b63ff;
+      --gold:#ffd86d;
+      --white:#fff9fd;
+      --muted:rgba(255,255,255,.78);
+      --stroke:rgba(255,255,255,.12);
+      --glass1:rgba(255,255,255,.10);
+      --glass2:rgba(255,255,255,.05);
+      --shadow:0 10px 30px rgba(0,0,0,.28);
+      --romantic:linear-gradient(135deg,#ff66cb 0%,#b36cff 55%,#7b63ff 100%);
+      --accent:#ff66cb;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:"Segoe UI",system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+      min-height:100vh;
+      color:var(--white);
+      overflow-x:hidden;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(255,99,201,.12), transparent 22%),
+        radial-gradient(circle at 85% 20%, rgba(123,99,255,.14), transparent 24%),
+        radial-gradient(circle at 50% 84%, rgba(255,216,109,.06), transparent 20%),
+        linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3),#09030f);
+      -webkit-tap-highlight-color:transparent;
+      transition:background .8s ease;
+    }
+
+    a{text-decoration:none;color:inherit}
+    button,input{font:inherit}
+
+    /* background */
+    .bg-wrap{
+      position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:-10;
+    }
+    .blob{
+      position:absolute; border-radius:50%; filter:blur(70px); opacity:.14;
+      animation:blobFloat 18s ease-in-out infinite;
+    }
+    .blob.b1{width:220px;height:220px;background:#ff63c9;left:6%;top:8%}
+    .blob.b2{width:260px;height:260px;background:#8d63ff;right:6%;top:12%;animation-delay:2s}
+    .blob.b3{width:220px;height:220px;background:#ffbde9;left:20%;bottom:8%;animation-delay:4s}
+    @keyframes blobFloat{
+      0%,100%{transform:translate3d(0,0,0) scale(1)}
+      50%{transform:translate3d(12px,-10px,0) scale(1.04)}
+    }
+
+    .stars,.petals{
+      position:fixed; inset:0; overflow:hidden; pointer-events:none;
+    }
+    .stars{z-index:-9}
+    .petals{z-index:-8}
+
+    .star{
+      position:absolute; width:2px; height:2px; border-radius:50%;
+      background:#fff; box-shadow:0 0 6px #fff; opacity:.5;
+      animation:twinkle 4s ease-in-out infinite;
+    }
+    @keyframes twinkle{
+      0%,100%{opacity:.12;transform:scale(.85)}
+      50%{opacity:.9;transform:scale(1.4)}
+    }
+
+    .petal{
+      position:absolute; font-size:14px; opacity:.12;
+      animation:fallPetal linear infinite;
+    }
+    @keyframes fallPetal{
+      0%{transform:translateY(-10vh) translateX(0) rotate(0deg);opacity:0}
+      10%{opacity:.15}
+      100%{transform:translateY(110vh) translateX(22px) rotate(180deg);opacity:0}
+    }
+
+    /* loaders */
+    .loader-screen,.page-transition{
+      position:fixed; inset:0; z-index:9999;
+      display:flex; align-items:center; justify-content:center;
+      background:linear-gradient(135deg,#09030e,#14081d,#1c0d28);
+      transition:opacity .7s ease, visibility .7s ease;
+    }
+    .loader-screen.hide,.page-transition.hide{opacity:0;visibility:hidden}
+    .loader-box{
+      width:min(92%,620px); text-align:center; padding:34px 20px;
+      animation:popIn .7s ease;
+    }
+    .loader-icon{
+      font-size:58px; margin-bottom:14px; display:inline-block;
+      animation:pulse 1.5s ease-in-out infinite;
+    }
+    .loader-title{
+      font-size:clamp(2rem,4vw,3.2rem); font-weight:900; line-height:1.15; margin-bottom:12px;
+    }
+    .loader-sub{
+      color:rgba(255,255,255,.84); margin-bottom:22px; line-height:1.55; font-size:1.05rem;
+    }
+    .progress-wrap{
+      width:100%; height:10px; border-radius:999px; overflow:hidden;
+      background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.08);
+    }
+    .progress-bar{
+      width:0%; height:100%; border-radius:999px; background:var(--romantic);
+      animation:progressFill 3.1s forwards ease-in-out;
+    }
+    @keyframes pulse{
+      0%,100%{transform:scale(1)}
+      50%{transform:scale(1.12)}
+    }
+    @keyframes popIn{
+      from{opacity:0;transform:translateY(12px) scale(.98)}
+      to{opacity:1;transform:translateY(0) scale(1)}
+    }
+    @keyframes progressFill{
+      0%{width:0}
+      25%{width:22%}
+      55%{width:60%}
+      82%{width:84%}
+      100%{width:100%}
+    }
+
+    /* layout */
+    .page{width:min(1180px,92%); margin:0 auto; position:relative}
+    .glass{
+      background:linear-gradient(180deg,var(--glass1),var(--glass2));
+      border:1px solid var(--stroke);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(14px);
+      -webkit-backdrop-filter:blur(14px);
+      border-radius:30px;
+    }
+
+    .hero{
+      min-height:100vh; display:flex; align-items:center; justify-content:center;
+      padding:28px 0 40px;
+    }
+    .hero-card{
+      width:min(950px,100%);
+      padding:34px 24px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .badge{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:10px 18px; border-radius:999px;
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.12);
+      text-transform:uppercase; letter-spacing:1px;
+      font-size:.92rem; font-weight:800; color:#f8deef;
+      margin-bottom:18px;
+    }
+    .hero-title{
+      font-size:clamp(2.7rem,6vw,5rem); line-height:1.02; font-weight:900;
+      letter-spacing:-1.8px; margin-bottom:14px;
+    }
+    .gradient-text{
+      background:linear-gradient(135deg,#fff,#ffe0f3,#ffb8ea);
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+    }
+    .hero-sub{
+      max-width:760px; margin:0 auto 24px; color:var(--muted);
+      line-height:1.65; font-size:clamp(1rem,2vw,1.3rem);
+    }
+    .btn-row{
+      display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin-top:10px;
+    }
+    .btn{
+      border:none; cursor:pointer; color:#fff; font-weight:800;
+      padding:16px 26px; border-radius:999px; position:relative; overflow:hidden;
+      transition:transform .2s ease;
+    }
+    .btn:hover{transform:translateY(-2px)}
+    .btn:active{transform:scale(.99)}
+    .btn-primary{
+      background:var(--romantic);
+      box-shadow:0 12px 24px rgba(179,108,255,.18);
+    }
+    .btn-secondary{
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .btn-tertiary{
+      background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .shine::before{
+      content:""; position:absolute; top:0; left:-120%; width:60%; height:100%;
+      transform:skewX(-20deg);
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);
+      transition:left .7s ease;
+    }
+    .shine:hover::before{left:130%}
+    .pills{
+      display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-top:16px;
+    }
+    .pill{
+      padding:10px 14px; border-radius:999px;
+      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
+      font-size:.92rem; font-weight:700; color:rgba(255,255,255,.9);
+    }
+    .divider{
+      height:1px; margin:24px 0;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);
+    }
+
+    .section{margin-bottom:28px}
+    .section-card{padding:26px}
+    .section-title{font-size:clamp(1.7rem,3vw,2.6rem); font-weight:900; margin-bottom:8px}
+    .section-sub{color:var(--muted); line-height:1.65; margin-bottom:20px}
+    .fade-up{opacity:0; transform:translateY(24px); transition:all .7s ease}
+    .fade-up.show{opacity:1; transform:translateY(0)}
+
+    /* mood builder */
+    .mood-grid{
+      display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
+    }
+    .mood-card{
+      padding:18px; border-radius:24px;
+      background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.1);
+    }
+    .mood-card h3{margin-bottom:12px; font-size:1.15rem}
+    .choice-wrap{display:flex; flex-wrap:wrap; gap:10px}
+    .choice{
+      padding:10px 14px; border:none; cursor:pointer; border-radius:999px;
+      color:#fff; font-weight:700;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1);
+      transition:.2s ease;
+    }
+    .choice.active{
+      background:var(--romantic);
+      transform:translateY(-1px);
+    }
+
+    /* portals */
+    .portal-grid{
+      display:grid; grid-template-columns:repeat(3,1fr); gap:18px;
+    }
+    .portal{
+      padding:22px; border-radius:26px;
+      background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:var(--shadow);
+      min-height:220px;
+      cursor:pointer;
+      transition:transform .22s ease, border-color .22s ease, background .22s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    .portal:hover{transform:translateY(-4px)}
+    .portal.active{
+      border-color:rgba(255,255,255,.28);
+      background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.05));
+    }
+    .portal .emoji{
+      width:74px; height:74px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:2rem; margin-bottom:14px;
+      background:var(--romantic);
+      box-shadow:0 8px 20px rgba(179,108,255,.18);
+    }
+    .portal h3{font-size:1.3rem; margin-bottom:8px}
+    .portal p{color:var(--muted); line-height:1.6; font-size:.96rem}
+
+    /* fate / tokens / souvenirs */
+    .tri-grid{
+      display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px;
+    }
+    .mini-panel{
+      padding:20px; border-radius:24px;
+      background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.1);
+    }
+    .mini-panel h3{margin-bottom:10px}
+    .token-list,.souvenir-list{
+      display:flex; flex-wrap:wrap; gap:10px; margin-top:12px;
+    }
+    .token,.souvenir{
+      padding:10px 14px; border-radius:999px;
+      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
+      font-weight:700; font-size:.92rem;
+    }
+
+    /* date scene */
+    .scene-layout{
+      display:grid; grid-template-columns:1.02fr .98fr; gap:18px; align-items:start;
+    }
+    .scene-box{
+      padding:20px; border-radius:24px;
+      background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.09);
+      min-height:340px;
+    }
+    .scene-title{
+      font-size:1.5rem; font-weight:900; margin-bottom:10px;
+    }
+    .scene-text{
+      color:#fff1f9; line-height:1.8; min-height:170px; white-space:pre-wrap;
+    }
+    .cursor{
+      display:inline-block; width:10px; color:#ff9ce0; animation:blink .9s infinite;
+    }
+    @keyframes blink{
+      0%,50%{opacity:1}
+      51%,100%{opacity:0}
+    }
+
+    .object-grid{
+      display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:14px;
+    }
+    .object-btn,.scene-choice{
+      border:none; cursor:pointer; color:#fff; font-weight:800;
+      padding:13px 14px; border-radius:16px;
+      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
+      transition:.2s ease;
+    }
+    .object-btn:hover,.scene-choice:hover{transform:translateY(-2px); background:rgba(255,255,255,.09)}
+    .choice-stack{display:grid; gap:10px; margin-top:14px}
+    .scene-result{
+      margin-top:14px; min-height:92px; padding:14px; border-radius:18px;
+      background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08);
+      line-height:1.6;
+    }
+
+    /* future visions */
+    .vision-grid{
+      display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
+    }
+    .vision-card{
+      padding:20px; border-radius:22px;
+      background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.1);
+      min-height:180px;
+    }
+    .vision-card h3{margin-bottom:10px}
+    .vision-card p{color:var(--muted); line-height:1.65}
+
+    /* star wishes */
+    .wish-grid{
+      display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
+    }
+    .wish-card{
+      padding:20px; border-radius:22px;
+      background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.1);
+      text-align:center;
+    }
+    .wish-star{
+      width:78px; height:78px; border-radius:50%;
+      margin:0 auto 12px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:2rem; background:var(--romantic);
+    }
+    .wish-card p{color:var(--muted); line-height:1.6; margin-bottom:12px}
+
+    /* final ending */
+    .ending-box{
+      padding:22px; border-radius:24px;
+      background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.11);
+    }
+    .ending-title{
+      font-size:1.6rem; font-weight:900; margin-bottom:10px;
+    }
+    .ending-text{
+      color:#fff1f9; line-height:1.8;
+    }
+
+    /* modal */
+    .modal{
+      position:fixed; inset:0; z-index:9998;
+      background:rgba(7,2,12,.70);
+      display:flex; align-items:center; justify-content:center;
+      opacity:0; visibility:hidden; transition:.3s ease; padding:16px;
+    }
+    .modal.show{opacity:1; visibility:visible}
+    .modal-card{
+      width:min(720px,100%); border-radius:28px; padding:24px;
+      background:linear-gradient(180deg, rgba(28,13,40,.95), rgba(20,9,29,.96));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:0 20px 50px rgba(0,0,0,.35);
+      position:relative;
+      animation:popIn .35s ease;
+    }
+    .modal-card h2{font-size:2rem; margin-bottom:10px}
+    .modal-card p{color:var(--muted); line-height:1.75; margin-bottom:12px}
+    .close-modal{
+      position:absolute; top:12px; right:12px;
+      width:42px; height:42px; border:none; border-radius:50%; cursor:pointer;
+      color:#fff; background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.12);
+    }
+
+    /* nav/footer */
+    .nav-row{
+      display:flex; flex-wrap:wrap; gap:14px; margin-top:24px;
+    }
+    .footer-note{
+      text-align:center; margin-top:24px; color:rgba(255,255,255,.72); line-height:1.6;
+    }
+
+    /* floating controls */
+    .floating-controls{
+      position:fixed; right:14px; bottom:14px; z-index:300;
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .fab{
+      width:54px; height:54px; border:none; border-radius:50%; cursor:pointer;
+      color:#fff; font-size:1.15rem; background:var(--romantic);
+      box-shadow:0 10px 20px rgba(179,108,255,.18);
+      transition:transform .2s ease;
+    }
+    .fab:hover{transform:scale(1.05)}
+    .floating-note{
+      position:fixed; z-index:400; pointer-events:none; font-size:18px;
+      animation:noteUp 1.5s ease forwards;
+    }
+    @keyframes noteUp{
+      0%{opacity:0; transform:translateY(0) scale(.85)}
+      20%{opacity:1}
+      100%{opacity:0; transform:translateY(-46px) scale(1.12)}
+    }
+
+    @media (max-width: 980px){
+      .mood-grid,.portal-grid,.tri-grid,.scene-layout,.vision-grid,.wish-grid{
+        grid-template-columns:1fr;
+      }
+      .hero-card{padding:28px 18px}
+    }
+
+    @media (max-width: 640px){
+      .page{width:min(94%,94%)}
+      .section-card{padding:18px}
+      .btn,.choice,.object-btn,.scene-choice{width:100%}
+      .btn-row,.nav-row{flex-direction:column}
+      .object-grid{grid-template-columns:1fr}
+      .wish-star{width:68px;height:68px}
+      .hero-sub{font-size:1rem}
+      .floating-controls{right:10px;bottom:10px}
+      .fab{width:50px;height:50px}
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *,*::before,*::after{
+        animation-duration:.01ms !important;
+        animation-iteration-count:1 !important;
+        transition-duration:.01ms !important;
+        scroll-behavior:auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-wrap">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+  </div>
+  <div class="stars" id="stars"></div>
+  <div class="petals" id="petals"></div>
+
+  <div class="loader-screen" id="loaderScreen">
+    <div class="loader-box">
+      <div class="loader-icon">💖</div>
+      <div class="loader-title">Loading Chapter 5...</div>
+      <div class="loader-sub">Preparing tonight’s dream date for Chokie and Sinta.</div>
+      <div class="progress-wrap"><div class="progress-bar"></div></div>
+    </div>
+  </div>
+
+  <div class="page-transition hide" id="pageTransition">
+    <div class="loader-box">
+      <div class="loader-icon">💖</div>
+      <div class="loader-title" id="transitionTitle">Loading Chapter...</div>
+      <div class="loader-sub" id="transitionSub">A new beautiful chapter is opening.</div>
+      <div class="progress-wrap"><div class="progress-bar" style="animation-duration:1.6s;"></div></div>
+    </div>
+  </div>
+
+  <audio id="bgMusic" src="song5.mp3" loop preload="auto"></audio>
+
+  <!-- HERO -->
+  <section class="hero page">
+    <div class="hero-card glass fade-up show">
+      <div class="badge">🌙 Chapter 5 • Dream Date Multiverse</div>
+      <h1 class="hero-title gradient-text">Choose Our Dream Date Tonight ✨</h1>
+      <p class="hero-sub">
+        Tonight, the universe opens more than one beautiful possibility.
+        We can go where the moon listens, where the rain glows, where lights spin,
+        where waves whisper, where flowers bloom, or where trains carry us toward tomorrow.
+      </p>
+
+      <div class="btn-row">
+        <button class="btn btn-primary shine" id="enterMusicBtn">Enter With Music 🎵</button>
+        <button class="btn btn-secondary shine" id="enterSilentBtn">Enter Silently</button>
+        <button class="btn btn-tertiary shine" id="fateBtn">Let Fate Decide ✨</button>
+      </div>
+
+      <div class="pills">
+        <div class="pill">💖 Low Lag</div>
+        <div class="pill">🎵 song5.mp3</div>
+        <div class="pill">🪄 Dynamic Endings</div>
+        <div class="pill">🌌 Date Portals</div>
+        <div class="pill">💌 Hidden Future Visions</div>
+        <div class="pill">📱 Mobile Friendly</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="btn-row">
+        <a href="index4.html" class="btn btn-tertiary shine nav-link" data-title="Returning to Chapter 4..." data-sub="Going back into the previous romantic chapter.">← Go Back to Page 4</a>
+        <a href="index6.html" class="btn btn-primary shine nav-link" data-title="Loading Chapter 6..." data-sub="Memory Lane is getting ready for you.">Move Ahead to Page 6 →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- MOOD BUILDER -->
+  <section class="page section fade-up" id="moodSection">
+    <div class="section-card glass">
+      <h2 class="section-title">Set the Mood Before We Go</h2>
+      <p class="section-sub">
+        Choose tonight’s atmosphere first. Your date story and ending will softly change with your selections.
+      </p>
+
+      <div class="mood-grid">
+        <div class="mood-card">
+          <h3>🕰️ Time</h3>
+          <div class="choice-wrap" id="timeChoices">
+            <button class="choice active" data-group="time" data-value="Sunset">Sunset</button>
+            <button class="choice" data-group="time" data-value="Midnight">Midnight</button>
+            <button class="choice" data-group="time" data-value="Dawn">Dawn</button>
+          </div>
+        </div>
+
+        <div class="mood-card">
+          <h3>🌦️ Weather</h3>
+          <div class="choice-wrap" id="weatherChoices">
+            <button class="choice active" data-group="weather" data-value="Starlight">Starlight</button>
+            <button class="choice" data-group="weather" data-value="Rain">Rain</button>
+            <button class="choice" data-group="weather" data-value="Snow">Snow</button>
+            <button class="choice" data-group="weather" data-value="Soft Breeze">Soft Breeze</button>
+          </div>
+        </div>
+
+        <div class="mood-card">
+          <h3>💞 Vibe</h3>
+          <div class="choice-wrap" id="vibeChoices">
+            <button class="choice active" data-group="vibe" data-value="Dreamy">Dreamy</button>
+            <button class="choice" data-group="vibe" data-value="Cozy">Cozy</button>
+            <button class="choice" data-group="vibe" data-value="Playful">Playful</button>
+            <button class="choice" data-group="vibe" data-value="Deep Talk">Deep Talk</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTALS -->
+  <section class="page section fade-up" id="portalSection">
+    <div class="section-card glass">
+      <h2 class="section-title">Open a Date Portal</h2>
+      <p class="section-sub">
+        Each portal is a different little world. Choose one — or let fate choose for us.
+      </p>
+
+      <div class="portal-grid" id="portalGrid">
+        <div class="portal" data-portal="rooftop">
+          <div class="emoji">🌙</div>
+          <h3>Moon Rooftop</h3>
+          <p>City lights below, stars above, and a silence soft enough to hold two hearts.</p>
+        </div>
+
+        <div class="portal" data-portal="cafe">
+          <div class="emoji">☕</div>
+          <h3>Rain Café</h3>
+          <p>Warm lights, foggy glass, rain outside, and the kind of closeness that feels like home.</p>
+        </div>
+
+        <div class="portal" data-portal="beach">
+          <div class="emoji">🌊</div>
+          <h3>Starry Beach</h3>
+          <p>Waves whispering in the dark, cold sand underfoot, and a sky made for wishes.</p>
+        </div>
+
+        <div class="portal" data-portal="carnival">
+          <div class="emoji">🎡</div>
+          <h3>Carnival Lights</h3>
+          <p>Ferris wheels, glowing stalls, silly laughter, and too much brightness to hide feelings.</p>
+        </div>
+
+        <div class="portal" data-portal="garden">
+          <div class="emoji">🌸</div>
+          <h3>Blossom Garden</h3>
+          <p>Petals drifting through the air, moon-soft paths, and a fairytale hidden in the night.</p>
+        </div>
+
+        <div class="portal" data-portal="train">
+          <div class="emoji">🚆</div>
+          <h3>Endless Train Ride</h3>
+          <p>A moving world outside the window, quiet seats, shared dreams, and a future waiting ahead.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOKENS / SOUVENIRS / FATE SUMMARY -->
+  <section class="page section fade-up">
+    <div class="section-card glass">
+      <h2 class="section-title">Tonight’s Collected Feelings</h2>
+      <p class="section-sub">
+        Every interaction gives this date a texture — warmth, wonder, peace, laughter, tenderness, and more.
+      </p>
+
+      <div class="tri-grid">
+        <div class="mini-panel">
+          <h3>💞 Tokens Collected</h3>
+          <div class="token-list" id="tokenList">
+            <div class="token">None Yet</div>
+          </div>
+        </div>
+
+        <div class="mini-panel">
+          <h3>🎁 Souvenirs Earned</h3>
+          <div class="souvenir-list" id="souvenirList">
+            <div class="souvenir">No souvenir yet</div>
+          </div>
+        </div>
+
+        <div class="mini-panel">
+          <h3>✨ Date Mood Summary</h3>
+          <div class="scene-result" id="moodSummary">
+            Time: Sunset • Weather: Starlight • Vibe: Dreamy
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DATE SCENE -->
+  <section class="page section fade-up" id="sceneSection">
+    <div class="section-card glass">
+      <h2 class="section-title">Live the Date</h2>
+      <p class="section-sub">
+        Select a portal to begin the scene. Then click special objects, choose moments, and shape your ending.
+      </p>
+
+      <div class="scene-layout">
+        <div class="scene-box">
+          <div class="scene-title" id="sceneTitle">No Date Selected Yet</div>
+          <div class="scene-text" id="sceneText">Choose a portal above and this dream world will begin writing itself here...</div>
+          <div class="choice-stack" id="sceneChoices"></div>
+        </div>
+
+        <div class="scene-box">
+          <div class="scene-title">Secret Interactions</div>
+          <div class="object-grid" id="objectGrid">
+            <button class="object-btn">Pick a portal first</button>
+          </div>
+          <div class="scene-result" id="objectResult">
+            Click special objects from the selected date world to reveal hidden romantic details.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENDING -->
+  <section class="page section fade-up">
+    <div class="section-card glass">
+      <h2 class="section-title">Your Date Ending</h2>
+      <p class="section-sub">
+        Once you make enough choices, your ending below will update into something unique for tonight.
+      </p>
+
+      <div class="ending-box">
+        <div class="ending-title" id="endingTitle">Waiting for Tonight’s Story...</div>
+        <div class="ending-text" id="endingText">
+          Pick a portal, shape the mood, make your choices, and let the night turn into a memory.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FUTURE VISIONS -->
+  <section class="page section fade-up">
+    <div class="section-card glass">
+      <h2 class="section-title">A Glimpse of Us in the Future</h2>
+      <p class="section-sub">
+        Tiny imagined scenes from tomorrow, because beautiful dates always make the future feel closer.
+      </p>
+
+      <div class="vision-grid">
+        <div class="vision-card">
+          <h3>🏡 Our Future Home</h3>
+          <p>A window with rain outside, warm lights inside, and a room where silence never feels empty because it is shared with you.</p>
+        </div>
+
+        <div class="vision-card">
+          <h3>🛒 Ordinary Days Together</h3>
+          <p>Walking through grocery aisles, teasing each other over snacks, and somehow turning normal things into memories worth keeping.</p>
+        </div>
+
+        <div class="vision-card">
+          <h3>🌙 Balcony Talks</h3>
+          <p>Late-night air, sleepy eyes, warm drinks, and the kind of honest conversations that only happen when two hearts trust each other fully.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WISH ON A STAR -->
+  <section class="page section fade-up">
+    <div class="section-card glass">
+      <h2 class="section-title">Wish on a Star</h2>
+      <p class="section-sub">
+        Pick one star for now, one for soon, and one for forever.
+      </p>
+
+      <div class="wish-grid">
+        <div class="wish-card">
+          <div class="wish-star">⭐</div>
+          <p>A wish for this moment — something soft, sweet, and close enough to touch.</p>
+          <button class="btn btn-secondary shine wish-btn" data-message="I wish this night could stretch a little longer, just so I could stay near you in it.">Wish for Now</button>
+        </div>
+
+        <div class="wish-card">
+          <div class="wish-star">🌟</div>
+          <p>A wish for soon — a beautiful next chapter we both step into together.</p>
+          <button class="btn btn-secondary shine wish-btn" data-message="I wish for more nights like this — more laughter, more comfort, more us.">Wish for Soon</button>
+        </div>
+
+        <div class="wish-card">
+          <div class="wish-star">✨</div>
+          <p>A wish for forever — the dream that lives quietly beneath all the others.</p>
+          <button class="btn btn-secondary shine wish-btn" data-message="I wish that wherever time takes us, it keeps making room for you beside me.">Wish for Forever</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL NAV -->
+  <section class="page section fade-up">
+    <div class="section-card glass">
+      <h2 class="section-title">Continue the Story</h2>
+      <p class="section-sub">
+        If tonight becomes a memory, the next chapter becomes memory lane.
+      </p>
+      <div class="nav-row">
+        <a href="index4.html" class="btn btn-tertiary shine nav-link" data-title="Returning to Chapter 4..." data-sub="Going back into the previous romantic chapter.">← Go Back to Page 4</a>
+        <a href="index6.html" class="btn btn-primary shine nav-link" data-title="Loading Chapter 6..." data-sub="Memory Lane is getting ready for you.">Continue to Page 6 →</a>
+      </div>
+      <p class="footer-note">Tonight was never just a date. It was a little universe choosing a mood. 💖</p>
+    </div>
+  </section>
+
+  <!-- modal -->
+  <div class="modal" id="wishModal">
+    <div class="modal-card">
+      <button class="close-modal" data-close="wishModal">✕</button>
+      <h2>Star Wish Received ✨</h2>
+      <p id="wishMessage">A soft little wish has been saved in tonight’s sky.</p>
+      <div class="btn-row" style="justify-content:flex-start;">
+        <button class="btn btn-primary shine" data-close="wishModal">Close Wish</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="floating-controls">
+    <button class="fab" id="musicToggleBtn" title="Play or Pause Music">🎵</button>
+    <button class="fab" id="topBtn" title="Back to Top">↑</button>
+  </div>
+
+  <script>
+    /* lightweight atmosphere */
+    const stars = document.getElementById('stars');
+    for(let i=0;i<45;i++){
+      const s = document.createElement('div');
+      s.className = 'star';
+      s.style.left = Math.random()*100 + '%';
+      s.style.top = Math.random()*100 + '%';
+      s.style.animationDelay = Math.random()*4 + 's';
+      stars.appendChild(s);
+    }
+
+    const petals = document.getElementById('petals');
+    function makePetal(){
+      const p = document.createElement('div');
+      p.className = 'petal';
+      p.textContent = ['🌸','✨','💖'][Math.floor(Math.random()*3)];
+      p.style.left = Math.random()*100 + 'vw';
+      p.style.animationDuration = (10 + Math.random()*6) + 's';
+      petals.appendChild(p);
+      setTimeout(()=>p.remove(), 17000);
+    }
+    setInterval(makePetal, 2400);
+
+    /* loader */
+    const loaderScreen = document.getElementById('loaderScreen');
+    window.addEventListener('load', ()=>{
+      setTimeout(()=>loaderScreen.classList.add('hide'), 3200);
+    });
+
+    /* reveal */
+    const io = new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting) entry.target.classList.add('show');
+      });
+    }, {threshold:.12});
+    document.querySelectorAll('.fade-up').forEach(el=>io.observe(el));
+
+    /* music */
+    const bgMusic = document.getElementById('bgMusic');
+    const enterMusicBtn = document.getElementById('enterMusicBtn');
+    const enterSilentBtn = document.getElementById('enterSilentBtn');
+    const musicToggleBtn = document.getElementById('musicToggleBtn');
+    const topBtn = document.getElementById('topBtn');
+
+    function playMusic(){
+      bgMusic.volume = 0.72;
+      bgMusic.play().then(()=>spawnMusicNote()).catch(()=>{});
+    }
+    function pauseMusic(){ bgMusic.pause(); }
+
+    window.addEventListener('load', ()=>{
+      setTimeout(()=>playMusic(), 3500);
+    });
+
+    enterMusicBtn.addEventListener('click', ()=>{
+      playMusic();
+      document.getElementById('moodSection').scrollIntoView({behavior:'smooth'});
+    });
+
+    enterSilentBtn.addEventListener('click', ()=>{
+      pauseMusic();
+      document.getElementById('moodSection').scrollIntoView({behavior:'smooth'});
+    });
+
+    musicToggleBtn.addEventListener('click', ()=>{
+      if(bgMusic.paused) playMusic(); else pauseMusic();
+      spawnMusicNote();
+    });
+
+    topBtn.addEventListener('click', ()=>window.scrollTo({top:0, behavior:'smooth'}));
+
+    function spawnMusicNote(){
+      const note = document.createElement('div');
+      note.className = 'floating-note';
+      note.textContent = ['🎵','🎶','✨'][Math.floor(Math.random()*3)];
+      note.style.right = '26px';
+      note.style.bottom = '80px';
+      document.body.appendChild(note);
+      setTimeout(()=>note.remove(), 1500);
+    }
+
+    /* page transitions */
+    const pageTransition = document.getElementById('pageTransition');
+    const transitionTitle = document.getElementById('transitionTitle');
+    const transitionSub = document.getElementById('transitionSub');
+
+    function bindNavLinks(){
+      document.querySelectorAll('.nav-link').forEach(link=>{
+        if(link.dataset.bound === 'true') return;
+        link.dataset.bound = 'true';
+        link.addEventListener('click', function(e){
+          e.preventDefault();
+          transitionTitle.textContent = this.dataset.title || 'Loading Chapter...';
+          transitionSub.textContent = this.dataset.sub || 'A new beautiful chapter is opening.';
+          pageTransition.classList.remove('hide');
+          setTimeout(()=>{ window.location.href = this.getAttribute('href'); }, 1100);
+        });
+      });
+    }
+    bindNavLinks();
+
+    /* mood builder */
+    const mood = {
+      time:'Sunset',
+      weather:'Starlight',
+      vibe:'Dreamy'
+    };
+    const moodSummary = document.getElementById('moodSummary');
+
+    document.querySelectorAll('.choice').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const group = btn.dataset.group;
+        document.querySelectorAll(`.choice[data-group="${group}"]`).forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        mood[group] = btn.dataset.value;
+        updateMoodSummary();
+        updateEnding();
+      });
+    });
+
+    function updateMoodSummary(){
+      moodSummary.textContent = `Time: ${mood.time} • Weather: ${mood.weather} • Vibe: ${mood.vibe}`;
+    }
+    updateMoodSummary();
+
+    /* data */
+    const portalData = {
+      rooftop:{
+        title:'Moon Rooftop 🌙',
+        token:'Peace',
+        souvenir:'Moon Charm',
+        color:['#ff66cb','#7b63ff'],
+        intro:`${mood.time} settles over the rooftop like a secret. The city glows below us, the sky listens above us, and standing beside you somehow makes the whole night feel quieter and more complete.`,
+        objects:[
+          {label:'Telescope 🔭', text:'Through the telescope, the stars look distant — but you, somehow, still feel like the brightest thing in the sky.'},
+          {label:'Lantern 🏮', text:'The lantern light touches your face softly, and for a moment the whole city feels like background scenery.'},
+          {label:'Moon 🌙', text:'The moon hangs above us like it arrived just to witness this exact silence.'}
+        ],
+        choices:[
+          {label:'Watch the stars together', text:'We stand shoulder to shoulder, saying almost nothing, and somehow it says everything.'},
+          {label:'Talk about forever', text:'The future stops feeling scary when it sounds like it might include you.'},
+          {label:'Stay in the quiet', text:'Some silences are empty. This one feels full.'}
+        ],
+        ending:'Moonlit Soulmate'
+      },
+      cafe:{
+        title:'Rain Café ☕',
+        token:'Warmth',
+        souvenir:'Coffee Charm',
+        color:['#ff8ecf','#9d6bff'],
+        intro:`Rain writes soft music on the windows while warm light wraps around the little café. The table feels small, the room feels safe, and your presence somehow becomes the warmest thing in it.`,
+        objects:[
+          {label:'Foggy Window 🌧️', text:'A little heart on the glass appears and suddenly the rain outside feels like part of the date.'},
+          {label:'Coffee Cup ☕', text:'Even the warmth rising from the cup feels slower, softer, and more romantic tonight.'},
+          {label:'Candle 🕯️', text:'The candle flickers as if it knows this moment deserves softness.'}
+        ],
+        choices:[
+          {label:'Share dessert', text:'One spoon, two smiles, and far too much sweetness pretending to come from the cake.'},
+          {label:'Write on the foggy glass', text:'A tiny symbol on the window turns into a memory the rain will keep for us.'},
+          {label:'Hold the warm cup together', text:'Warm fingers, tiny laughter, and a closeness that makes the rest of the room disappear.'}
+        ],
+        ending:'Rain-Written Romance'
+      },
+      beach:{
+        title:'Starry Beach 🌊',
+        token:'Wonder',
+        souvenir:'Seashell',
+        color:['#62c8ff','#7b63ff'],
+        intro:`The waves keep arriving like they have secrets to tell, and the sky above us looks endless. Sand shifts beneath our steps while the night feels wide, soft, and a little unreal in the best way.`,
+        objects:[
+          {label:'Waves 🌊', text:'Every wave sounds like the sea trying to say what words can’t quite carry.'},
+          {label:'Shell 🐚', text:'A tiny shell in your hand suddenly feels like proof that beautiful things can be quietly found.'},
+          {label:'Stars ✨', text:'The stars above us look less like dots and more like wishes waiting to be chosen.'}
+        ],
+        choices:[
+          {label:'Walk barefoot together', text:'The cold sand, the dark water, and your nearness make the whole night feel vivid.'},
+          {label:'Sit near the waves', text:'We sit close enough that silence becomes something shared instead of empty.'},
+          {label:'Make wishes to the stars', text:'Some wishes are spoken. Others are just felt.'}
+        ],
+        ending:'Seaside Promise'
+      },
+      carnival:{
+        title:'Carnival Lights 🎡',
+        token:'Laughter',
+        souvenir:'Glowing Ticket',
+        color:['#ff76b6','#ffb347'],
+        intro:`Lights spin everywhere, music drifts in little bursts, and the night feels brighter, louder, and more playful. Somehow, in all the chaos, your smile still steals all the attention.`,
+        objects:[
+          {label:'Ferris Wheel 🎡', text:'From the top, everything below becomes tiny — except the feeling of being beside you.'},
+          {label:'Cotton Candy 🍭', text:'The sweetness is ridiculous, but not quite as ridiculous as how much I like this with you.'},
+          {label:'Prize Stall 🧸', text:'Winning a silly little prize suddenly feels like winning a tiny memory to keep.'}
+        ],
+        choices:[
+          {label:'Ride the ferris wheel', text:'As the world rises and slows, the lights below blur into something almost magical.'},
+          {label:'Win a plushie', text:'It starts as a joke, and ends as a souvenir with way too much emotional value.'},
+          {label:'Get lost in the lights', text:'The whole carnival feels like it was built just to make us laugh too much.'}
+        ],
+        ending:'Laughter Under Lights'
+      },
+      garden:{
+        title:'Blossom Garden 🌸',
+        token:'Tenderness',
+        souvenir:'Petal Promise',
+        color:['#ff92d9','#b36cff'],
+        intro:`Petals drift through the air like the night itself is being gentle. The garden paths glow softly, flowers breathe their quiet perfume, and everything feels like a fairytale trying not to be too obvious about it.`,
+        objects:[
+          {label:'Flower 🌸', text:'One flower becomes a tiny promise, simply because it was chosen beside you.'},
+          {label:'Bench 🪑', text:'Even a small bench in the garden feels like the perfect place to let time slow down.'},
+          {label:'Butterflies 🦋', text:'They move like little pieces of softness escaped into the air.'}
+        ],
+        choices:[
+          {label:'Pick a flower promise', text:'One bloom, one promise, one tiny moment that feels strangely important.'},
+          {label:'Slow dance under petals', text:'No stage, no audience, just a softness too beautiful to rush.'},
+          {label:'Sit beneath the blossoms', text:'The whole garden seems to quiet itself so the moment can breathe.'}
+        ],
+        ending:'Blossom Forever'
+      },
+      train:{
+        title:'Endless Train Ride 🚆',
+        token:'Future',
+        souvenir:'Golden Ticket',
+        color:['#7bcfff','#ff8ccf'],
+        intro:`The train moves through the dark like it already knows where dreams go. Outside the window, lights slide by in soft streaks. Inside, the quiet between us feels less like travel and more like becoming a story together.`,
+        objects:[
+          {label:'Window 🪟', text:'The world outside keeps moving, but this moment somehow feels still enough to keep.'},
+          {label:'Ticket 🎫', text:'A small paper ticket feels like permission to believe in destinations we haven’t reached yet.'},
+          {label:'Empty Seat 💺', text:'The seat beside you suddenly looks like the simplest and safest future.'}
+        ],
+        choices:[
+          {label:'Take the window seat together', text:'Outside, the world rushes by; inside, time feels slow and almost tender.'},
+          {label:'Plan future destinations', text:'The map ahead feels less like distance and more like possibility.'},
+          {label:'Rest on each other quietly', text:'Some comfort doesn’t need explaining. It just settles.'}
+        ],
+        ending:'Train to Tomorrow'
+      }
+    };
+
+    /* portal handling */
+    const portalEls = document.querySelectorAll('.portal');
+    const sceneTitle = document.getElementById('sceneTitle');
+    const sceneText = document.getElementById('sceneText');
+    const sceneChoices = document.getElementById('sceneChoices');
+    const objectGrid = document.getElementById('objectGrid');
+    const objectResult = document.getElementById('objectResult');
+    const tokenList = document.getElementById('tokenList');
+    const souvenirList = document.getElementById('souvenirList');
+    const endingTitle = document.getElementById('endingTitle');
+    const endingText = document.getElementById('endingText');
+
+    let selectedPortal = null;
+    let tokens = [];
+    let souvenirs = [];
+    let choiceMoments = [];
+
+    portalEls.forEach(el=>{
+      el.addEventListener('click', ()=>{
+        selectPortal(el.dataset.portal);
+      });
+    });
+
+    const fateBtn = document.getElementById('fateBtn');
+    fateBtn.addEventListener('click', ()=>{
+      const keys = Object.keys(portalData);
+      const randomKey = keys[Math.floor(Math.random()*keys.length)];
+      selectPortal(randomKey);
+      document.getElementById('sceneSection').scrollIntoView({behavior:'smooth'});
+    });
+
+    function selectPortal(key){
+      selectedPortal = key;
+      portalEls.forEach(p=>p.classList.toggle('active', p.dataset.portal === key));
+      const data = portalData[key];
+
+      document.documentElement.style.setProperty('--accent', data.color[0]);
+      sceneTitle.textContent = data.title;
+
+      typeSceneText(data.intro);
+
+      sceneChoices.innerHTML = '';
+      data.choices.forEach(choice=>{
+        const btn = document.createElement('button');
+        btn.className = 'scene-choice';
+        btn.textContent = choice.label;
+        btn.addEventListener('click', ()=>{
+          choiceMoments.push(choice.label);
+          objectResult.textContent = choice.text;
+          addToken(data.token);
+          addSouvenir(data.souvenir);
+          updateEnding();
+        });
+        sceneChoices.appendChild(btn);
+      });
+
+      objectGrid.innerHTML = '';
+      data.objects.forEach(obj=>{
+        const btn = document.createElement('button');
+        btn.className = 'object-btn';
+        btn.textContent = obj.label;
+        btn.addEventListener('click', ()=>{
+          objectResult.textContent = obj.text;
+          addToken(data.token);
+          updateEnding();
+        });
+        objectGrid.appendChild(btn);
+      });
+
+      updateEnding();
+    }
+
+    let typingTimer;
+    function typeSceneText(text){
+      clearInterval(typingTimer);
+      sceneText.innerHTML = '';
+      let i = 0;
+      typingTimer = setInterval(()=>{
+        if(i < text.length){
+          sceneText.innerHTML = text.slice(0, i+1) + '<span class="cursor">|</span>';
+          i++;
+        }else{
+          clearInterval(typingTimer);
+          sceneText.textContent = text;
+        }
+      }, 18);
+    }
+
+    /* tokens & souvenirs */
+    function addToken(token){
+      if(!tokens.includes(token)) tokens.push(token);
+      renderTokens();
+    }
+    function addSouvenir(item){
+      if(!souvenirs.includes(item)) souvenirs.push(item);
+      renderSouvenirs();
+    }
+
+    function renderTokens(){
+      tokenList.innerHTML = '';
+      if(tokens.length === 0){
+        tokenList.innerHTML = '<div class="token">None Yet</div>';
+        return;
+      }
+      tokens.forEach(t=>{
+        const el = document.createElement('div');
+        el.className = 'token';
+        el.textContent = t;
+        tokenList.appendChild(el);
+      });
+    }
+
+    function renderSouvenirs(){
+      souvenirList.innerHTML = '';
+      if(souvenirs.length === 0){
+        souvenirList.innerHTML = '<div class="souvenir">No souvenir yet</div>';
+        return;
+      }
+      souvenirs.forEach(s=>{
+        const el = document.createElement('div');
+        el.className = 'souvenir';
+        el.textContent = s;
+        souvenirList.appendChild(el);
+      });
+    }
+
+    /* endings */
+    function updateEnding(){
+      if(!selectedPortal){
+        endingTitle.textContent = 'Waiting for Tonight’s Story...';
+        endingText.textContent = 'Pick a portal, shape the mood, make your choices, and let the night turn into a memory.';
+        return;
+      }
+
+      const data = portalData[selectedPortal];
+      const title = data.ending;
+      const tokenText = tokens.length ? tokens.join(', ') : 'soft possibility';
+      const souvenirText = souvenirs.length ? souvenirs.join(', ') : 'a memory not yet held';
+
+      endingTitle.textContent = `Your Ending: ${title}`;
+      endingText.textContent =
+        `Tonight unfolded in ${mood.time.toLowerCase()} under ${mood.weather.toLowerCase()}, carrying a ${mood.vibe.toLowerCase()} feeling from beginning to end. ` +
+        `From the ${data.title.toLowerCase()} came ${tokenText.toLowerCase()}, and tonight left behind ${souvenirText.toLowerCase()} as proof that beautiful moments can be kept. ` +
+        `No matter which portal we chose, the real magic was that the whole scene felt more alive because you were in it.`;
+    }
+
+    /* wishes */
+    const wishModal = document.getElementById('wishModal');
+    const wishMessage = document.getElementById('wishMessage');
+    document.querySelectorAll('.wish-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        wishMessage.textContent = btn.dataset.message;
+        wishModal.classList.add('show');
+        heartBurst(10);
+      });
+    });
+
+    document.querySelectorAll('[data-close]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const id = btn.dataset.close;
+        document.getElementById(id).classList.remove('show');
+      });
+    });
+    document.querySelectorAll('.modal').forEach(modal=>{
+      modal.addEventListener('click', e=>{
+        if(e.target === modal) modal.classList.remove('show');
+      });
+    });
+
+    /* tiny burst */
+    function heartBurst(count = 12){
+      for(let i=0;i<count;i++){
+        const el = document.createElement('div');
+        el.className = 'floating-note';
+        el.textContent = ['💖','✨','🌸','💕'][Math.floor(Math.random()*4)];
+        el.style.left = (15 + Math.random()*70) + 'vw';
+        el.style.bottom = (10 + Math.random()*20) + 'vh';
+        document.body.appendChild(el);
+        setTimeout(()=>el.remove(), 1600);
+      }
+    }
+  </script>
+</body>
+</html>

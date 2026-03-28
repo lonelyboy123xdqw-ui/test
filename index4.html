@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Index 4 | Our Love Universe</title>
+  <meta name="theme-color" content="#120818" />
+  <style>
+    :root{
+      --bg1:#0b0411;
+      --bg2:#150820;
+      --bg3:#241132;
+      --pink:#ff63c9;
+      --pink2:#ff98e3;
+      --purple:#b16cff;
+      --purple2:#7f63ff;
+      --gold:#ffd86f;
+      --white:#fff8fd;
+      --muted:rgba(255,255,255,.78);
+      --glass:rgba(255,255,255,.08);
+      --glass-2:rgba(255,255,255,.05);
+      --stroke:rgba(255,255,255,.12);
+      --shadow:0 10px 35px rgba(0,0,0,.26);
+      --romantic:linear-gradient(135deg,#ff66cb 0%,#b36cff 55%,#7b63ff 100%);
+    }
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      font-family:"Segoe UI",system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+      min-height:100vh;
+      color:var(--white);
+      overflow-x:hidden;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(255,99,201,.12), transparent 22%),
+        radial-gradient(circle at 85% 20%, rgba(127,99,255,.14), transparent 24%),
+        radial-gradient(circle at 50% 85%, rgba(255,216,111,.05), transparent 18%),
+        linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3),#09030f);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    a{
+      color:inherit;
+      text-decoration:none;
+    }
+
+    button,input{
+      font:inherit;
+    }
+
+    .bg-wrap{
+      position:fixed;
+      inset:0;
+      overflow:hidden;
+      pointer-events:none;
+      z-index:-10;
+    }
+
+    .blob{
+      position:absolute;
+      border-radius:50%;
+      filter:blur(70px);
+      opacity:.14;
+      animation:blobFloat 18s ease-in-out infinite;
+    }
+
+    .blob.b1{width:220px;height:220px;background:#ff63c9;left:5%;top:8%;}
+    .blob.b2{width:260px;height:260px;background:#8c63ff;right:5%;top:10%;animation-delay:2s;}
+    .blob.b3{width:220px;height:220px;background:#ffb9ea;left:18%;bottom:6%;animation-delay:4s;}
+
+    @keyframes blobFloat{
+      0%,100%{transform:translate3d(0,0,0) scale(1)}
+      50%{transform:translate3d(12px,-10px,0) scale(1.03)}
+    }
+
+    .stars,.petal-zone{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+    }
+
+    .stars{z-index:-9;}
+    .petal-zone{z-index:-8;}
+
+    .star{
+      position:absolute;
+      width:2px;
+      height:2px;
+      border-radius:50%;
+      background:#fff;
+      box-shadow:0 0 6px #fff;
+      animation:twinkle 4s ease-in-out infinite;
+      opacity:.5;
+    }
+
+    @keyframes twinkle{
+      0%,100%{opacity:.12;transform:scale(.85)}
+      50%{opacity:.9;transform:scale(1.45)}
+    }
+
+    .petal{
+      position:absolute;
+      animation:fallPetal linear infinite;
+      opacity:.12;
+      font-size:14px;
+    }
+
+    @keyframes fallPetal{
+      0%{transform:translateY(-10vh) translateX(0) rotate(0deg);opacity:0}
+      10%{opacity:.15}
+      100%{transform:translateY(110vh) translateX(20px) rotate(180deg);opacity:0}
+    }
+
+    .loader-screen,
+    .page-transition{
+      position:fixed;
+      inset:0;
+      background:linear-gradient(135deg,#09030e,#14081d,#1c0d28);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:9999;
+      transition:opacity .7s ease, visibility .7s ease;
+    }
+
+    .loader-screen.hide,
+    .page-transition.hide{
+      opacity:0;
+      visibility:hidden;
+    }
+
+    .loader-box{
+      width:min(92%,620px);
+      text-align:center;
+      padding:34px 20px;
+      animation:loaderPop .7s ease;
+    }
+
+    .loader-icon{
+      font-size:56px;
+      margin-bottom:16px;
+      display:inline-block;
+      animation:pulse 1.5s ease-in-out infinite;
+    }
+
+    .loader-title{
+      font-size:clamp(2rem,4vw,3.4rem);
+      font-weight:900;
+      line-height:1.14;
+      margin-bottom:12px;
+    }
+
+    .loader-sub{
+      color:rgba(255,255,255,.85);
+      font-size:1.08rem;
+      margin-bottom:22px;
+      line-height:1.5;
+    }
+
+    .progress-wrap{
+      height:10px;
+      width:100%;
+      border-radius:999px;
+      overflow:hidden;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.09);
+    }
+
+    .progress-bar{
+      width:0%;
+      height:100%;
+      border-radius:999px;
+      background:var(--romantic);
+      animation:progressFill 3.2s forwards ease-in-out;
+    }
+
+    @keyframes pulse{
+      0%,100%{transform:scale(1)}
+      50%{transform:scale(1.12)}
+    }
+
+    @keyframes loaderPop{
+      from{opacity:0;transform:translateY(12px) scale(.98)}
+      to{opacity:1;transform:translateY(0) scale(1)}
+    }
+
+    @keyframes progressFill{
+      0%{width:0%}
+      25%{width:20%}
+      55%{width:58%}
+      80%{width:82%}
+      100%{width:100%}
+    }
+
+    .page{
+      width:min(1180px,92%);
+      margin:0 auto;
+      position:relative;
+    }
+
+    .glass{
+      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      border:1px solid var(--stroke);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(14px);
+      -webkit-backdrop-filter:blur(14px);
+      border-radius:32px;
+    }
+
+    .hero{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:26px 0 40px;
+    }
+
+    .hero-card{
+      width:min(920px,100%);
+      padding:34px 24px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 18px;
+      border-radius:999px;
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.12);
+      text-transform:uppercase;
+      font-size:.92rem;
+      font-weight:800;
+      letter-spacing:1px;
+      color:#f6dfea;
+      margin-bottom:18px;
+    }
+
+    .hero-title{
+      font-size:clamp(2.8rem,6vw,5.2rem);
+      line-height:1.02;
+      font-weight:900;
+      letter-spacing:-1.8px;
+      margin-bottom:14px;
+    }
+
+    .gradient-text{
+      background:linear-gradient(135deg,#fff,#ffe1f2,#ffb7e9);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .hero-sub{
+      max-width:760px;
+      margin:0 auto 26px;
+      color:var(--muted);
+      line-height:1.65;
+      font-size:clamp(1rem,2vw,1.35rem);
+    }
+
+    .btn-row{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:14px;
+      margin-top:10px;
+    }
+
+    .btn{
+      border:none;
+      outline:none;
+      color:#fff;
+      cursor:pointer;
+      font-weight:800;
+      padding:16px 26px;
+      border-radius:999px;
+      position:relative;
+      overflow:hidden;
+      transition:transform .2s ease;
+    }
+
+    .btn:hover{transform:translateY(-2px)}
+    .btn:active{transform:scale(.99)}
+
+    .btn-primary{
+      background:var(--romantic);
+      box-shadow:0 12px 26px rgba(179,108,255,.18);
+    }
+
+    .btn-secondary{
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .btn-tertiary{
+      background:linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .shine::before{
+      content:"";
+      position:absolute;
+      top:0;
+      left:-120%;
+      width:60%;
+      height:100%;
+      transform:skewX(-20deg);
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent);
+      transition:left .7s ease;
+    }
+
+    .shine:hover::before{left:130%}
+
+    .pills{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:10px;
+      margin-top:16px;
+    }
+
+    .pill{
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1);
+      font-size:.92rem;
+      font-weight:700;
+      color:rgba(255,255,255,.9);
+    }
+
+    .divider{
+      height:1px;
+      margin:24px 0;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
+    }
+
+    .section{
+      margin-bottom:28px;
+    }
+
+    .section-card{
+      padding:26px;
+    }
+
+    .section-title{
+      font-size:clamp(1.7rem,3vw,2.6rem);
+      font-weight:900;
+      margin-bottom:8px;
+    }
+
+    .section-sub{
+      color:var(--muted);
+      line-height:1.65;
+      margin-bottom:20px;
+    }
+
+    .fade-up{
+      opacity:0;
+      transform:translateY(24px);
+      transition:all .7s ease;
+    }
+
+    .fade-up.show{
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+      margin-top:10px;
+    }
+
+    .stat-card{
+      border-radius:22px;
+      padding:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.1);
+      text-align:center;
+    }
+
+    .stat-card h3{
+      font-size:1.8rem;
+      margin-bottom:6px;
+    }
+
+    .stat-card p{
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    .games-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:18px;
+    }
+
+    .game-card{
+      padding:20px;
+      border-radius:24px;
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.11);
+      box-shadow:var(--shadow);
+      min-height:320px;
+    }
+
+    .game-card h3{
+      font-size:1.28rem;
+      margin-bottom:8px;
+    }
+
+    .game-card p{
+      color:var(--muted);
+      line-height:1.55;
+      margin-bottom:14px;
+    }
+
+    .mini-btn{
+      border:none;
+      cursor:pointer;
+      color:#fff;
+      font-weight:800;
+      padding:12px 14px;
+      border-radius:16px;
+      background:linear-gradient(135deg, rgba(255,99,201,.22), rgba(127,99,255,.25));
+      border:1px solid rgba(255,255,255,.1);
+      transition:transform .2s ease;
+      touch-action:manipulation;
+    }
+
+    .mini-btn:hover{transform:translateY(-2px)}
+
+    .result-box{
+      margin-top:14px;
+      min-height:74px;
+      padding:13px 14px;
+      border-radius:16px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      line-height:1.55;
+      color:#fff;
+    }
+
+    .tap-area{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:10px;
+    }
+
+    .tap-heart{
+      width:110px;
+      height:110px;
+      border:none;
+      border-radius:50%;
+      cursor:pointer;
+      font-size:2.7rem;
+      color:#fff;
+      background:var(--romantic);
+      box-shadow:0 10px 24px rgba(255,99,201,.20);
+      transition:transform .08s ease;
+      touch-action:manipulation;
+      -webkit-user-select:none;
+      user-select:none;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      z-index:2;
+    }
+
+    .tap-heart.pressed{
+      transform:scale(.92);
+    }
+
+    .small-meter{
+      width:100%;
+      height:12px;
+      background:rgba(255,255,255,.07);
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .small-meter-fill{
+      width:0%;
+      height:100%;
+      background:var(--romantic);
+      border-radius:999px;
+      transition:width .1s linear;
+    }
+
+    .stats-row{
+      display:flex;
+      justify-content:space-between;
+      width:100%;
+      gap:10px;
+      font-size:.95rem;
+      color:rgba(255,255,255,.9);
+    }
+
+    .sequence-display{
+      min-height:68px;
+      border-radius:16px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1.8rem;
+      margin-bottom:12px;
+      letter-spacing:8px;
+    }
+
+    .seq-buttons{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:10px;
+    }
+
+    .seq-btn{
+      border:none;
+      cursor:pointer;
+      padding:14px;
+      border-radius:18px;
+      color:#fff;
+      font-size:1.3rem;
+      font-weight:900;
+      border:1px solid rgba(255,255,255,.1);
+      background:linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      transition:transform .15s ease, filter .15s ease;
+      touch-action:manipulation;
+    }
+
+    .seq-btn.active{
+      filter:brightness(1.12);
+    }
+
+    .lock-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+    }
+
+    .lock-tile{
+      aspect-ratio:1/1;
+      border:none;
+      cursor:pointer;
+      border-radius:18px;
+      background:linear-gradient(135deg,#29153a,#491d61);
+      color:#fff;
+      font-size:1.6rem;
+      border:1px solid rgba(255,255,255,.1);
+      transition:transform .15s ease, background .15s ease;
+      touch-action:manipulation;
+    }
+
+    .lock-tile:hover{transform:scale(1.02)}
+    .lock-tile.on{
+      background:linear-gradient(135deg,#ff76d1,#8d65ff);
+    }
+
+    .story-layout{
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:18px;
+      align-items:start;
+    }
+
+    .typewriter{
+      min-height:320px;
+      padding:20px;
+      border-radius:24px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.09);
+      color:#fff1f9;
+      line-height:1.8;
+      white-space:pre-wrap;
+    }
+
+    .typing-cursor{
+      display:inline-block;
+      width:10px;
+      animation:blink .9s infinite;
+      color:#ff9ce0;
+    }
+
+    @keyframes blink{
+      0%,50%{opacity:1}
+      51%,100%{opacity:0}
+    }
+
+    .love-meter{
+      width:100%;
+      height:14px;
+      margin-top:14px;
+      background:rgba(255,255,255,.07);
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .love-meter-fill{
+      width:0%;
+      height:100%;
+      background:linear-gradient(90deg,#ff6ccf,#ff97e3,#b36cff,#7b63ff);
+      border-radius:999px;
+      transition:width .45s ease;
+    }
+
+    .map-box{
+      padding:18px;
+      border-radius:24px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.09);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .journey-line{
+      position:absolute;
+      top:72px;
+      left:10%;
+      right:10%;
+      height:6px;
+      background:rgba(255,255,255,.07);
+      border-radius:999px;
+      overflow:hidden;
+    }
+
+    .journey-line-fill{
+      width:0%;
+      height:100%;
+      background:var(--romantic);
+      transition:width .6s ease;
+    }
+
+    .map-nodes{
+      position:relative;
+      z-index:2;
+      display:flex;
+      justify-content:space-between;
+      gap:8px;
+      margin-top:18px;
+    }
+
+    .node{
+      width:19%;
+      text-align:center;
+    }
+
+    .node-dot{
+      width:54px;
+      height:54px;
+      margin:0 auto 10px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1.2rem;
+      background:linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.12);
+      transition:.25s ease;
+    }
+
+    .node.active .node-dot{
+      background:var(--romantic);
+      transform:translateY(-4px) scale(1.05);
+    }
+
+    .node p{
+      font-size:.78rem;
+      color:rgba(255,255,255,.84);
+      line-height:1.35;
+    }
+
+    .quiz-box{
+      margin-top:18px;
+      padding:18px;
+      border-radius:20px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .quiz-question{
+      font-size:1.08rem;
+      font-weight:900;
+      line-height:1.5;
+      margin-bottom:12px;
+    }
+
+    .quiz-options{
+      display:grid;
+      gap:10px;
+    }
+
+    .quiz-option{
+      padding:13px 15px;
+      border-radius:16px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.09);
+      cursor:pointer;
+      font-weight:700;
+      transition:.2s ease;
+      touch-action:manipulation;
+    }
+
+    .quiz-option:hover{
+      transform:translateX(3px);
+      background:rgba(255,255,255,.09);
+    }
+
+    .quiz-option.correct{
+      background:rgba(70,255,176,.14);
+      border-color:rgba(84,255,177,.36);
+    }
+
+    .quiz-option.wrong{
+      background:rgba(255,108,147,.13);
+      border-color:rgba(255,108,147,.34);
+    }
+
+    .score-pill{
+      display:inline-block;
+      margin-top:12px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.1);
+      font-weight:900;
+    }
+
+    .nav-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:14px;
+      margin-top:24px;
+    }
+
+    .secret-zone{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+    }
+
+    .secret-card{
+      padding:18px;
+      border-radius:22px;
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.1);
+      min-height:140px;
+    }
+
+    .secret-card h3{
+      margin-bottom:8px;
+    }
+
+    .secret-card p{
+      color:var(--muted);
+      line-height:1.6;
+      margin-bottom:12px;
+    }
+
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(7,2,12,.70);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:9998;
+      opacity:0;
+      visibility:hidden;
+      transition:.3s ease;
+      padding:16px;
+    }
+
+    .modal.show{
+      opacity:1;
+      visibility:visible;
+    }
+
+    .modal-card{
+      width:min(720px,100%);
+      border-radius:28px;
+      padding:24px;
+      background:linear-gradient(180deg, rgba(28,13,40,.95), rgba(20,9,29,.96));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:0 20px 50px rgba(0,0,0,.35);
+      position:relative;
+      animation:loaderPop .35s ease;
+    }
+
+    .modal-card h2{
+      font-size:2rem;
+      margin-bottom:10px;
+    }
+
+    .modal-card p{
+      color:var(--muted);
+      line-height:1.75;
+      margin-bottom:14px;
+    }
+
+    .close-modal{
+      position:absolute;
+      top:12px;
+      right:12px;
+      border:none;
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      cursor:pointer;
+      color:#fff;
+      background:rgba(255,255,255,.09);
+      border:1px solid rgba(255,255,255,.12);
+      touch-action:manipulation;
+    }
+
+    .floating-controls{
+      position:fixed;
+      right:14px;
+      bottom:14px;
+      z-index:300;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .fab{
+      width:54px;
+      height:54px;
+      border:none;
+      border-radius:50%;
+      cursor:pointer;
+      color:#fff;
+      font-size:1.15rem;
+      background:var(--romantic);
+      box-shadow:0 10px 20px rgba(179,108,255,.18);
+      transition:transform .2s ease;
+      touch-action:manipulation;
+    }
+
+    .fab:hover{transform:scale(1.05)}
+
+    .floating-note{
+      position:fixed;
+      z-index:400;
+      pointer-events:none;
+      animation:noteUp 1.6s ease forwards;
+      font-size:18px;
+    }
+
+    @keyframes noteUp{
+      0%{opacity:0;transform:translateY(0) scale(.85)}
+      20%{opacity:1}
+      100%{opacity:0;transform:translateY(-48px) scale(1.15)}
+    }
+
+    .footer-note{
+      text-align:center;
+      margin-top:24px;
+      color:rgba(255,255,255,.72);
+      line-height:1.6;
+    }
+
+    @media (max-width: 980px){
+      .games-grid,
+      .story-layout,
+      .secret-zone{
+        grid-template-columns:1fr;
+      }
+
+      .stats-grid{
+        grid-template-columns:1fr;
+      }
+
+      .hero-card{
+        padding:28px 18px;
+      }
+    }
+
+    @media (max-width: 640px){
+      .page{
+        width:min(94%,94%);
+      }
+
+      .section-card{
+        padding:18px;
+      }
+
+      .btn,
+      .mini-btn{
+        width:100%;
+      }
+
+      .btn-row,
+      .nav-row{
+        flex-direction:column;
+      }
+
+      .node-dot{
+        width:44px;
+        height:44px;
+        font-size:1rem;
+      }
+
+      .node p{
+        font-size:.67rem;
+      }
+
+      .journey-line{
+        top:62px;
+      }
+
+      .tap-heart{
+        width:96px;
+        height:96px;
+        font-size:2.25rem;
+      }
+
+      .floating-controls{
+        right:10px;
+        bottom:10px;
+      }
+
+      .fab{
+        width:50px;
+        height:50px;
+      }
+
+      .hero-sub{
+        font-size:1rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *,*::before,*::after{
+        animation-duration:0.01ms !important;
+        animation-iteration-count:1 !important;
+        transition-duration:0.01ms !important;
+        scroll-behavior:auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-wrap">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+  </div>
+  <div class="stars" id="stars"></div>
+  <div class="petal-zone" id="petalZone"></div>
+
+  <div class="loader-screen" id="loaderScreen">
+    <div class="loader-box">
+      <div class="loader-icon">💖</div>
+      <div class="loader-title">Preparing Your Heaven,<br>Chokie...</div>
+      <div class="loader-sub">A little universe made with love by your Sinta.</div>
+      <div class="progress-wrap">
+        <div class="progress-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-transition hide" id="pageTransition">
+    <div class="loader-box">
+      <div class="loader-icon">💖</div>
+      <div class="loader-title" id="transitionTitle">Loading Chapter...</div>
+      <div class="loader-sub" id="transitionSub">A little promise world for Chokie and Sinta.</div>
+      <div class="progress-wrap">
+        <div class="progress-bar" style="animation-duration:1.6s;"></div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="bgMusic" src="song4.mp3" loop preload="auto"></audio>
+
+  <section class="hero page">
+    <div class="hero-card glass fade-up show">
+      <div class="badge">✨ Private Love Space ✨</div>
+      <h1 class="hero-title gradient-text">For My Chokie 💖</h1>
+      <p class="hero-sub">
+        Tap below to enter our little heaven. Every glow, every star, every heartbeat here belongs to us.
+        This chapter is romantic, playful, cinematic, and optimized to stay smooth.
+      </p>
+
+      <div class="btn-row">
+        <button class="btn btn-primary shine" id="enterMusicBtn" type="button">Enter With Music ✨</button>
+        <button class="btn btn-secondary shine" id="enterSilentBtn" type="button">Enter Silently</button>
+      </div>
+
+      <div class="pills">
+        <div class="pill">💖 Story Quest</div>
+        <div class="pill">🎵 song4.mp3</div>
+        <div class="pill">📱 Mobile Friendly</div>
+        <div class="pill">💻 PC Friendly</div>
+        <div class="pill">⚡ Optimized</div>
+        <div class="pill">✨ Secret Surprises</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="btn-row">
+        <a href="index3.html" class="btn btn-tertiary shine nav-link" data-title="Returning to Chapter 3..." data-sub="Going back to the previous beautiful memory.">← Go Back to Page 3</a>
+        <a href="index5.html" class="btn btn-primary shine nav-link" data-title="Loading Chapter 5..." data-sub="The next dreamy chapter is opening now.">Move Ahead to Page 5 →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="page section fade-up">
+    <div class="section-card glass">
+      <h2 class="section-title">Our Little Universe Stats</h2>
+      <p class="section-sub">A small sweet dashboard without heavy live effects.</p>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h3>100%</h3>
+          <p>Love Intensity</p>
+        </div>
+        <div class="stat-card">
+          <h3>247</h3>
+          <p>Imaginary Tiny Memories</p>
+        </div>
+        <div class="stat-card">
+          <h3>∞</h3>
+          <p>Forever Energy</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page section fade-up" id="miniGamesSection">
+    <div class="section-card glass">
+      <h2 class="section-title">Tiny Romantic Games</h2>
+      <p class="section-sub">Three sweet little challenges before the main love journey begins.</p>
+
+      <div class="games-grid">
+        <div class="game-card">
+          <h3>💓 Love Meter Tap Rush</h3>
+          <p>Tap the glowing heart as fast as you can before time runs out and fill the meter with love energy.</p>
+          <div class="tap-area">
+            <button class="tap-heart" id="tapHeartBtn" type="button" aria-label="Tap heart">💖</button>
+            <div class="small-meter">
+              <div class="small-meter-fill" id="tapMeterFill"></div>
+            </div>
+            <div class="stats-row">
+              <span>Taps: <strong id="tapCount">0</strong></span>
+              <span>Time: <strong id="tapTime">8</strong>s</span>
+            </div>
+            <button class="mini-btn" id="startTapGameBtn" type="button">Start Tap Rush</button>
+          </div>
+          <div class="result-box" id="tapGameResult">Press start and make the page blush with your tapping speed.</div>
+        </div>
+
+        <div class="game-card">
+          <h3>🧠 Cupid Memory Sequence</h3>
+          <p>Watch the romantic symbol sequence and repeat it. Each round gets a little longer.</p>
+          <div class="sequence-display" id="sequenceDisplay">—</div>
+          <div class="seq-buttons">
+            <button class="seq-btn" data-emoji="💖" type="button">💖</button>
+            <button class="seq-btn" data-emoji="🌸" type="button">🌸</button>
+            <button class="seq-btn" data-emoji="✨" type="button">✨</button>
+            <button class="seq-btn" data-emoji="💌" type="button">💌</button>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+            <button class="mini-btn" id="startSequenceBtn" type="button">Start Sequence</button>
+            <button class="mini-btn" id="resetSequenceBtn" type="button">Reset</button>
+          </div>
+          <div class="result-box" id="sequenceResult">Can you remember the symbols of our little world?</div>
+        </div>
+
+        <div class="game-card">
+          <h3>🔐 Heart Lock Puzzle</h3>
+          <p>Tap tiles to make every tile glow together. Each press changes the tile and nearby ones too.</p>
+          <div class="lock-grid" id="lockGrid"></div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+            <button class="mini-btn" id="shuffleLockBtn" type="button">Shuffle Puzzle</button>
+            <button class="mini-btn" id="solveHintBtn" type="button">Tiny Hint</button>
+          </div>
+          <div class="result-box" id="lockResult">Make all tiles glow together to open the heart lock.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page section fade-up" id="storyQuestSection">
+    <div class="section-card glass">
+      <h2 class="section-title">The Complete Love Story Game</h2>
+      <p class="section-sub">
+        Begin the written story, then move through the animated map and answer romantic questions chapter by chapter.
+      </p>
+
+      <div class="btn-row" style="justify-content:flex-start;">
+        <button class="btn btn-primary shine" id="startStoryBtn" type="button">Start Our Love Story ✨</button>
+        <button class="btn btn-secondary shine" id="skipTypingBtn" type="button">Skip Typing</button>
+        <button class="btn btn-tertiary shine" id="openLetterBtn" type="button">Open Secret Love Letter 💌</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="story-layout">
+        <div>
+          <div class="typewriter" id="typewriterBox">Press “Start Our Love Story” and let the words begin...</div>
+          <div class="love-meter">
+            <div class="love-meter-fill" id="loveMeterFill"></div>
+          </div>
+        </div>
+
+        <div class="map-box">
+          <div class="journey-line">
+            <div class="journey-line-fill" id="journeyLineFill"></div>
+          </div>
+
+          <div class="map-nodes">
+            <div class="node active"><div class="node-dot">🌙</div><p>First Glance</p></div>
+            <div class="node"><div class="node-dot">💌</div><p>First Talk</p></div>
+            <div class="node"><div class="node-dot">🌸</div><p>Growing Closer</p></div>
+            <div class="node"><div class="node-dot">🎡</div><p>Dream Date</p></div>
+            <div class="node"><div class="node-dot">💍</div><p>Forever Promise</p></div>
+          </div>
+
+          <div class="quiz-box" id="quizBox">
+            <div class="quiz-question">Your love quest will appear here after the story begins...</div>
+            <div class="quiz-options"></div>
+            <div class="score-pill">Love Score: <span id="loveScore">0</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <a href="index3.html" class="btn btn-tertiary shine nav-link" data-title="Returning to Chapter 3..." data-sub="Going back to the previous beautiful memory.">← Back to Previous Page</a>
+        <a href="index5.html" class="btn btn-primary shine nav-link" data-title="Loading Chapter 5..." data-sub="The next dreamy chapter is opening now.">Continue to Chapter 5 →</a>
+      </div>
+
+      <p class="footer-note">This page glows because your name entered the story. 💖</p>
+    </div>
+  </section>
+
+  <section class="page section fade-up">
+    <div class="section-card glass">
+      <h2 class="section-title">Hidden Soft Surprises</h2>
+      <p class="section-sub">A few extra little secrets because one chapter should never hold just one emotion.</p>
+
+      <div class="secret-zone">
+        <div class="secret-card">
+          <h3>🌙 Whisper Button</h3>
+          <p>Click for a tiny random romantic whisper message.</p>
+          <button class="mini-btn" id="whisperBtn" type="button">Tell Me Something Sweet</button>
+          <div class="result-box" id="whisperResult">A whisper is waiting...</div>
+        </div>
+
+        <div class="secret-card">
+          <h3>💘 Proposal Tease</h3>
+          <p>A playful yes/no moment that is impossible to lose.</p>
+          <button class="mini-btn" id="proposalBtn" type="button">Open Proposal Tease</button>
+          <div class="result-box">Hint: the answer is already hidden in the stars.</div>
+        </div>
+
+        <div class="secret-card">
+          <h3>✨ Secret Spark Burst</h3>
+          <p>Make the page burst with hearts and sparkles for a moment.</p>
+          <button class="mini-btn" id="sparkBurstBtn" type="button">Release Magic</button>
+          <div class="result-box">A little dramatic romance, but optimized.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="floating-controls">
+    <button class="fab" id="musicToggleBtn" title="Play or Pause Music" type="button">🎵</button>
+    <button class="fab" id="topBtn" title="Back to Top" type="button">↑</button>
+  </div>
+
+  <div class="modal" id="loveLetterModal">
+    <div class="modal-card">
+      <button class="close-modal" data-close="loveLetterModal" type="button">✕</button>
+      <h2>My Secret Love Letter 💌</h2>
+      <p>If this page could speak more softly than music, it would say this: you are not just someone I love, you are someone who changes the feeling of everything around me.</p>
+      <p>Days feel warmer, songs feel deeper, and even silence feels kinder when I think of you. If there is magic here, it exists because your name touched this chapter.</p>
+      <p>So if you ever wonder what this page is trying to hold — it is trying to hold affection, admiration, softness, longing, peace, and all the tiny things that become love.</p>
+      <div class="btn-row" style="justify-content:flex-start;">
+        <button class="btn btn-primary shine" data-close="loveLetterModal" type="button">Close Letter ✨</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="proposalModal">
+    <div class="modal-card" style="text-align:center;">
+      <button class="close-modal" data-close="proposalModal" type="button">✕</button>
+      <h2>Will You Keep Being My Favorite Person? 💖</h2>
+      <p style="margin-bottom:18px;">This mini proposal game is lovingly rigged.</p>
+      <div class="btn-row" style="justify-content:center;">
+        <button class="btn btn-primary shine" id="yesBtn" type="button">Yes, Obviously 💞</button>
+        <button class="btn btn-secondary shine" id="noBtn" type="button">No 🙈</button>
+      </div>
+      <div class="result-box" id="proposalResult" style="margin-top:16px;">Choose carefully... though the stars already know.</div>
+    </div>
+  </div>
+
+  <script>
+    const stars = document.getElementById('stars');
+    for(let i=0;i<45;i++){
+      const s = document.createElement('div');
+      s.className = 'star';
+      s.style.left = Math.random()*100 + '%';
+      s.style.top = Math.random()*100 + '%';
+      s.style.animationDelay = Math.random()*4 + 's';
+      stars.appendChild(s);
+    }
+
+    const petalZone = document.getElementById('petalZone');
+    function makePetal(){
+      const p = document.createElement('div');
+      p.className = 'petal';
+      p.textContent = ['🌸','💖','✨'][Math.floor(Math.random()*3)];
+      p.style.left = Math.random()*100 + 'vw';
+      p.style.animationDuration = (10 + Math.random()*6) + 's';
+      petalZone.appendChild(p);
+      setTimeout(()=>p.remove(), 17000);
+    }
+    setInterval(makePetal, 2200);
+
+    const loaderScreen = document.getElementById('loaderScreen');
+    window.addEventListener('load', () => {
+      setTimeout(() => loaderScreen.classList.add('hide'), 3300);
+    });
+
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting) entry.target.classList.add('show');
+      });
+    }, {threshold:.12});
+    document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+
+    const bgMusic = document.getElementById('bgMusic');
+    const enterMusicBtn = document.getElementById('enterMusicBtn');
+    const enterSilentBtn = document.getElementById('enterSilentBtn');
+    const musicToggleBtn = document.getElementById('musicToggleBtn');
+    const topBtn = document.getElementById('topBtn');
+
+    function playMusic(){
+      bgMusic.volume = 0.72;
+      bgMusic.play().then(()=>spawnMusicNote()).catch(()=>{});
+    }
+
+    function pauseMusic(){
+      bgMusic.pause();
+    }
+
+    window.addEventListener('load', ()=>{
+      setTimeout(()=>playMusic(), 3600);
+    });
+
+    enterMusicBtn.addEventListener('click', ()=>{
+      playMusic();
+      document.getElementById('miniGamesSection').scrollIntoView({behavior:'smooth'});
+    });
+
+    enterSilentBtn.addEventListener('click', ()=>{
+      pauseMusic();
+      document.getElementById('miniGamesSection').scrollIntoView({behavior:'smooth'});
+    });
+
+    musicToggleBtn.addEventListener('click', ()=>{
+      if(bgMusic.paused) playMusic(); else pauseMusic();
+      spawnMusicNote();
+    });
+
+    topBtn.addEventListener('click', ()=>{
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+
+    function spawnMusicNote(){
+      const note = document.createElement('div');
+      note.className = 'floating-note';
+      note.textContent = ['🎵','🎶','✨'][Math.floor(Math.random()*3)];
+      note.style.right = '26px';
+      note.style.bottom = '80px';
+      document.body.appendChild(note);
+      setTimeout(()=>note.remove(), 1600);
+    }
+
+    const pageTransition = document.getElementById('pageTransition');
+    const transitionTitle = document.getElementById('transitionTitle');
+    const transitionSub = document.getElementById('transitionSub');
+
+    function bindNavLinks(){
+      document.querySelectorAll('.nav-link').forEach(link=>{
+        if(link.dataset.bound === 'true') return;
+        link.dataset.bound = 'true';
+        link.addEventListener('click', function(e){
+          e.preventDefault();
+          transitionTitle.textContent = this.dataset.title || 'Loading Chapter...';
+          transitionSub.textContent = this.dataset.sub || 'A new chapter is opening.';
+          pageTransition.classList.remove('hide');
+          setTimeout(()=>{
+            window.location.href = this.getAttribute('href');
+          }, 1100);
+        });
+      });
+    }
+    bindNavLinks();
+
+    const loveMeterFill = document.getElementById('loveMeterFill');
+    let loveMeter = 0;
+    function addLove(points){
+      loveMeter = Math.min(100, loveMeter + points);
+      loveMeterFill.style.width = loveMeter + '%';
+    }
+
+    /* -------------------------
+       TAP RUSH FIXED PROPERLY
+    ------------------------- */
+    const tapHeartBtn = document.getElementById('tapHeartBtn');
+    const startTapGameBtn = document.getElementById('startTapGameBtn');
+    const tapMeterFill = document.getElementById('tapMeterFill');
+    const tapCountEl = document.getElementById('tapCount');
+    const tapTimeEl = document.getElementById('tapTime');
+    const tapGameResult = document.getElementById('tapGameResult');
+
+    let tapRunning = false;
+    let tapCount = 0;
+    let tapTime = 8;
+    let tapTimer = null;
+
+    function updateTapUI(){
+      tapCountEl.textContent = tapCount;
+      tapMeterFill.style.width = Math.min(100, tapCount * 2.5) + '%';
+    }
+
+    function animateHeartPress(){
+      tapHeartBtn.classList.add('pressed');
+      setTimeout(()=>tapHeartBtn.classList.remove('pressed'), 80);
+    }
+
+    function registerTap(){
+      if(!tapRunning) return;
+      tapCount++;
+      updateTapUI();
+      animateHeartPress();
+    }
+
+    function finishTapRush(){
+      clearInterval(tapTimer);
+      tapRunning = false;
+
+      let msg = '';
+      let reward = 0;
+
+      if(tapCount >= 40){
+        msg = 'Wildly romantic speed. This page is officially blushing. 💖';
+        reward = 20;
+      }else if(tapCount >= 25){
+        msg = 'Strong love reflexes. The stars approve. ✨';
+        reward = 14;
+      }else if(tapCount >= 12){
+        msg = 'Soft and sweet effort. Lovely energy. 🌸';
+        reward = 9;
+      }else{
+        msg = 'Gentle start... but even one loving tap matters. 💞';
+        reward = 5;
+      }
+
+      tapGameResult.textContent = `${msg} Total taps: ${tapCount}`;
+      addLove(reward);
+    }
+
+    function startTapRush(){
+      clearInterval(tapTimer);
+      tapRunning = true;
+      tapCount = 0;
+      tapTime = 8;
+
+      tapCountEl.textContent = '0';
+      tapTimeEl.textContent = '8';
+      tapMeterFill.style.width = '0%';
+      tapGameResult.textContent = 'Go! Tap the heart as fast as you can.';
+
+      tapTimer = setInterval(()=>{
+        tapTime--;
+        tapTimeEl.textContent = tapTime;
+
+        if(tapTime <= 0){
+          finishTapRush();
+        }
+      }, 1000);
+    }
+
+    startTapGameBtn.addEventListener('click', startTapRush);
+
+    /* Key fix: use pointerdown so both mobile + pc work reliably */
+    tapHeartBtn.addEventListener('pointerdown', (e)=>{
+      e.preventDefault();
+      registerTap();
+    });
+
+    tapHeartBtn.addEventListener('contextmenu', (e)=>e.preventDefault());
+
+    const sequenceDisplay = document.getElementById('sequenceDisplay');
+    const startSequenceBtn = document.getElementById('startSequenceBtn');
+    const resetSequenceBtn = document.getElementById('resetSequenceBtn');
+    const sequenceResult = document.getElementById('sequenceResult');
+    const seqBtns = document.querySelectorAll('.seq-btn');
+
+    const seqSymbols = ['💖','🌸','✨','💌'];
+    let sequence = [];
+    let userSeq = [];
+    let seqLevel = 0;
+    let seqAllow = false;
+
+    function flashSeq(emoji){
+      const btn = [...seqBtns].find(b => b.dataset.emoji === emoji);
+      if(!btn) return;
+      btn.classList.add('active');
+      setTimeout(()=>btn.classList.remove('active'), 300);
+    }
+
+    function playSequence(){
+      seqAllow = false;
+      let i = 0;
+      sequenceDisplay.textContent = 'Watch';
+      const interval = setInterval(()=>{
+        flashSeq(sequence[i]);
+        sequenceDisplay.textContent = sequence[i];
+        i++;
+        if(i >= sequence.length){
+          clearInterval(interval);
+          setTimeout(()=>{
+            sequenceDisplay.textContent = 'Your Turn';
+            seqAllow = true;
+          }, 350);
+        }
+      }, 650);
+    }
+
+    function nextRound(){
+      seqLevel++;
+      userSeq = [];
+      sequence.push(seqSymbols[Math.floor(Math.random()*seqSymbols.length)]);
+      sequenceResult.textContent = `Round ${seqLevel}: remember carefully...`;
+      setTimeout(playSequence, 300);
+    }
+
+    startSequenceBtn.addEventListener('click', ()=>{
+      sequence = [];
+      userSeq = [];
+      seqLevel = 0;
+      nextRound();
+    });
+
+    resetSequenceBtn.addEventListener('click', ()=>{
+      sequence = [];
+      userSeq = [];
+      seqLevel = 0;
+      seqAllow = false;
+      sequenceDisplay.textContent = '—';
+      sequenceResult.textContent = 'Can you remember the symbols of our little world?';
+    });
+
+    seqBtns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        if(!seqAllow) return;
+        const emoji = btn.dataset.emoji;
+        flashSeq(emoji);
+        userSeq.push(emoji);
+
+        const idx = userSeq.length - 1;
+        if(userSeq[idx] !== sequence[idx]){
+          seqAllow = false;
+          sequenceDisplay.textContent = 'Oops';
+          sequenceResult.textContent = `Wrong sequence at round ${seqLevel}. Cupid still thinks you are cute. 💌`;
+          addLove(6);
+          return;
+        }
+
+        if(userSeq.length === sequence.length){
+          seqAllow = false;
+          if(seqLevel >= 5){
+            sequenceDisplay.textContent = 'Perfect!';
+            sequenceResult.textContent = 'You mastered Cupid Memory Sequence. Elegant and unforgettable. ✨';
+            addLove(20);
+          }else{
+            sequenceDisplay.textContent = 'Correct!';
+            sequenceResult.textContent = `Beautiful. Next round: ${seqLevel + 1}`;
+            addLove(5);
+            setTimeout(nextRound, 800);
+          }
+        }
+      });
+    });
+
+    const lockGrid = document.getElementById('lockGrid');
+    const shuffleLockBtn = document.getElementById('shuffleLockBtn');
+    const solveHintBtn = document.getElementById('solveHintBtn');
+    const lockResult = document.getElementById('lockResult');
+
+    let lockState = new Array(9).fill(false);
+
+    function neighbors(index){
+      const arr = [index];
+      const row = Math.floor(index / 3);
+      const col = index % 3;
+      if(row > 0) arr.push(index - 3);
+      if(row < 2) arr.push(index + 3);
+      if(col > 0) arr.push(index - 1);
+      if(col < 2) arr.push(index + 1);
+      return arr;
+    }
+
+    function renderLock(){
+      lockGrid.innerHTML = '';
+      lockState.forEach((on, index)=>{
+        const tile = document.createElement('button');
+        tile.className = 'lock-tile' + (on ? ' on' : '');
+        tile.innerHTML = on ? '💖' : '🖤';
+        tile.type = 'button';
+        tile.addEventListener('click', ()=>{
+          neighbors(index).forEach(i => lockState[i] = !lockState[i]);
+          renderLock();
+        });
+        lockGrid.appendChild(tile);
+      });
+
+      if(lockState.every(Boolean)){
+        lockResult.textContent = 'Heart lock opened! Every light is glowing together. 🔓💖';
+        addLove(18);
+      }
+    }
+
+    function shuffleLock(){
+      lockState = new Array(9).fill(false);
+      for(let i=0;i<7;i++){
+        const r = Math.floor(Math.random()*9);
+        neighbors(r).forEach(i => lockState[i] = !lockState[i]);
+      }
+      renderLock();
+      lockResult.textContent = 'Puzzle shuffled. Make every tile glow together.';
+    }
+
+    shuffleLockBtn.addEventListener('click', shuffleLock);
+    solveHintBtn.addEventListener('click', ()=>{
+      lockResult.textContent = 'Tiny hint: center affects the most tiles. Start there if lost. 🌸';
+      addLove(3);
+    });
+    shuffleLock();
+
+    const typewriterBox = document.getElementById('typewriterBox');
+    const startStoryBtn = document.getElementById('startStoryBtn');
+    const skipTypingBtn = document.getElementById('skipTypingBtn');
+
+    const storyText = `Once upon a quiet night lit by soft stars, a heart was living normally — smiling, speaking, dreaming — but still waiting for something it could not name.
+
+Then, somehow, you arrived.
+
+At first, it was only a small thing.
+A glance.
+A hello.
+A feeling too gentle to explain and too powerful to ignore.
+
+And then, slowly, everything changed.
+
+Conversations became safer.
+Smiles stayed longer.
+Ordinary days started carrying secret light.
+Songs felt more personal.
+Silence felt kinder.
+Time itself started sounding sweeter.
+
+You became the part of the day that stayed in the heart the longest.
+
+Then love grew.
+
+Not all at once —
+but in details,
+in care,
+in patience,
+in teasing laughter,
+in remembering small things,
+in missing each other too much,
+in feeling peace where there used to be noise.
+
+Soon the story stopped being about two separate hearts.
+It became one shared sky.
+
+This chapter is that sky.
+
+Now let us travel through the map of us:
+through first glances,
+first words,
+growing closeness,
+dream dates,
+and the promise of forever.
+
+Take my hand.
+Answer each little challenge.
+Cross each glowing stop.
+And let this page remind you of one simple truth:
+
+you were never just part of the story...
+
+you became the most beautiful part of it. 💖`;
+
+    let typingTimer;
+    function typeStory(text){
+      clearInterval(typingTimer);
+      typewriterBox.innerHTML = '';
+      let i = 0;
+      typingTimer = setInterval(()=>{
+        if(i < text.length){
+          typewriterBox.innerHTML = text.slice(0, i + 1) + '<span class="typing-cursor">|</span>';
+          i++;
+          if(i % 40 === 0) addLove(1);
+        }else{
+          clearInterval(typingTimer);
+          typewriterBox.textContent = text;
+          loadQuizStep(0);
+        }
+      }, 20);
+    }
+
+    startStoryBtn.addEventListener('click', ()=>{
+      typeStory(storyText);
+      addLove(10);
+      document.getElementById('storyQuestSection').scrollIntoView({behavior:'smooth'});
+    });
+
+    skipTypingBtn.addEventListener('click', ()=>{
+      clearInterval(typingTimer);
+      typewriterBox.textContent = storyText;
+      loadQuizStep(0);
+      addLove(8);
+    });
+
+    const mapNodes = document.querySelectorAll('.node');
+    const journeyLineFill = document.getElementById('journeyLineFill');
+    const quizBox = document.getElementById('quizBox');
+    let loveScore = 0;
+
+    const quizData = [
+      {
+        question: "Chapter 1 — First Glance: What makes a first meeting unforgettable?",
+        options: ["A feeling that stays after the moment ends","Forgetting it immediately","Only noticing random details"],
+        correct: 0,
+        success: "Yes. Sometimes the heart understands before words do. 🌙"
+      },
+      {
+        question: "Chapter 2 — First Talk: What turns a conversation into connection?",
+        options: ["Comfort, honesty, and wanting it to last longer","Replying with one word forever","Trying not to care at all"],
+        correct: 0,
+        success: "Exactly. The best talks feel easy, safe, and special. 💌"
+      },
+      {
+        question: "Chapter 3 — Growing Closer: What shows love is becoming real?",
+        options: ["You remember the tiniest details about each other","You become colder","You stop listening"],
+        correct: 0,
+        success: "Correct. Love grows quietly through care and memory. 🌸"
+      },
+      {
+        question: "Chapter 4 — Dream Date: What makes a date magical?",
+        options: ["Only spending lots of money","Being truly present with each other","Sitting silently with no feeling"],
+        correct: 1,
+        success: "Yes. Presence creates magic more than place ever can. 🎡"
+      },
+      {
+        question: "Chapter 5 — Forever Promise: What builds forever?",
+        options: ["Daily choosing each other with patience and loyalty","Only dramatic speeches","Pure luck and nothing else"],
+        correct: 0,
+        success: "Beautiful. Forever is built in ordinary devotion. 💍"
+      }
+    ];
+
+    function updateMap(step){
+      mapNodes.forEach((node, idx)=>{
+        node.classList.toggle('active', idx <= step);
+      });
+      journeyLineFill.style.width = `${step * 25}%`;
+    }
+
+    function loadQuizStep(step){
+      if(step >= quizData.length){
+        updateMap(4);
+        quizBox.innerHTML = `
+          <div class="quiz-question">You completed the Love Story Quest! 💖</div>
+          <p style="line-height:1.7;color:rgba(255,255,255,.86);margin-bottom:12px;">
+            From first glance to forever promise, every stop on the map is glowing now.
+            This chapter officially says your love score is dangerously powerful.
+          </p>
+          <div class="score-pill">Final Love Score: ${loveScore}</div>
+          <div class="nav-row" style="margin-top:16px;">
+            <a href="index3.html" class="btn btn-tertiary shine nav-link" data-title="Returning to Chapter 3..." data-sub="Going back to the previous beautiful memory.">← Go Back</a>
+            <a href="index5.html" class="btn btn-primary shine nav-link" data-title="Loading Chapter 5..." data-sub="The next dreamy chapter is opening now.">Go to Next Page →</a>
+          </div>
+        `;
+        addLove(100);
+        heartBurst(18);
+        bindNavLinks();
+        return;
+      }
+
+      updateMap(step);
+      const q = quizData[step];
+      quizBox.innerHTML = `
+        <div class="quiz-question">${q.question}</div>
+        <div class="quiz-options">
+          ${q.options.map((opt, idx)=>`<div class="quiz-option" data-index="${idx}">${opt}</div>`).join('')}
+        </div>
+        <div class="score-pill">Love Score: <span>${loveScore}</span></div>
+      `;
+
+      const options = quizBox.querySelectorAll('.quiz-option');
+      options.forEach(option=>{
+        option.addEventListener('click', ()=>{
+          const picked = Number(option.dataset.index);
+          options.forEach(o => o.style.pointerEvents = 'none');
+
+          if(picked === q.correct){
+            option.classList.add('correct');
+            loveScore += 20;
+            addLove(14);
+            setTimeout(()=>{
+              quizBox.insertAdjacentHTML('beforeend', `<p style="margin-top:12px;color:#dcffe9;">${q.success}</p>`);
+            },100);
+          }else{
+            option.classList.add('wrong');
+            options[q.correct].classList.add('correct');
+            loveScore += 8;
+            addLove(7);
+            setTimeout(()=>{
+              quizBox.insertAdjacentHTML('beforeend', `<p style="margin-top:12px;color:#ffe4ee;">Not quite... but your heart is still adorable. ${q.success}</p>`);
+            },100);
+          }
+
+          setTimeout(()=>loadQuizStep(step + 1), 1500);
+        });
+      });
+    }
+
+    const whisperBtn = document.getElementById('whisperBtn');
+    const whisperResult = document.getElementById('whisperResult');
+    const whispers = [
+      "If stars had favorites, they would choose your smile.",
+      "You make ordinary moments feel softly legendary.",
+      "Somehow your name sounds like comfort.",
+      "Even silence feels prettier when I think of you.",
+      "You are the kind of feeling songs try to become."
+    ];
+
+    whisperBtn.addEventListener('click', ()=>{
+      whisperResult.textContent = whispers[Math.floor(Math.random()*whispers.length)];
+      addLove(4);
+      heartBurst(6);
+    });
+
+    const sparkBurstBtn = document.getElementById('sparkBurstBtn');
+    sparkBurstBtn.addEventListener('click', ()=>{
+      heartBurst(16);
+      addLove(6);
+    });
+
+    const loveLetterModal = document.getElementById('loveLetterModal');
+    const openLetterBtn = document.getElementById('openLetterBtn');
+    openLetterBtn.addEventListener('click', ()=>{
+      loveLetterModal.classList.add('show');
+      addLove(5);
+    });
+
+    const proposalBtn = document.getElementById('proposalBtn');
+    const proposalModal = document.getElementById('proposalModal');
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    const proposalResult = document.getElementById('proposalResult');
+
+    proposalBtn.addEventListener('click', ()=>{
+      proposalModal.classList.add('show');
+    });
+
+    yesBtn.addEventListener('click', ()=>{
+      proposalResult.textContent = "Correct answer detected. The universe is pleased. 💞";
+      addLove(10);
+      heartBurst(12);
+    });
+
+    noBtn.addEventListener('click', ()=>{
+      proposalResult.textContent = "That button refuses to believe you. Try the other one. 😌";
+    });
+
+    document.querySelectorAll('[data-close]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const id = btn.dataset.close;
+        document.getElementById(id).classList.remove('show');
+      });
+    });
+
+    document.querySelectorAll('.modal').forEach(modal=>{
+      modal.addEventListener('click', (e)=>{
+        if(e.target === modal) modal.classList.remove('show');
+      });
+    });
+
+    function heartBurst(count = 16){
+      for(let i=0;i<count;i++){
+        const item = document.createElement('div');
+        item.className = 'floating-note';
+        item.textContent = ['💖','💕','✨','🌸'][Math.floor(Math.random()*4)];
+        item.style.left = (15 + Math.random()*70) + 'vw';
+        item.style.bottom = (10 + Math.random()*22) + 'vh';
+        document.body.appendChild(item);
+        setTimeout(()=>item.remove(), 1800);
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 6 — Memory Archive</title>
+  <style>
+    :root{
+      --bg-1:#140815;
+      --bg-2:#23112b;
+      --bg-3:#321b3f;
+      --card:rgba(255,255,255,.07);
+      --text:#fff7fb;
+      --muted:#d9c6dd;
+      --pink:#ff68d8;
+      --violet:#8a6bff;
+      --gold:#ffd56b;
+      --cyan:#7ae7ff;
+      --shadow:0 20px 60px rgba(0,0,0,.35);
+      --radius-xl:28px;
+      --radius-lg:22px;
+      --radius-md:18px;
+      --radius-sm:14px;
+      --blur:18px;
+    }
+
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,104,216,.14), transparent 26%),
+        radial-gradient(circle at 80% 15%, rgba(138,107,255,.18), transparent 28%),
+        radial-gradient(circle at 50% 75%, rgba(255,213,107,.07), transparent 24%),
+        linear-gradient(180deg, #170a1d 0%, #24132f 55%, #130913 100%);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,.02), rgba(255,255,255,.01)),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+      opacity:.45;
+      z-index:-3;
+    }
+
+    .floating-orbs span,
+    .floating-hearts span{
+      position:fixed;
+      pointer-events:none;
+      z-index:-2;
+    }
+
+    .floating-orbs span{
+      border-radius:50%;
+      filter:blur(40px);
+      opacity:.18;
+      animation:floatOrb linear infinite;
+    }
+
+    .floating-orbs span:nth-child(1){
+      width:220px;height:220px;
+      background:#ff68d8;
+      top:8%;left:8%;
+      animation-duration:18s;
+    }
+
+    .floating-orbs span:nth-child(2){
+      width:280px;height:280px;
+      background:#8a6bff;
+      top:28%;right:6%;
+      animation-duration:22s;
+    }
+
+    .floating-orbs span:nth-child(3){
+      width:180px;height:180px;
+      background:#ffd56b;
+      bottom:8%;left:18%;
+      animation-duration:20s;
+    }
+
+    .floating-hearts span{
+      font-size:18px;
+      opacity:.18;
+      animation:heartFloat linear infinite;
+    }
+
+    .floating-hearts span:nth-child(1){ left:10%; top:90%; animation-duration:13s; }
+    .floating-hearts span:nth-child(2){ left:24%; top:96%; animation-duration:16s; }
+    .floating-hearts span:nth-child(3){ left:52%; top:92%; animation-duration:15s; }
+    .floating-hearts span:nth-child(4){ left:72%; top:97%; animation-duration:18s; }
+    .floating-hearts span:nth-child(5){ left:88%; top:94%; animation-duration:14s; }
+
+    @keyframes floatOrb{
+      0%{transform:translateY(0) translateX(0) scale(1)}
+      50%{transform:translateY(-20px) translateX(14px) scale(1.06)}
+      100%{transform:translateY(0) translateX(0) scale(1)}
+    }
+
+    @keyframes heartFloat{
+      0%{ transform:translateY(0) scale(.8); opacity:0; }
+      15%{ opacity:.16; }
+      100%{ transform:translateY(-120vh) scale(1.15); opacity:0; }
+    }
+
+    @keyframes pulse{
+      0%,100%{transform:scale(1)}
+      50%{transform:scale(1.12)}
+    }
+
+    @keyframes spinSlow{
+      from{transform:rotate(0deg)}
+      to{transform:rotate(360deg)}
+    }
+
+    @keyframes twinkle{
+      0%,100%{opacity:.6; transform:translateY(0)}
+      50%{opacity:1; transform:translateY(-2px)}
+    }
+
+    @keyframes loadBar{
+      to{width:100%}
+    }
+
+    #loadingScreen{
+      position:fixed;
+      inset:0;
+      background:linear-gradient(180deg, #160919 0%, #17091d 100%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:2000;
+      transition:opacity .8s ease, visibility .8s ease;
+    }
+
+    #loadingScreen.hidden{
+      opacity:0;
+      visibility:hidden;
+    }
+
+    .loader-box{
+      width:min(92vw,700px);
+      text-align:center;
+      padding:24px;
+    }
+
+    .loader-heart{
+      font-size:54px;
+      margin-bottom:16px;
+      display:inline-block;
+      animation:pulse 1.3s ease-in-out infinite;
+      filter:drop-shadow(0 6px 18px rgba(255,0,120,.35));
+    }
+
+    .loader-title{
+      font-size:clamp(2.1rem,5vw,4.2rem);
+      font-weight:900;
+      line-height:1.05;
+      margin-bottom:12px;
+    }
+
+    .loader-text{
+      color:var(--muted);
+      font-size:clamp(1rem,2vw,1.1rem);
+      margin-bottom:24px;
+    }
+
+    .progress-wrap{
+      width:100%;
+      height:8px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      overflow:hidden;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);
+    }
+
+    .progress-bar{
+      width:0%;
+      height:100%;
+      border-radius:999px;
+      background:linear-gradient(90deg, var(--pink), var(--violet));
+      animation:loadBar 3.2s ease forwards;
+    }
+
+    #entryOverlay{
+      position:fixed;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,.05), transparent 50%),
+        linear-gradient(180deg, rgba(22,10,29,.72), rgba(18,8,23,.92));
+      backdrop-filter:blur(10px);
+      z-index:1500;
+      padding:22px;
+      transition:opacity .8s ease, visibility .8s ease;
+    }
+
+    #entryOverlay.hidden{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+
+    .entry-card{
+      width:min(980px,100%);
+      padding:34px 24px;
+      border-radius:32px;
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:var(--shadow);
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .entry-card::before{
+      content:"";
+      position:absolute;
+      inset:auto -20% -60% -20%;
+      height:180px;
+      background:radial-gradient(circle, rgba(255,104,216,.18), transparent 60%);
+      pointer-events:none;
+    }
+
+    .kicker,
+    .eyebrow,
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1);
+      color:#f7deff;
+      font-weight:700;
+      font-size:.95rem;
+    }
+
+    .entry-title{
+      font-size:clamp(2rem,5vw,4rem);
+      line-height:1.03;
+      font-weight:900;
+      margin:14px 0 12px;
+    }
+
+    .entry-sub{
+      color:var(--muted);
+      max-width:700px;
+      margin:0 auto 24px;
+      font-size:clamp(1rem,2vw,1.1rem);
+    }
+
+    .entry-actions,
+    .hero-actions,
+    .seal-row,
+    .memory-jar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:14px;
+    }
+
+    .entry-actions{
+      justify-content:center;
+      margin-bottom:16px;
+    }
+
+    .btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      color:white;
+      font-weight:800;
+      font-size:1rem;
+      padding:18px 28px;
+      border-radius:999px;
+      transition:transform .25s ease, box-shadow .25s ease, background .25s ease, border-color .25s ease;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-width:190px;
+    }
+
+    .btn:hover{
+      transform:translateY(-2px);
+    }
+
+    .btn-primary{
+      background:linear-gradient(90deg, #f062d2, #7f63ff);
+      box-shadow:0 12px 28px rgba(176,91,255,.28);
+    }
+
+    .btn-secondary{
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);
+      color:#fff7fb;
+    }
+
+    .mini-tags{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:10px;
+      margin-top:8px;
+    }
+
+    .mini-tag{
+      padding:10px 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.09);
+      color:#f1dff4;
+      font-weight:700;
+      font-size:.95rem;
+    }
+
+    main{
+      opacity:0;
+      transform:translateY(18px);
+      transition:opacity .9s ease, transform .9s ease;
+    }
+
+    main.revealed{
+      opacity:1;
+      transform:none;
+    }
+
+    .container{
+      width:min(1180px, calc(100% - 28px));
+      margin:0 auto;
+    }
+
+    section{
+      padding:72px 0;
+    }
+
+    .glass,
+    .hero-card,
+    .memory-card{
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.11);
+      border-radius:var(--radius-xl);
+      backdrop-filter:blur(var(--blur));
+      box-shadow:var(--shadow);
+    }
+
+    .hero{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:28px;
+      align-items:center;
+    }
+
+    .hero-copy{
+      padding:34px;
+    }
+
+    .eyebrow{
+      margin-bottom:18px;
+      font-weight:800;
+    }
+
+    .hero h1{
+      font-size:clamp(2.6rem,6vw,5.5rem);
+      line-height:.95;
+      margin-bottom:16px;
+      font-weight:950;
+      letter-spacing:-.03em;
+    }
+
+    .gradient-text{
+      background:linear-gradient(90deg, #fff7fb, #ff9ce7 35%, #a98bff 75%, #fff1bd);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .hero p,
+    .museum-note,
+    .section-head p,
+    .changed p,
+    .muted{
+      color:var(--muted);
+      line-height:1.75;
+    }
+
+    .hero p{
+      font-size:1.08rem;
+      max-width:62ch;
+      margin-bottom:26px;
+    }
+
+    .hero-visual{
+      min-height:520px;
+      position:relative;
+      padding:24px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .archive-portal{
+      position:relative;
+      width:min(100%,420px);
+      aspect-ratio:4/5;
+      border-radius:30px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)),
+        radial-gradient(circle at 50% 30%, rgba(255,215,107,.18), transparent 25%),
+        radial-gradient(circle at 50% 60%, rgba(138,107,255,.15), transparent 40%);
+      border:1px solid rgba(255,255,255,.12);
+      overflow:hidden;
+      box-shadow:0 30px 60px rgba(0,0,0,.35);
+    }
+
+    .door{
+      position:absolute;
+      top:7%;
+      bottom:7%;
+      width:50%;
+      background:linear-gradient(180deg, rgba(39,20,48,.95), rgba(22,10,29,.92));
+      border:1px solid rgba(255,255,255,.08);
+      transition:transform 1.3s cubic-bezier(.2,.8,.2,1);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.03);
+    }
+
+    .door.left{ left:0; border-radius:24px 0 0 24px; }
+    .door.right{ right:0; border-radius:0 24px 24px 0; }
+
+    .archive-portal:hover .door.left{ transform:translateX(-82%); }
+    .archive-portal:hover .door.right{ transform:translateX(82%); }
+
+    .door::after{
+      content:"";
+      position:absolute;
+      top:50%;
+      width:12px;height:12px;
+      border-radius:50%;
+      background:linear-gradient(180deg,#ffd98b,#ffb94d);
+      box-shadow:0 0 14px rgba(255,212,107,.4);
+    }
+
+    .door.left::after{ right:16px; }
+    .door.right::after{ left:16px; }
+
+    .archive-core{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      text-align:center;
+      padding:20px;
+    }
+
+    .core-ring{
+      width:140px;height:140px;
+      border-radius:50%;
+      border:1px solid rgba(255,255,255,.15);
+      display:grid;
+      place-items:center;
+      position:relative;
+      margin-bottom:16px;
+      background:radial-gradient(circle, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      animation:spinSlow 14s linear infinite;
+    }
+
+    .core-ring::before{
+      content:"";
+      position:absolute;
+      inset:-12px;
+      border-radius:50%;
+      border:1px dashed rgba(255,255,255,.08);
+    }
+
+    .core-heart{
+      font-size:52px;
+      animation:pulse 1.8s ease-in-out infinite;
+    }
+
+    .core-caption{
+      max-width:270px;
+      color:#f3def2;
+      font-weight:700;
+      line-height:1.5;
+    }
+
+    .section-head{
+      display:flex;
+      align-items:end;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom:28px;
+    }
+
+    .section-head h2{
+      font-size:clamp(1.8rem,4vw,3rem);
+      line-height:1.05;
+    }
+
+    .memories-grid{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:18px;
+    }
+
+    .memory-card{
+      padding:22px;
+      position:relative;
+      overflow:hidden;
+      transition:transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+    }
+
+    .memory-card:hover{
+      transform:translateY(-4px);
+      border-color:rgba(255,255,255,.18);
+      box-shadow:0 24px 50px rgba(0,0,0,.28);
+    }
+
+    .memory-card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:radial-gradient(circle at top right, rgba(255,104,216,.11), transparent 28%);
+      pointer-events:none;
+    }
+
+    .memory-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:16px;
+    }
+
+    .memory-no{
+      font-weight:900;
+      font-size:.92rem;
+      color:#f8d6f0;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+    .emotion-tag{
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.11);
+      color:#fff2ca;
+      font-size:.85rem;
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+    .memory-text{
+      font-size:1.05rem;
+      color:#fff7fb;
+      line-height:1.8;
+      margin-bottom:16px;
+    }
+
+    .changed{
+      padding:14px;
+      border-radius:16px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .changed span{
+      display:block;
+      font-size:.8rem;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:#ffcadf;
+      margin-bottom:6px;
+      font-weight:900;
+    }
+
+    .museum-panel,
+    .drawer-wrap,
+    .cute-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      align-items:stretch;
+    }
+
+    .panel-left, .panel-right,
+    .drawer-card,
+    .hold-card,
+    .letter-card,
+    .completion-card,
+    .cute-card{
+      padding:26px;
+    }
+
+    .museum-card-title{
+      font-size:1.4rem;
+      font-weight:900;
+      margin-bottom:10px;
+    }
+
+    .seal-row{
+      margin-top:18px;
+    }
+
+    .seal{
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1);
+      font-weight:800;
+      color:#f7dcff;
+    }
+
+    .reservation-list{
+      display:grid;
+      gap:12px;
+    }
+
+    .reservation-item{
+      padding:14px 16px;
+      border-radius:16px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      align-items:center;
+    }
+
+    .reservation-item small{
+      color:var(--muted);
+      display:block;
+      margin-top:4px;
+    }
+
+    .reservation-badge{
+      padding:8px 10px;
+      border-radius:999px;
+      font-weight:800;
+      font-size:.82rem;
+      background:linear-gradient(90deg, rgba(255,104,216,.17), rgba(138,107,255,.17));
+      border:1px solid rgba(255,255,255,.09);
+      white-space:nowrap;
+    }
+
+    .memory-jar{
+      margin-top:18px;
+    }
+
+    .jar-chip{
+      padding:11px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1);
+      font-weight:800;
+      cursor:pointer;
+      transition:.25s ease;
+      color:#fff;
+    }
+
+    .jar-chip:hover{
+      transform:translateY(-2px);
+      background:rgba(255,255,255,.09);
+    }
+
+    #jarMessage{
+      margin-top:14px;
+      min-height:54px;
+      color:#f5dff3;
+      line-height:1.75;
+    }
+
+    .drawer-card{
+      min-height:280px;
+      position:relative;
+    }
+
+    .forgotten-drawer{
+      position:relative;
+      margin-top:16px;
+      background:linear-gradient(180deg, rgba(66,39,71,.65), rgba(40,21,46,.9));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:22px;
+      padding:22px;
+      overflow:hidden;
+    }
+
+    .drawer-front{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      transition:transform .7s ease;
+    }
+
+    .forgotten-drawer.open .drawer-front{
+      transform:translateY(120%);
+    }
+
+    .drawer-hidden{
+      position:absolute;
+      inset:18px;
+      border-radius:18px;
+      padding:18px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      transform:translateY(-120%);
+      transition:transform .7s ease;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+    }
+
+    .forgotten-drawer.open .drawer-hidden{
+      transform:translateY(0%);
+    }
+
+    .hold-target{
+      margin-top:16px;
+      border-radius:26px;
+      border:1px solid rgba(255,255,255,.1);
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      padding:24px;
+    }
+
+    .hold-btn{
+      width:100%;
+      border:none;
+      cursor:pointer;
+      border-radius:999px;
+      padding:18px 20px;
+      font-weight:900;
+      font-size:1rem;
+      color:white;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.1);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hold-fill{
+      position:absolute;
+      inset:0;
+      width:0%;
+      background:linear-gradient(90deg, rgba(240,98,210,.8), rgba(127,99,255,.8));
+      z-index:0;
+      transition:width .08s linear;
+    }
+
+    .hold-label{
+      position:relative;
+      z-index:1;
+    }
+
+    .unlock-message{
+      margin-top:16px;
+      color:var(--muted);
+      line-height:1.8;
+      min-height:84px;
+    }
+
+    .letter-paper{
+      margin-top:16px;
+      padding:22px;
+      border-radius:20px;
+      background:linear-gradient(180deg, rgba(255,248,232,.94), rgba(255,241,222,.88));
+      color:#42293f;
+      box-shadow:0 16px 40px rgba(0,0,0,.2);
+      transform:rotate(-1.1deg);
+    }
+
+    .letter-paper p{
+      line-height:1.9;
+      font-size:1rem;
+    }
+
+    .cute-card h3{
+      font-size:1.25rem;
+      margin-bottom:10px;
+    }
+
+    .compliment-box{
+      margin-top:14px;
+      padding:18px;
+      border-radius:18px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      min-height:90px;
+      line-height:1.8;
+      color:#fbe8f7;
+    }
+
+    .wish-input-wrap{
+      margin-top:14px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .wish-input{
+      flex:1;
+      min-width:180px;
+      border:none;
+      outline:none;
+      padding:14px 16px;
+      border-radius:14px;
+      background:rgba(255,255,255,.07);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.1);
+    }
+
+    .wish-list{
+      margin-top:14px;
+      display:grid;
+      gap:10px;
+    }
+
+    .wish-item{
+      padding:12px 14px;
+      border-radius:14px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      color:#ffeaf8;
+      line-height:1.6;
+    }
+
+    .completion-card{
+      text-align:center;
+    }
+
+    .completion-ring{
+      width:144px;
+      height:144px;
+      margin:0 auto 16px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      background:conic-gradient(
+        from 0deg,
+        #ff68d8 0deg,
+        #b56cff 140deg,
+        #8a6bff 230deg,
+        rgba(255,255,255,.08) 230deg 360deg
+      );
+      position:relative;
+      transition:background .45s ease;
+    }
+
+    .completion-ring::after{
+      content:"";
+      position:absolute;
+      inset:14px;
+      border-radius:50%;
+      background:#201124;
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .completion-value{
+      position:relative;
+      z-index:1;
+      font-size:1.7rem;
+      font-weight:900;
+    }
+
+    .nav-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:16px;
+      justify-content:center;
+      margin-top:30px;
+    }
+
+    .nav-btn{
+      min-width:240px;
+    }
+
+    .reveal{
+      opacity:0;
+      transform:translateY(28px);
+      transition:all .8s ease;
+    }
+
+    .reveal.visible{
+      opacity:1;
+      transform:none;
+    }
+
+    .sparkle{
+      animation:twinkle 2.4s ease-in-out infinite;
+    }
+
+    @media (max-width: 980px){
+      .hero-grid,
+      .museum-panel,
+      .drawer-wrap,
+      .cute-grid{
+        grid-template-columns:1fr;
+      }
+
+      .memories-grid{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .hero{
+        min-height:auto;
+        padding-top:120px;
+      }
+    }
+
+    @media (max-width: 640px){
+      .entry-card{
+        padding:26px 16px;
+        border-radius:24px;
+      }
+
+      .btn{
+        width:100%;
+        min-width:unset;
+        padding:16px 20px;
+      }
+
+      .hero-copy,
+      .panel-left, .panel-right,
+      .drawer-card,
+      .hold-card,
+      .letter-card,
+      .completion-card,
+      .cute-card{
+        padding:20px;
+      }
+
+      .memories-grid{
+        grid-template-columns:1fr;
+      }
+
+      section{
+        padding:56px 0;
+      }
+
+      .nav-btn{
+        width:100%;
+        min-width:unset;
+      }
+
+      .section-head{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+
+      .hero-visual{
+        min-height:400px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="floating-orbs" aria-hidden="true">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <div class="floating-hearts" aria-hidden="true">
+    <span>💗</span>
+    <span>💖</span>
+    <span>💕</span>
+    <span>💘</span>
+    <span>💞</span>
+  </div>
+
+  <div id="loadingScreen">
+    <div class="loader-box">
+      <div class="loader-heart">💘</div>
+      <h1 class="loader-title">Loading Chapter 6...</h1>
+      <p class="loader-text">Opening the archive of remembered feelings, unfinished words, soft smiles, and the moments that quietly changed everything.</p>
+      <div class="progress-wrap">
+        <div class="progress-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="entryOverlay">
+    <div class="entry-card">
+      <div class="kicker">🗂️ Memory Archive Open</div>
+      <h1 class="entry-title">Step Into<br><span class="gradient-text">Chapter 6</span></h1>
+      <p class="entry-sub">
+        This chapter feels like a museum of love — preserved glances, trembling silences, tiny adorable details, and the moments that rewrote the heart without asking permission.
+      </p>
+
+      <div class="entry-actions">
+        <button class="btn btn-primary" id="enterMusicBtn">Enter With Music 🎵</button>
+        <button class="btn btn-secondary" id="enterSilentBtn">Enter Silently</button>
+      </div>
+
+      <div class="mini-tags">
+        <div class="mini-tag">💖 Low Lag</div>
+        <div class="mini-tag">🎧 song6.mp3</div>
+        <div class="mini-tag">🗃️ Emotional Archive</div>
+        <div class="mini-tag">📱 Mobile Friendly</div>
+        <div class="mini-tag">✨ Cute Hidden Interactions</div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="bgMusic" loop preload="auto">
+    <source src="song6.mp3" type="audio/mpeg">
+  </audio>
+
+  <main id="mainContent">
+
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-card hero-copy reveal">
+          <div class="eyebrow">🏛️ Chapter 6 — The Memory Archive</div>
+          <h1>Some memories don’t fade.<br><span class="gradient-text">They become exhibits.</span></h1>
+          <p>
+            Behind every closed feeling, there is a room still lit by what happened there.
+            This archive keeps the tender evidence: what was said, what was felt,
+            what changed forever after that moment existed,
+            and the tiny lovely details that still make the heart smile.
+          </p>
+          <div class="hero-actions">
+            <a href="#doors" class="btn btn-primary">Open the Archive</a>
+            <a href="#cuteThings" class="btn btn-secondary">See the Cute Things</a>
+          </div>
+        </div>
+
+        <div class="hero-card hero-visual reveal">
+          <div class="archive-portal">
+            <div class="door left"></div>
+            <div class="door right"></div>
+            <div class="archive-core">
+              <div class="core-ring">
+                <div class="core-heart">❤️</div>
+              </div>
+              <div class="core-caption">
+                Hover the doors. Every love story has moments sealed like artifacts.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="doors">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <h2>Memory Archive Doors</h2>
+          </div>
+          <p>
+            Curated like a museum, each memory is more than a scene — it is a turning point,
+            preserved with its feeling, its impact, and the invisible before-and-after it created.
+          </p>
+        </div>
+
+        <div class="memories-grid">
+          <article class="memory-card reveal">
+            <div class="memory-top">
+              <div class="memory-no">Memory 01</div>
+              <div class="emotion-tag">Warmth</div>
+            </div>
+            <div class="memory-text">
+              “You laughed in the middle of your sentence, and for a second, everything around us disappeared except the sound of you being happy.”
+            </div>
+            <div class="changed">
+              <span>What this changed</span>
+              <p>I stopped thinking of you as someone I admired, and started feeling you becoming someone I could not emotionally look away from.</p>
+            </div>
+          </article>
+
+          <article class="memory-card reveal">
+            <div class="memory-top">
+              <div class="memory-no">Memory 02</div>
+              <div class="emotion-tag">Ache</div>
+            </div>
+            <div class="memory-text">
+              “The night ended too early. We both said goodbye like normal people, but I walked away feeling like I had left something alive behind.”
+            </div>
+            <div class="changed">
+              <span>What this changed</span>
+              <p>Absence stopped being empty space. It became proof that your presence had already started meaning too much.</p>
+            </div>
+          </article>
+
+          <article class="memory-card reveal">
+            <div class="memory-top">
+              <div class="memory-no">Memory 03</div>
+              <div class="emotion-tag">Safety</div>
+            </div>
+            <div class="memory-text">
+              “There was a pause, and somehow it wasn’t awkward. It felt like even silence had decided to sit gently with us.”
+            </div>
+            <div class="changed">
+              <span>What this changed</span>
+              <p>I learned that comfort is not always loud. Sometimes it arrives as quiet that does not ask you to perform.</p>
+            </div>
+          </article>
+
+          <article class="memory-card reveal">
+            <div class="memory-top">
+              <div class="memory-no">Memory 04</div>
+              <div class="emotion-tag">Wonder</div>
+            </div>
+            <div class="memory-text">
+              “You looked at something ordinary and made it feel meaningful, and I realized your way of seeing life was changing mine too.”
+            </div>
+            <div class="changed">
+              <span>What this changed</span>
+              <p>Love became less about grand events and more about who teaches your heart to notice light in small things.</p>
+            </div>
+          </article>
+
+          <article class="memory-card reveal">
+            <div class="memory-top">
+              <div class="memory-no">Memory 05</div>
+              <div class="emotion-tag">Nervous Joy</div>
+            </div>
+            <div class="memory-text">
+              “My hand almost touched yours, and for one tiny second the entire universe felt suspended on a maybe.”
+            </div>
+            <div class="changed">
+              <span>What this changed</span>
+              <p>I understood that anticipation can be its own kind of intimacy — the trembling edge before certainty arrives.</p>
+            </div>
+          </article>
+
+          <article class="memory-card reveal">
+            <div class="memory-top">
+              <div class="memory-no">Memory 06</div>
+              <div class="emotion-tag">Recognition</div>
+            </div>
+            <div class="memory-text">
+              “You said one simple thing, but it landed in me like a truth I had apparently been waiting my whole life to hear.”
+            </div>
+            <div class="changed">
+              <span>What this changed</span>
+              <p>I stopped calling this coincidence. Some connections feel less like beginnings and more like remembering.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="museum-panel">
+          <div class="glass panel-left reveal">
+            <div class="museum-card-title">Museum-Style Exhibit Panel</div>
+            <p class="museum-note">
+              In some museums, the most valuable pieces sit behind glass because they are fragile.
+              In love, the same is true. The rarest moments are not always dramatic — they are often the ones that changed your emotional architecture in secret.
+            </p>
+            <p class="museum-note">
+              This wing of the archive is dedicated to the subtle evidence: pauses that felt safe, glances that outlived the room, and ordinary evenings that became permanent landmarks.
+            </p>
+            <div class="seal-row">
+              <div class="seal">Seal of Warmth</div>
+              <div class="seal">Seal of Courage</div>
+              <div class="seal">Seal of Realization</div>
+              <div class="seal">Seal of Longing</div>
+            </div>
+          </div>
+
+          <div class="glass panel-right reveal">
+            <div class="museum-card-title">Future Memory Reservations</div>
+            <p class="museum-note">Some memories have not happened yet. Still, the heart saves them a place in advance.</p>
+            <div class="reservation-list">
+              <div class="reservation-item">
+                <div>
+                  <strong>The day we revisit an old place and it feels new again</strong>
+                  <small>Reserved under: hope that survives time</small>
+                </div>
+                <div class="reservation-badge">Pending</div>
+              </div>
+              <div class="reservation-item">
+                <div>
+                  <strong>The quiet drive where no song says enough</strong>
+                  <small>Reserved under: comfort beyond words</small>
+                </div>
+                <div class="reservation-badge">Awaiting</div>
+              </div>
+              <div class="reservation-item">
+                <div>
+                  <strong>The memory we create by simply choosing each other again</strong>
+                  <small>Reserved under: future tenderness</small>
+                </div>
+                <div class="reservation-badge">Protected</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cuteThings">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <h2>Cute Little Additions</h2>
+          </div>
+          <p>
+            Love is not only deep. It is also adorable. These tiny corners hold blushes, compliments, wishes, and the details that make affection feel alive.
+          </p>
+        </div>
+
+        <div class="cute-grid">
+          <div class="glass cute-card reveal">
+            <h3>Pick a Tiny Saved Feeling</h3>
+            <p class="museum-note">Tap a memory chip and reveal a soft little archive note.</p>
+
+            <div class="memory-jar">
+              <button class="jar-chip" data-text="💗 Your smile had the kind of softness that makes a person unknowingly stay a little longer.">Your Smile</button>
+              <button class="jar-chip" data-text="🌙 That late-night conversation still feels warm, like a light left on in the heart.">Late Night Talk</button>
+              <button class="jar-chip" data-text="✨ The way you noticed small things made the world feel gentler and more beautiful.">Small Things</button>
+              <button class="jar-chip" data-text="🫶 Even your silence felt kind, and that is rarer than people admit.">Quiet Comfort</button>
+            </div>
+
+            <div id="jarMessage">Choose a chip to reveal a tiny lovely note.</div>
+          </div>
+
+          <div class="glass cute-card reveal">
+            <h3>Compliment Capsule</h3>
+            <p class="museum-note">Press the button for a random sweet line from the archive.</p>
+            <button class="btn btn-primary" id="complimentBtn" style="margin-top:8px;">Open Capsule ✨</button>
+            <div class="compliment-box" id="complimentBox">
+              A lovely little compliment is waiting here.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="drawer-wrap">
+          <div class="glass drawer-card reveal">
+            <h3 style="font-size:1.4rem; margin-bottom:10px;">Hidden Forgotten Drawer</h3>
+            <p class="museum-note">
+              Not every memory gets framed. Some are tucked away because they still feel too alive to display.
+            </p>
+
+            <div class="forgotten-drawer" id="forgottenDrawer">
+              <div class="drawer-front">
+                <div>
+                  <strong>Drawer 06-B</strong>
+                  <div class="muted" style="margin-top:6px;">Tap to pull open what was nearly forgotten.</div>
+                </div>
+                <button class="btn btn-secondary" id="openDrawerBtn" style="min-width:auto;padding:12px 18px;">Open Drawer</button>
+              </div>
+              <div class="drawer-hidden">
+                <strong style="margin-bottom:10px;">Recovered Fragment</strong>
+                <p class="muted" style="line-height:1.8;">
+                  “I pretended I was okay with the moment ending, but the truth is I replayed it later like someone trying to warm cold hands over a fading fire.”
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass hold-card reveal">
+            <h3 style="font-size:1.4rem; margin-bottom:10px;">“The Moment I Knew” — Hold to Unlock</h3>
+            <p class="museum-note">
+              Some truths are not clicked open. They are held, endured, and finally admitted.
+            </p>
+
+            <div class="hold-target">
+              <button class="hold-btn" id="holdBtn">
+                <div class="hold-fill" id="holdFill"></div>
+                <span class="hold-label">Hold to Unlock</span>
+              </button>
+              <div class="unlock-message" id="unlockMessage">
+                Press and hold. Let the memory arrive completely.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="cute-grid">
+          <div class="glass cute-card reveal">
+            <h3>Future Wish Reservations</h3>
+            <p class="museum-note">Write a tiny future memory you want this archive to save.</p>
+
+            <div class="wish-input-wrap">
+              <input type="text" id="wishInput" class="wish-input" placeholder="A future memory I want to keep..." />
+              <button class="btn btn-secondary" id="addWishBtn" style="min-width:auto;padding:14px 18px;">Save Wish</button>
+            </div>
+
+            <div class="wish-list" id="wishList">
+              <div class="wish-item">💞 A slow evening full of soft laughter.</div>
+            </div>
+          </div>
+
+          <div class="glass cute-card reveal">
+            <h3>Heartbeat Counter</h3>
+            <p class="museum-note">Tap the heart whenever a memory makes you smile.</p>
+            <button class="btn btn-primary" id="heartTapBtn" style="margin-top:8px;">Tap Heart 💖</button>
+            <div class="compliment-box" id="heartCountBox">
+              Heartbeats collected: <strong id="heartCount">0</strong><br>
+              <span class="muted">A tiny meter for how full this chapter feels.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="glass letter-card reveal">
+          <h2>Letter Never Sent</h2>
+          <p class="museum-note">
+            Not every confession reaches the person it was written for. Some become private landmarks in the writer instead.
+          </p>
+
+          <div class="letter-paper">
+            <p>
+              I never sent this because I was afraid naming it would make it too real,
+              and somehow losing the silence felt scarier than losing the chance.
+              But if I had sent it, I would have said this:
+              you changed the emotional temperature of my days.
+              Things I used to move through half-awake began to glow.
+              I started saving little details because they reminded me of you.
+              And somewhere between the ordinary and the unforgettable,
+              I realized my heart had already made room.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="glass completion-card reveal">
+          <div class="completion-ring" id="completionRing">
+            <div class="completion-value" id="completionValue">64%</div>
+          </div>
+          <h2 style="margin-bottom:12px;">Archive Completion</h2>
+          <p class="museum-note" style="max-width:680px;margin:0 auto 16px;">
+            Every discovered seal means one more truth was named, one more memory was honored, and one more lovely feeling stopped hiding in the dark.
+          </p>
+          <div class="seal-row" style="justify-content:center;">
+            <div class="seal">Collected: 4 Seals</div>
+            <div class="seal" id="momentSeal">Moment Seal: Locked</div>
+            <div class="seal" id="drawerSeal">Drawer Seal: Hidden</div>
+            <div class="seal" id="cuteSeal">Cute Seal: Sleeping</div>
+          </div>
+
+          <div class="nav-row">
+            <a href="index5.html" class="btn btn-secondary nav-btn">← Go Back to Page 5</a>
+            <a href="index7.html" class="btn btn-primary nav-btn">Continue to Page 7 →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const loadingScreen = document.getElementById('loadingScreen');
+    const entryOverlay = document.getElementById('entryOverlay');
+    const mainContent = document.getElementById('mainContent');
+    const bgMusic = document.getElementById('bgMusic');
+    const enterMusicBtn = document.getElementById('enterMusicBtn');
+    const enterSilentBtn = document.getElementById('enterSilentBtn');
+
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        loadingScreen.classList.add('hidden');
+      }, 3200);
+    });
+
+    function enterSite(playMusic){
+      entryOverlay.classList.add('hidden');
+      mainContent.classList.add('revealed');
+      if(playMusic){
+        bgMusic.volume = 0.65;
+        bgMusic.play().catch(() => {});
+      }
+    }
+
+    enterMusicBtn.addEventListener('click', () => enterSite(true));
+    enterSilentBtn.addEventListener('click', () => enterSite(false));
+
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {threshold:0.12});
+    reveals.forEach(el=>observer.observe(el));
+
+    const openDrawerBtn = document.getElementById('openDrawerBtn');
+    const forgottenDrawer = document.getElementById('forgottenDrawer');
+    const drawerSeal = document.getElementById('drawerSeal');
+    const completionValue = document.getElementById('completionValue');
+    const completionRing = document.getElementById('completionRing');
+
+    let holdCompleted = false;
+    let drawerOpened = false;
+    let cuteUnlocked = false;
+
+    openDrawerBtn.addEventListener('click', ()=>{
+      forgottenDrawer.classList.toggle('open');
+      drawerOpened = forgottenDrawer.classList.contains('open');
+      if(drawerOpened){
+        drawerSeal.textContent = 'Drawer Seal: Collected';
+      } else {
+        drawerSeal.textContent = 'Drawer Seal: Hidden';
+      }
+      updateCompletion();
+    });
+
+    const holdBtn = document.getElementById('holdBtn');
+    const holdFill = document.getElementById('holdFill');
+    const unlockMessage = document.getElementById('unlockMessage');
+    const momentSeal = document.getElementById('momentSeal');
+
+    let holdInterval;
+    let holdProgress = 0;
+
+    function startHold(){
+      clearInterval(holdInterval);
+      holdInterval = setInterval(()=>{
+        holdProgress += 2.2;
+        if(holdProgress > 100) holdProgress = 100;
+        holdFill.style.width = holdProgress + '%';
+
+        if(holdProgress >= 100){
+          clearInterval(holdInterval);
+          holdCompleted = true;
+          unlockMessage.innerHTML = `
+            <strong style="color:#fff;">The Moment I Knew:</strong><br>
+            It was not one dramatic second. It was the quiet accumulation of how safe, seen, and strangely at home I felt with you — until denying it became less honest than admitting it.
+          `;
+          momentSeal.textContent = 'Moment Seal: Collected';
+          updateCompletion();
+        }
+      }, 45);
+    }
+
+    function stopHold(){
+      if(holdCompleted) return;
+      clearInterval(holdInterval);
+      const back = setInterval(()=>{
+        holdProgress -= 4;
+        if(holdProgress <= 0){
+          holdProgress = 0;
+          clearInterval(back);
+        }
+        holdFill.style.width = holdProgress + '%';
+      }, 16);
+    }
+
+    ['mousedown','touchstart'].forEach(evt=>holdBtn.addEventListener(evt, startHold));
+    ['mouseup','mouseleave','touchend','touchcancel'].forEach(evt=>holdBtn.addEventListener(evt, stopHold));
+
+    const jarChips = document.querySelectorAll('.jar-chip');
+    const jarMessage = document.getElementById('jarMessage');
+    const complimentBtn = document.getElementById('complimentBtn');
+    const complimentBox = document.getElementById('complimentBox');
+    const cuteSeal = document.getElementById('cuteSeal');
+
+    const compliments = [
+      "You have the kind of presence that makes ordinary moments feel curated by fate.",
+      "Some people are beautiful to look at. You are beautiful to remember.",
+      "You carry softness in a way that never feels weak, only rare.",
+      "There is something deeply lovely about how your existence changes the emotional weather of a room.",
+      "If comfort had a face, I think memory would keep sketching yours."
+    ];
+
+    let cuteInteractions = 0;
+
+    jarChips.forEach(chip=>{
+      chip.addEventListener('click', ()=>{
+        jarMessage.textContent = chip.dataset.text;
+        registerCuteInteraction();
+      });
+    });
+
+    complimentBtn.addEventListener('click', ()=>{
+      const random = compliments[Math.floor(Math.random() * compliments.length)];
+      complimentBox.textContent = random;
+      registerCuteInteraction();
+    });
+
+    function registerCuteInteraction(){
+      cuteInteractions++;
+      if(cuteInteractions >= 2){
+        cuteUnlocked = true;
+        cuteSeal.textContent = 'Cute Seal: Collected';
+        updateCompletion();
+      }
+    }
+
+    const addWishBtn = document.getElementById('addWishBtn');
+    const wishInput = document.getElementById('wishInput');
+    const wishList = document.getElementById('wishList');
+
+    addWishBtn.addEventListener('click', addWish);
+    wishInput.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter') addWish();
+    });
+
+    function addWish(){
+      const value = wishInput.value.trim();
+      if(!value) return;
+      const item = document.createElement('div');
+      item.className = 'wish-item';
+      item.textContent = '💌 ' + value;
+      wishList.prepend(item);
+      wishInput.value = '';
+      registerCuteInteraction();
+    }
+
+    const heartTapBtn = document.getElementById('heartTapBtn');
+    const heartCount = document.getElementById('heartCount');
+    let heartTotal = 0;
+
+    heartTapBtn.addEventListener('click', ()=>{
+      heartTotal++;
+      heartCount.textContent = heartTotal;
+      heartTapBtn.style.transform = 'scale(1.05)';
+      setTimeout(()=> heartTapBtn.style.transform = '', 150);
+      if(heartTotal >= 3){
+        registerCuteInteraction();
+      }
+    });
+
+    function updateCompletion(){
+      let percent = 64;
+      if(drawerOpened) percent += 10;
+      if(holdCompleted) percent += 14;
+      if(cuteUnlocked) percent += 12;
+
+      completionValue.textContent = percent + '%';
+
+      const degrees = (percent / 100) * 360;
+      const mid = degrees * 0.58;
+
+      completionRing.style.background = `conic-gradient(
+        from 0deg,
+        #ff68d8 0deg,
+        #b56cff ${mid}deg,
+        #8a6bff ${degrees}deg,
+        rgba(255,255,255,.08) ${degrees}deg 360deg
+      )`;
+    }
+
+    updateCompletion();
+  </script>
+</body>
+</html>

@@ -1,0 +1,2557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Future Observatory</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root{
+      --lav1:#604c7b;
+      --lav2:#7f6aaa;
+      --lav3:#9f8ccd;
+      --lav4:#cdbfe9;
+      --van1:#fffaf1;
+      --van2:#f9efde;
+      --van3:#f2e3c6;
+      --ink:#312543;
+      --ink2:#5d4f73;
+      --muted:#85789b;
+      --glass:rgba(255,255,255,.72);
+      --glass2:rgba(255,255,255,.86);
+      --border:rgba(96,76,123,.10);
+      --shadow:0 10px 28px rgba(95,75,122,.10);
+      --shadow2:0 18px 48px rgba(95,75,122,.16);
+      --success:#78b192;
+      --danger:#d68195;
+      --board-light:#f8ecd9;
+      --board-dark:#b8a1d1;
+    }
+
+    html { scroll-behavior:smooth; }
+
+    body{
+      min-height:100vh;
+      font-family: Georgia, "Times New Roman", serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(255,255,255,.95) 0 1px, transparent 2px),
+        radial-gradient(circle at 85% 20%, rgba(255,255,255,.88) 0 1px, transparent 2px),
+        radial-gradient(circle at 70% 70%, rgba(255,255,255,.72) 0 1px, transparent 2px),
+        linear-gradient(180deg, #f7f0ff 0%, #f5ecff 32%, #fffaf1 100%);
+      overflow-x:hidden;
+      position:relative;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      background:
+        radial-gradient(circle at 12% 22%, rgba(159,140,205,.14), transparent 24%),
+        radial-gradient(circle at 82% 18%, rgba(205,191,233,.16), transparent 24%),
+        radial-gradient(circle at 50% 100%, rgba(242,227,198,.20), transparent 28%);
+    }
+
+    .stars{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      overflow:hidden;
+    }
+
+    .star{
+      position:absolute;
+      width:3px;
+      height:3px;
+      border-radius:50%;
+      background:white;
+      opacity:.68;
+      box-shadow:0 0 8px rgba(255,255,255,.8);
+      animation:twinkle 3.2s infinite ease-in-out;
+    }
+
+    @keyframes twinkle{
+      0%,100%{ opacity:.25; transform:scale(1); }
+      50%{ opacity:1; transform:scale(1.75); }
+    }
+
+    .orb{
+      position:fixed;
+      border-radius:50%;
+      filter:blur(16px);
+      pointer-events:none;
+      opacity:.16;
+      z-index:0;
+      animation:floatOrb 9s ease-in-out infinite alternate;
+    }
+    .orb1{ width:170px; height:170px; background:#d8c7ef; top:8%; left:4%; }
+    .orb2{ width:210px; height:210px; background:#fff0cf; right:5%; bottom:10%; animation-delay:1.2s; }
+    .orb3{ width:150px; height:150px; background:#cab6e4; right:20%; top:34%; animation-delay:2.3s; }
+
+    @keyframes floatOrb{
+      from{ transform:translateY(0) translateX(0); }
+      to{ transform:translateY(12px) translateX(8px); }
+    }
+
+    .entry-overlay{
+      position:fixed;
+      inset:0;
+      z-index:20000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,.9), rgba(245,236,255,.95) 46%, rgba(255,250,241,.98));
+      transition:opacity .6s ease, visibility .6s ease;
+    }
+
+    .entry-overlay.hide{
+      opacity:0;
+      visibility:hidden;
+    }
+
+    .entry-card{
+      width:min(720px,100%);
+      background:rgba(255,255,255,.80);
+      border:1px solid var(--border);
+      border-radius:32px;
+      padding:38px 28px;
+      box-shadow:var(--shadow2);
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .entry-card::before{
+      content:"";
+      position:absolute;
+      inset:auto -20% -40% -20%;
+      height:160px;
+      background:radial-gradient(circle, rgba(205,191,233,.26), transparent 60%);
+      pointer-events:none;
+    }
+
+    .entry-card h1{
+      color:var(--lav1);
+      font-size:clamp(2rem, 4vw, 3.6rem);
+      margin-bottom:14px;
+      position:relative;
+      z-index:1;
+    }
+
+    .entry-card p{
+      color:var(--ink2);
+      line-height:1.8;
+      font-size:1.06rem;
+      margin-bottom:22px;
+      position:relative;
+      z-index:1;
+    }
+
+    .entry-actions{
+      display:flex;
+      justify-content:center;
+      gap:14px;
+      flex-wrap:wrap;
+      position:relative;
+      z-index:1;
+    }
+
+    .entry-btn{
+      min-width:220px;
+      padding:14px 20px;
+      border:none;
+      border-radius:999px;
+      cursor:pointer;
+      font-family:inherit;
+      font-size:1rem;
+      transition:.22s ease;
+      position:relative;
+      overflow:hidden;
+      box-shadow:0 10px 22px rgba(95,75,122,.08);
+    }
+
+    .entry-btn::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(120deg, transparent 0%, rgba(255,255,255,.32) 50%, transparent 100%);
+      transform:translateX(-120%);
+      transition:.5s ease;
+    }
+
+    .entry-btn:hover::before{ transform:translateX(120%); }
+    .entry-btn:hover{ transform:translateY(-2px); }
+
+    .entry-btn.primary{
+      color:white;
+      background:linear-gradient(135deg, var(--lav2), var(--lav3));
+    }
+
+    .entry-btn.secondary{
+      color:var(--ink);
+      background:linear-gradient(135deg, var(--van1), var(--van2));
+      border:1px solid var(--border);
+    }
+
+    .loader{
+      position:fixed;
+      inset:0;
+      z-index:19000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:18px;
+      background:
+        radial-gradient(circle at center, rgba(159,140,205,.15), transparent 35%),
+        linear-gradient(180deg,#faf6ff,#f4ebff,#fffaf1);
+      visibility:hidden;
+      opacity:0;
+      transition:opacity .6s ease, visibility .6s ease;
+    }
+
+    .loader.show{
+      visibility:visible;
+      opacity:1;
+    }
+
+    .loader.hide{
+      visibility:hidden;
+      opacity:0;
+    }
+
+    .loader-ring{
+      width:84px;
+      height:84px;
+      border-radius:50%;
+      border:4px solid rgba(127,106,170,.16);
+      border-top-color:var(--lav2);
+      animation:spin 1s linear infinite;
+    }
+
+    .loader-text{
+      color:var(--lav1);
+      letter-spacing:1px;
+      text-align:center;
+      font-size:1rem;
+    }
+
+    .loader-sub{
+      color:var(--muted);
+      text-align:center;
+      font-size:.92rem;
+    }
+
+    @keyframes spin{ to{ transform:rotate(360deg);} }
+
+    .container{
+      position:relative;
+      z-index:2;
+      width:min(1180px,92%);
+      margin:0 auto;
+      padding:30px 0 90px;
+    }
+
+    .top-nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+      flex-wrap:wrap;
+      margin-bottom:24px;
+    }
+
+    .chapter-tag{
+      color:var(--lav2);
+      text-transform:uppercase;
+      letter-spacing:2px;
+      font-size:.86rem;
+      font-weight:bold;
+    }
+
+    .top-note{
+      color:var(--muted);
+      font-size:.95rem;
+      text-align:right;
+    }
+
+    .hero{
+      position:relative;
+      text-align:center;
+      padding:92px 22px 78px;
+      border-radius:34px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.80), rgba(255,255,255,.58)),
+        radial-gradient(circle at 50% 10%, rgba(205,191,233,.24), transparent 42%);
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      margin-bottom:26px;
+    }
+
+    .hero::after{
+      content:"";
+      position:absolute;
+      left:-8%;
+      right:-8%;
+      bottom:-65%;
+      height:180px;
+      background:radial-gradient(circle, rgba(255,250,241,.72), transparent 60%);
+      pointer-events:none;
+    }
+
+    .dome{
+      position:absolute;
+      width:520px;
+      height:260px;
+      top:24px;
+      left:50%;
+      transform:translateX(-50%);
+      border:2px solid rgba(127,106,170,.12);
+      border-bottom:none;
+      border-radius:260px 260px 0 0;
+      opacity:.48;
+    }
+
+    .dome::before,.dome::after{
+      content:"";
+      position:absolute;
+      top:0; bottom:0;
+      width:2px;
+      background:rgba(127,106,170,.10);
+    }
+    .dome::before{ left:33%; }
+    .dome::after{ right:33%; }
+
+    .hero h1{
+      position:relative;
+      z-index:2;
+      color:var(--lav1);
+      font-size:clamp(2.5rem,5vw,4.8rem);
+      margin-bottom:16px;
+    }
+
+    .hero-line{
+      position:relative;
+      z-index:2;
+      width:min(840px,100%);
+      margin:0 auto;
+      color:var(--ink);
+      line-height:1.85;
+      font-size:clamp(1.05rem,2vw,1.42rem);
+    }
+
+    .hero-line span{
+      color:var(--lav2);
+      font-style:italic;
+    }
+
+    .tap-note{
+      margin-top:18px;
+      color:var(--muted);
+      font-size:.98rem;
+      position:relative;
+      z-index:2;
+    }
+
+    .section-grid{
+      display:grid;
+      grid-template-columns:repeat(12,1fr);
+      gap:20px;
+    }
+
+    .card{
+      background:rgba(255,255,255,.76);
+      border:1px solid var(--border);
+      border-radius:24px;
+      padding:22px;
+      box-shadow:var(--shadow);
+      transition:.22s ease;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .card::before{
+      content:"";
+      position:absolute;
+      left:-30%;
+      top:-50%;
+      width:140%;
+      height:100%;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+      opacity:0;
+      transition:.35s ease;
+      transform:rotate(8deg);
+      pointer-events:none;
+    }
+
+    .card:hover{
+      transform:translateY(-3px);
+      background:rgba(255,255,255,.84);
+    }
+
+    .card:hover::before{ opacity:1; }
+
+    .card h2,.card h3{
+      color:var(--lav1);
+      margin-bottom:12px;
+      font-weight:normal;
+    }
+
+    .card p{
+      color:var(--ink2);
+      line-height:1.75;
+      font-size:1rem;
+    }
+
+    .hero-stars{ grid-column:span 5; }
+    .telescope-card{ grid-column:span 7; }
+    .tickets{ grid-column:span 5; }
+    .letter{ grid-column:span 7; }
+    .meter{ grid-column:span 4; }
+    .secret{ grid-column:span 4; }
+    .wish{ grid-column:span 4; }
+    .chess-launch{ grid-column:span 12; }
+
+    .interactive-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      border:none;
+      border-radius:999px;
+      padding:12px 18px;
+      min-height:46px;
+      cursor:pointer;
+      font-family:inherit;
+      font-size:.98rem;
+      transition:.18s ease;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .interactive-btn::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(120deg, transparent 0%, rgba(255,255,255,.28) 50%, transparent 100%);
+      transform:translateX(-120%);
+      transition:.45s ease;
+    }
+
+    .interactive-btn:hover::before{ transform:translateX(120%); }
+    .interactive-btn:hover{ transform:translateY(-2px); }
+    .interactive-btn:active{ transform:scale(.98); }
+
+    .interactive-btn.lav{
+      background:linear-gradient(135deg, var(--lav2), var(--lav3));
+      color:white;
+    }
+
+    .interactive-btn.van{
+      background:linear-gradient(135deg, var(--van1), var(--van2));
+      color:var(--ink);
+      border:1px solid var(--border);
+    }
+
+    .star-map{
+      position:relative;
+      height:320px;
+      margin-top:18px;
+      border-radius:20px;
+      border:1px solid rgba(96,76,123,.08);
+      overflow:hidden;
+      touch-action:manipulation;
+      background:
+        radial-gradient(circle at 16% 22%, rgba(255,255,255,.98) 0 2px, transparent 3px),
+        radial-gradient(circle at 26% 31%, rgba(255,255,255,.98) 0 2px, transparent 3px),
+        radial-gradient(circle at 38% 40%, rgba(255,255,255,.98) 0 2px, transparent 3px),
+        radial-gradient(circle at 50% 48%, rgba(255,255,255,.98) 0 2px, transparent 3px),
+        radial-gradient(circle at 63% 58%, rgba(255,255,255,.98) 0 2px, transparent 3px),
+        radial-gradient(circle at 74% 72%, rgba(255,255,255,.98) 0 3px, transparent 4px),
+        radial-gradient(circle at 58% 74%, rgba(255,255,255,.95) 0 2px, transparent 3px),
+        radial-gradient(circle at 43% 67%, rgba(255,255,255,.95) 0 2px, transparent 3px),
+        linear-gradient(180deg, rgba(205,191,233,.14), rgba(255,255,255,.10));
+    }
+
+    .star-map::after{
+      content:"Virgo";
+      position:absolute;
+      right:14px;
+      bottom:10px;
+      font-size:.95rem;
+      color:rgba(96,76,123,.55);
+      font-style:italic;
+      letter-spacing:1px;
+    }
+
+    .star-node{
+      position:absolute;
+      width:24px;
+      height:24px;
+      border:none;
+      border-radius:50%;
+      transform:translate(-50%,-50%);
+      cursor:pointer;
+      background:radial-gradient(circle, #fff 0%, #fdf7ea 45%, rgba(255,255,255,.18) 72%, transparent 75%);
+      box-shadow:0 0 12px rgba(255,255,255,.8);
+      transition:.18s ease;
+    }
+
+    .star-node:hover{ transform:translate(-50%,-50%) scale(1.12); }
+
+    .star-node.active{
+      box-shadow:0 0 16px rgba(127,106,170,.55), 0 0 28px rgba(127,106,170,.20);
+      background:radial-gradient(circle, #fff 0%, #efe7ff 45%, rgba(255,255,255,.18) 72%, transparent 75%);
+    }
+
+    .const-line{
+      position:absolute;
+      height:2px;
+      background:rgba(127,106,170,.14);
+      transform-origin:left center;
+      transition:.25s ease;
+    }
+
+    .const-line.lit{
+      background:rgba(127,106,170,.56);
+      box-shadow:0 0 8px rgba(127,106,170,.18);
+    }
+
+    .star-hint{
+      margin-top:14px;
+      color:var(--ink);
+      font-size:.98rem;
+      min-height:44px;
+    }
+
+    .telescope-stage{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      align-items:center;
+      margin-top:18px;
+    }
+
+    .scope-visual{
+      min-height:290px;
+      border-radius:20px;
+      border:1px solid rgba(96,76,123,.08);
+      position:relative;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(205,191,233,.22), rgba(255,255,255,.12) 45%, transparent 55%),
+        linear-gradient(180deg, rgba(255,255,255,.24), rgba(255,255,255,.16));
+      overflow:hidden;
+      cursor:pointer;
+      touch-action:manipulation;
+      transition:.18s ease;
+    }
+
+    .scope-visual:hover{ transform:scale(1.01); }
+
+    .scope-circle{
+      position:absolute;
+      width:195px;
+      height:195px;
+      border-radius:50%;
+      border:2px solid rgba(127,106,170,.46);
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%);
+      box-shadow:0 0 20px rgba(127,106,170,.14);
+      transition:.28s ease;
+    }
+
+    .scope-circle::before,.scope-circle::after{
+      content:"";
+      position:absolute;
+      background:rgba(127,106,170,.30);
+    }
+
+    .scope-circle::before{
+      width:2px; height:100%;
+      left:50%; top:0;
+      transform:translateX(-50%);
+    }
+
+    .scope-circle::after{
+      width:100%; height:2px;
+      left:0; top:50%;
+      transform:translateY(-50%);
+    }
+
+    .scope-message{
+      color:var(--ink);
+      line-height:1.8;
+      font-size:1rem;
+      min-height:220px;
+      display:flex;
+      align-items:center;
+    }
+
+    .scope-message span{
+      color:var(--lav2);
+      font-style:italic;
+    }
+
+    .ticket-wrap{
+      display:grid;
+      gap:14px;
+      margin-top:18px;
+    }
+
+    .ticket{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+      padding:16px 18px;
+      border-radius:18px;
+      background:rgba(255,255,255,.64);
+      border:1px dashed rgba(127,106,170,.22);
+      cursor:pointer;
+      transition:.18s ease;
+      touch-action:manipulation;
+    }
+
+    .ticket:hover,.ticket.open{
+      background:rgba(255,255,255,.86);
+      transform:translateY(-1px);
+    }
+
+    .ticket small{
+      display:block;
+      color:var(--muted);
+      margin-top:5px;
+    }
+
+    .ticket-badge{
+      color:var(--lav2);
+      border:1px solid rgba(127,106,170,.22);
+      padding:7px 12px;
+      border-radius:999px;
+      font-size:.84rem;
+      white-space:nowrap;
+      background:rgba(255,255,255,.66);
+    }
+
+    .ticket-detail{
+      display:none;
+      margin-top:10px;
+      color:var(--ink);
+      line-height:1.7;
+      font-size:.96rem;
+    }
+
+    .ticket.open .ticket-detail{ display:block; }
+
+    .letter-paper{
+      margin-top:18px;
+      background:rgba(255,250,242,.82);
+      border:1px solid rgba(96,76,123,.08);
+      border-radius:18px;
+      padding:22px;
+      color:var(--ink);
+      line-height:1.9;
+      min-height:220px;
+    }
+
+    .typewriter-cursor{
+      display:inline-block;
+      width:8px;
+      animation:blink 1s infinite;
+    }
+
+    @keyframes blink{
+      0%,50%{opacity:1;}
+      51%,100%{opacity:0;}
+    }
+
+    .meter-bar{
+      width:100%;
+      height:18px;
+      border-radius:999px;
+      background:rgba(255,255,255,.60);
+      overflow:hidden;
+      border:1px solid rgba(96,76,123,.08);
+      margin-top:18px;
+    }
+
+    .meter-fill{
+      width:0%;
+      height:100%;
+      border-radius:999px;
+      background:linear-gradient(90deg, var(--lav2), var(--lav4), var(--van2));
+      transition:width .4s ease;
+    }
+
+    .meter-note{
+      margin-top:14px;
+      color:var(--muted);
+    }
+
+    .secret-box{
+      margin-top:16px;
+      padding:18px;
+      border-radius:16px;
+      background:rgba(255,255,255,.64);
+      border:1px solid rgba(96,76,123,.08);
+      color:var(--ink);
+      line-height:1.8;
+      display:none;
+      animation:fadeIn .3s ease;
+    }
+
+    .secret-box.show{ display:block; }
+
+    @keyframes fadeIn{
+      from{ opacity:0; transform:translateY(6px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+
+    .wish-input{
+      width:100%;
+      margin-top:14px;
+      min-height:46px;
+      border-radius:14px;
+      border:1px solid rgba(96,76,123,.08);
+      outline:none;
+      padding:13px 14px;
+      font-family:inherit;
+      font-size:1rem;
+      color:var(--ink);
+      background:rgba(255,255,255,.68);
+      transition:.18s ease;
+    }
+
+    .wish-input:focus{
+      border-color:rgba(127,106,170,.24);
+      box-shadow:0 0 0 3px rgba(205,191,233,.22);
+    }
+
+    .wish-list{
+      margin-top:12px;
+      display:grid;
+      gap:10px;
+    }
+
+    .wish-item{
+      padding:12px 14px;
+      border-radius:14px;
+      background:rgba(255,255,255,.64);
+      color:var(--ink);
+      border:1px solid rgba(96,76,123,.08);
+      line-height:1.6;
+      animation:fadeIn .28s ease;
+    }
+
+    .chess-launch-wrap{
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      gap:18px;
+      padding:18px 0 6px;
+      text-align:center;
+    }
+
+    .big-chess-btn{
+      min-width:320px;
+      min-height:78px;
+      padding:18px 28px;
+      border:none;
+      border-radius:24px;
+      cursor:pointer;
+      font-family:inherit;
+      font-size:1.2rem;
+      color:white;
+      background:linear-gradient(135deg, var(--lav1), var(--lav3));
+      box-shadow:0 14px 30px rgba(127,106,170,.16);
+      transition:.18s ease;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .big-chess-btn::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(120deg, transparent 0%, rgba(255,255,255,.28) 50%, transparent 100%);
+      transform:translateX(-120%);
+      transition:.45s ease;
+    }
+
+    .big-chess-btn:hover::before{ transform:translateX(120%); }
+    .big-chess-btn:hover{
+      transform:translateY(-3px) scale(1.01);
+    }
+
+    .big-chess-btn small{
+      display:block;
+      margin-top:6px;
+      opacity:.94;
+      font-size:.86rem;
+    }
+
+    .chess-modal{
+      position:fixed;
+      inset:0;
+      z-index:25000;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,.22), transparent 20%),
+        linear-gradient(180deg, rgba(127,106,170,.20), rgba(255,250,241,.16));
+      backdrop-filter:blur(6px);
+      display:none;
+      padding:0;
+    }
+
+    .chess-modal.show{
+      display:block;
+      animation:fadeIn .2s ease;
+    }
+
+    .chess-shell{
+      width:100vw;
+      height:100vh;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,250,242,.96));
+      display:grid;
+      grid-template-rows:68px 1fr;
+      overflow:hidden;
+    }
+
+    .chess-modal-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:12px 18px;
+      border-bottom:1px solid rgba(96,76,123,.08);
+      background:rgba(255,255,255,.68);
+      backdrop-filter:blur(8px);
+    }
+
+    .chess-modal-title{
+      color:var(--lav1);
+      font-size:1.12rem;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .modal-btn{
+      min-height:44px;
+      padding:12px 18px;
+      border:none;
+      border-radius:999px;
+      cursor:pointer;
+      font-family:inherit;
+      font-size:.96rem;
+      transition:.16s ease;
+      box-shadow:0 8px 18px rgba(95,75,122,.08);
+    }
+
+    .modal-btn.exit{
+      color:white;
+      background:linear-gradient(135deg, #d0909f, #b86d87);
+    }
+
+    .modal-btn:hover{ transform:translateY(-1px); }
+
+    .chess-layout{
+      height:100%;
+      width:100%;
+      display:grid;
+      grid-template-columns:minmax(0, 1fr) 320px;
+      gap:0;
+      overflow:hidden;
+    }
+
+    .board-zone{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      position:relative;
+    }
+
+    .board-wrap{
+      width:min(94vh, calc(100vw - 352px));
+      max-width:96vmin;
+      aspect-ratio:1/1;
+      position:relative;
+    }
+
+    .board-glow{
+      position:absolute;
+      inset:-16px;
+      border-radius:30px;
+      background:radial-gradient(circle, rgba(159,140,205,.18), transparent 65%);
+      pointer-events:none;
+      filter:blur(18px);
+      opacity:.8;
+    }
+
+    .board{
+      position:relative;
+      width:100%;
+      height:100%;
+      display:grid;
+      grid-template-columns:repeat(8,1fr);
+      grid-template-rows:repeat(8,1fr);
+      border-radius:22px;
+      overflow:hidden;
+      border:2px solid rgba(96,76,123,.12);
+      box-shadow:0 12px 28px rgba(95,75,122,.10);
+      touch-action:manipulation;
+      user-select:none;
+      -webkit-user-select:none;
+      background:#fff;
+    }
+
+    .square{
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:100%;
+      height:100%;
+      min-width:0;
+      min-height:0;
+      font-size:clamp(1.5rem, 3vw, 2.8rem);
+      line-height:1;
+      cursor:pointer;
+      transition:transform .08s ease, background .12s ease;
+      overflow:hidden;
+    }
+
+    .square:hover{
+      transform:scale(1.02);
+      z-index:1;
+    }
+
+    .square span.piece{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:100%;
+      height:100%;
+      line-height:1;
+      transform:translateY(-1px);
+      pointer-events:none;
+      text-shadow:
+        0 1px 0 rgba(255,255,255,.45),
+        0 0 2px rgba(49,37,67,.08);
+    }
+
+    .light{ background:var(--board-light); color:#2d213f; }
+    .dark{ background:var(--board-dark); color:#2d213f; }
+
+    .square.selected{
+      box-shadow:inset 0 0 0 4px rgba(127,106,170,.78);
+    }
+
+    .square.legal::after{
+      content:"";
+      position:absolute;
+      width:22%;
+      height:22%;
+      border-radius:50%;
+      background:rgba(120,177,146,.56);
+      box-shadow:0 0 10px rgba(120,177,146,.20);
+      animation:legalPulse 1.4s infinite ease-in-out;
+    }
+
+    .square.capture::after{
+      content:"";
+      position:absolute;
+      inset:10%;
+      border-radius:50%;
+      border:4px solid rgba(214,129,149,.62);
+      box-shadow:0 0 8px rgba(214,129,149,.16);
+      animation:capturePulse 1.4s infinite ease-in-out;
+    }
+
+    @keyframes legalPulse{
+      0%,100%{ transform:scale(1); opacity:.8; }
+      50%{ transform:scale(1.12); opacity:1; }
+    }
+
+    @keyframes capturePulse{
+      0%,100%{ transform:scale(1); opacity:.8; }
+      50%{ transform:scale(1.04); opacity:1; }
+    }
+
+    .square.lastmove{
+      box-shadow:inset 0 0 0 4px rgba(255,255,255,.60);
+    }
+
+    .coords{
+      margin-top:8px;
+      display:grid;
+      grid-template-columns:repeat(8,1fr);
+      color:var(--muted);
+      text-align:center;
+      font-size:.82rem;
+    }
+
+    .side-panel{
+      height:100%;
+      border-left:1px solid rgba(96,76,123,.08);
+      background:rgba(255,255,255,.40);
+      overflow:auto;
+      padding:16px;
+      display:grid;
+      gap:14px;
+      align-content:start;
+      backdrop-filter:blur(10px);
+    }
+
+    .panel-box{
+      background:rgba(255,255,255,.74);
+      border:1px solid rgba(96,76,123,.08);
+      border-radius:18px;
+      padding:16px;
+      box-shadow:0 8px 18px rgba(95,75,122,.06);
+      transition:.18s ease;
+    }
+
+    .panel-box:hover{
+      transform:translateY(-1px);
+      background:rgba(255,255,255,.82);
+    }
+
+    .status{
+      color:var(--ink);
+      line-height:1.7;
+      font-size:1rem;
+    }
+
+    .small-muted{
+      color:var(--muted);
+      font-size:.93rem;
+      line-height:1.6;
+    }
+
+    .mini-actions{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+    }
+
+    .mini-btn{
+      min-height:44px;
+      border:none;
+      border-radius:14px;
+      cursor:pointer;
+      font-family:inherit;
+      font-size:.95rem;
+      transition:.16s ease;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .mini-btn::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(120deg, transparent 0%, rgba(255,255,255,.25) 50%, transparent 100%);
+      transform:translateX(-120%);
+      transition:.4s ease;
+    }
+
+    .mini-btn:hover::before{ transform:translateX(120%); }
+    .mini-btn:hover{ transform:translateY(-1px); }
+
+    .mini-btn.primary{
+      background:linear-gradient(135deg, var(--lav2), var(--lav3));
+      color:white;
+    }
+
+    .mini-btn.soft{
+      background:linear-gradient(135deg, var(--van1), var(--van2));
+      color:var(--ink);
+      border:1px solid var(--border);
+    }
+
+    .move-log{
+      max-height:34vh;
+      overflow:auto;
+      display:grid;
+      gap:8px;
+      padding-right:2px;
+    }
+
+    .move-entry{
+      background:rgba(255,255,255,.76);
+      border:1px solid rgba(96,76,123,.06);
+      border-radius:12px;
+      padding:10px 12px;
+      color:var(--ink);
+      font-size:.94rem;
+      line-height:1.4;
+      animation:fadeIn .18s ease;
+    }
+
+    .unlock-box{
+      display:none;
+      margin-top:10px;
+      padding:16px;
+      border-radius:16px;
+      background:rgba(120,177,146,.12);
+      border:1px solid rgba(120,177,146,.22);
+      color:#355646;
+      line-height:1.8;
+      animation:fadeIn .35s ease;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .unlock-box.show{ display:block; }
+
+    .unlock-box::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(120deg, transparent 0%, rgba(255,255,255,.28) 50%, transparent 100%);
+      animation:unlockShine 2.4s ease-in-out infinite;
+      pointer-events:none;
+    }
+
+    @keyframes unlockShine{
+      0%{ transform:translateX(-120%); }
+      45%{ transform:translateX(120%); }
+      100%{ transform:translateX(120%); }
+    }
+
+    .victory-particles{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:26000;
+      overflow:hidden;
+    }
+
+    .particle{
+      position:absolute;
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      opacity:.8;
+      animation:particleFall 2.8s linear forwards;
+    }
+
+    @keyframes particleFall{
+      0%{
+        transform:translateY(-20px) scale(1);
+        opacity:0;
+      }
+      10%{ opacity:1; }
+      100%{
+        transform:translateY(110vh) rotate(360deg) scale(.7);
+        opacity:0;
+      }
+    }
+
+    .sound-toggle{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .toggle-pill{
+      border:none;
+      border-radius:999px;
+      padding:8px 12px;
+      background:linear-gradient(135deg, var(--van1), var(--van2));
+      border:1px solid var(--border);
+      color:var(--ink);
+      cursor:pointer;
+      transition:.16s ease;
+      font-family:inherit;
+    }
+
+    .toggle-pill:hover{ transform:translateY(-1px); }
+
+    .bottom-nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:30px;
+    }
+
+    .nav-link{
+      text-decoration:none;
+      color:var(--ink);
+      min-height:44px;
+      padding:14px 20px;
+      border-radius:999px;
+      background:rgba(255,255,255,.74);
+      border:1px solid rgba(96,76,123,.08);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      transition:.18s ease;
+      box-shadow:0 8px 16px rgba(95,75,122,.05);
+    }
+
+    .nav-link:hover{
+      transform:translateY(-2px);
+      background:rgba(255,255,255,.86);
+    }
+
+    .page-indicator{
+      flex:1;
+      text-align:center;
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    @media (max-width: 1100px){
+      .chess-layout{
+        grid-template-columns:minmax(0, 1fr) 300px;
+      }
+      .board-wrap{
+        width:min(92vh, calc(100vw - 332px));
+      }
+    }
+
+    @media (max-width: 980px){
+      .hero-stars,.telescope-card,.tickets,.letter,.meter,.secret,.wish,.chess-launch{
+        grid-column:span 12;
+      }
+
+      .telescope-stage{
+        grid-template-columns:1fr;
+      }
+
+      .chess-layout{
+        grid-template-columns:1fr;
+        grid-template-rows:auto auto;
+      }
+
+      .side-panel{
+        border-left:none;
+        border-top:1px solid rgba(96,76,123,.08);
+        max-height:40vh;
+      }
+
+      .board-wrap{
+        width:min(94vw, calc(100vh - 170px));
+      }
+    }
+
+    @media (max-width: 700px){
+      .container{ width:min(96%,96%); }
+      .hero{ padding:82px 16px 64px; }
+      .dome{
+        width:320px;
+        height:160px;
+        border-radius:160px 160px 0 0;
+      }
+      .card{ padding:18px; border-radius:22px; }
+      .ticket{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+      .ticket-badge{ align-self:flex-start; }
+      .entry-btn{ width:100%; }
+      .entry-actions{ width:100%; }
+      .page-indicator{ order:3; width:100%; }
+      .chess-shell{ grid-template-rows:62px 1fr; }
+      .chess-modal-top{ padding:10px 12px; }
+      .chess-modal-title{ font-size:.98rem; }
+      .board-zone{ padding:10px; }
+      .board-wrap{ width:min(96vw, 96vw); }
+      .square{ font-size:clamp(1.12rem, 8vw, 2rem); }
+      .side-panel{ padding:12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="entry-overlay" id="entryOverlay">
+    <div class="entry-card">
+      <h1>The Future Observatory</h1>
+      <p>
+        Some pages should not be entered accidentally.
+        Choose how you want to arrive:
+        with music, or with silence.
+      </p>
+      <div class="entry-actions">
+        <button class="entry-btn primary" id="enterMusicBtn">Enter with Music</button>
+        <button class="entry-btn secondary" id="enterSilentBtn">Enter Silently</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="loader" id="loader">
+    <div class="loader-ring"></div>
+    <div class="loader-text">Opening The Future Observatory</div>
+    <div class="loader-sub">Aligning starlight, letters, and one dangerous chess challenge...</div>
+  </div>
+
+  <div class="stars" id="stars"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <audio id="bg-music" loop>
+    <source src="song7.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="container">
+    <div class="top-nav">
+      <div class="chapter-tag">Chapter Seven • The Future Observatory</div>
+      <div class="top-note">Lavender skies, vanilla light, and a future still pretending not to say your name.</div>
+    </div>
+
+    <section class="hero">
+      <div class="dome"></div>
+      <h1>The Future Observatory</h1>
+      <p class="hero-line">
+        “The strange thing is, I don’t imagine the future as a place anymore.
+        I imagine it as <span>whatever becomes real when you are still there.</span>”
+      </p>
+      <div class="tap-note">
+        Touch the stars. Open the tickets. Read the letter from tomorrow.
+        And if you dare, challenge the observatory chessbot.
+      </div>
+    </section>
+
+    <section class="section-grid">
+      <div class="card hero-stars">
+        <h2>Virgo Constellation</h2>
+        <p>
+          Not random stars. A real pattern.
+          Touch each star of Virgo in order and let the sky finish what it has been trying to say.
+        </p>
+
+        <div class="star-map" id="virgoMap">
+          <button class="star-node" style="left:16%;top:22%;" data-order="1" data-name="Zavijava"></button>
+          <button class="star-node" style="left:26%;top:31%;" data-order="2" data-name="Porrima"></button>
+          <button class="star-node" style="left:38%;top:40%;" data-order="3" data-name="Auva"></button>
+          <button class="star-node" style="left:50%;top:48%;" data-order="4" data-name="Vindemiatrix"></button>
+          <button class="star-node" style="left:63%;top:58%;" data-order="5" data-name="Heze"></button>
+          <button class="star-node" style="left:74%;top:72%;" data-order="6" data-name="Spica"></button>
+          <button class="star-node" style="left:58%;top:74%;" data-order="7" data-name="Syrma"></button>
+          <button class="star-node" style="left:43%;top:67%;" data-order="8" data-name="Rijl al Awwa"></button>
+
+          <div class="const-line" id="vline1" style="left:16%;top:22%;width:13%;transform:rotate(38deg)"></div>
+          <div class="const-line" id="vline2" style="left:26%;top:31%;width:15%;transform:rotate(35deg)"></div>
+          <div class="const-line" id="vline3" style="left:38%;top:40%;width:15%;transform:rotate(33deg)"></div>
+          <div class="const-line" id="vline4" style="left:50%;top:48%;width:17%;transform:rotate(35deg)"></div>
+          <div class="const-line" id="vline5" style="left:63%;top:58%;width:17%;transform:rotate(51deg)"></div>
+          <div class="const-line" id="vline6" style="left:58%;top:74%;width:17%;transform:rotate(-6deg)"></div>
+          <div class="const-line" id="vline7" style="left:43%;top:67%;width:18%;transform:rotate(15deg)"></div>
+        </div>
+
+        <div class="star-hint" id="starHint">Begin with the first star of Virgo.</div>
+
+        <div id="virgoMessage" class="secret-box" style="display:none; margin-top:16px;">
+          You completed Virgo.
+          <br><br>
+          And maybe that is why this feels right:
+          not because the stars are random,
+          but because even across distance, pattern, silence, and time,
+          <strong>my heart keeps arranging the future in a shape that somehow leans toward you.</strong>
+        </div>
+      </div>
+
+      <div class="card telescope-card">
+        <h2>Telescope of Destiny</h2>
+        <p>Tap the lens to cycle through glimpses of possible tomorrows.</p>
+        <div class="telescope-stage">
+          <div class="scope-visual" id="scopeVisual">
+            <div class="scope-circle" id="scopeCircle"></div>
+          </div>
+          <div class="scope-message" id="scopeMessage">
+            Through this lens, I see <span>ordinary moments becoming extraordinary</span> simply because you are there.
+          </div>
+        </div>
+      </div>
+
+      <div class="card tickets">
+        <h3>Future Reservation Tickets</h3>
+        <p>Open a ticket to see the memory I would reserve in advance.</p>
+        <div class="ticket-wrap">
+          <div class="ticket">
+            <div>
+              <strong>Ticket 01 — A Slow Morning Together</strong>
+              <small>No rush. No proving. Just staying.</small>
+              <div class="ticket-detail">A quiet room, warm light, tea or coffee, and the kind of peace that never needed a dramatic name to be real.</div>
+            </div>
+            <div class="ticket-badge">Reserved</div>
+          </div>
+
+          <div class="ticket">
+            <div>
+              <strong>Ticket 02 — A Night Drive With Honest Things</strong>
+              <small>Windows down. Heart open.</small>
+              <div class="ticket-detail">The road keeps moving, but uncertainty softens because truth is finally brave enough to sit between us.</div>
+            </div>
+            <div class="ticket-badge">Reserved</div>
+          </div>
+
+          <div class="ticket">
+            <div>
+              <strong>Ticket 03 — The Day It Finally Feels Certain</strong>
+              <small>When hope stops whispering and starts becoming real.</small>
+              <div class="ticket-detail">Not loud. Not cinematic. Just a sacred recognition that my heart was always trying to arrive here.</div>
+            </div>
+            <div class="ticket-badge">Reserved</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card letter">
+        <h3>Letter From Tomorrow</h3>
+        <p>Press play to let the letter slowly write itself.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+          <button class="interactive-btn lav" id="typeLetterBtn">Write the Letter</button>
+          <button class="interactive-btn van" id="showFullLetterBtn">Show Full Letter</button>
+        </div>
+        <div class="letter-paper" id="letterPaper"></div>
+      </div>
+
+      <div class="card meter">
+        <h3>Constellation Completion Meter</h3>
+        <p>Some patterns only make sense when every necessary light appears.</p>
+        <div class="meter-bar">
+          <div class="meter-fill" id="meterFill"></div>
+        </div>
+        <div class="meter-note" id="meterNote">0% complete — Virgo is waiting for its first light.</div>
+      </div>
+
+      <div class="card secret">
+        <h3>One Future I Secretly Want</h3>
+        <p>Hidden unless someone is brave enough to open it.</p>
+        <button class="interactive-btn lav" id="secretBtn">Reveal Hidden Future</button>
+        <div class="secret-box" id="secretBox">
+          I want a future where loving you no longer has to survive as metaphor.
+          A future where it becomes visible, ordinary, lived-in, and true.
+          A future where I stop imagining and finally start arriving.
+        </div>
+      </div>
+
+      <div class="card wish">
+        <h3>Make a Wish to the Observatory</h3>
+        <p>Write one little future you would keep if the stars let you.</p>
+        <input id="wishInput" class="wish-input" type="text" maxlength="120" placeholder="Type a wish..." />
+        <button class="interactive-btn van" id="wishBtn" style="margin-top:14px;">Save Wish to the Sky</button>
+        <div class="wish-list" id="wishList"></div>
+      </div>
+
+      <div class="card chess-launch">
+        <h2>The Observatory Chess Challenge</h2>
+        <p>
+          There is a game hidden inside this observatory.
+          A full-screen chess board. A patient little bot.
+          And a sealed message if you manage to beat it.
+        </p>
+        <div class="chess-launch-wrap">
+          <button class="big-chess-btn" id="openChessBtn">
+            Play Chess
+            <small>Opens a full-screen chess board</small>
+          </button>
+          <div class="top-note" style="text-align:center;">
+            You play White. Win, and the observatory will confess something.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="bottom-nav">
+      <a href="index6.html" class="nav-link">← Back to Page 6</a>
+      <div class="page-indicator">Page 7 of 8</div>
+      <a href="index8.html" class="nav-link">Next to Page 8 →</a>
+    </div>
+  </div>
+
+  <div class="chess-modal" id="chessModal">
+    <div class="chess-shell">
+      <div class="chess-modal-top">
+        <div class="chess-modal-title">The Observatory Chess Challenge</div>
+        <button class="modal-btn exit" id="closeChessBtn">Exit Chess</button>
+      </div>
+
+      <div class="chess-layout">
+        <div class="board-zone">
+          <div>
+            <div class="board-wrap">
+              <div class="board-glow"></div>
+              <div class="board" id="board"></div>
+            </div>
+            <div class="coords">
+              <div>a</div><div>b</div><div>c</div><div>d</div><div>e</div><div>f</div><div>g</div><div>h</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="side-panel">
+          <div class="panel-box">
+            <div class="status" id="status">
+              You are <strong>White</strong>. Tap or click a piece, then tap/click a destination.
+            </div>
+          </div>
+
+          <div class="panel-box">
+            <div class="mini-actions">
+              <button class="mini-btn primary" id="newGameBtn">New Game</button>
+              <button class="mini-btn soft" id="undoBtn">Undo</button>
+              <button class="mini-btn soft" id="hintBtn">Hint</button>
+            </div>
+          </div>
+
+          <div class="panel-box sound-toggle">
+            <div class="small-muted">Move sounds</div>
+            <button class="toggle-pill" id="soundToggleBtn">On</button>
+          </div>
+
+          <div class="panel-box">
+            <h3 style="margin-bottom:10px;">Captured Pieces</h3>
+            <div class="small-muted">White captured: <span id="whiteCaps">—</span></div>
+            <div class="small-muted" style="margin-top:6px;">Black captured: <span id="blackCaps">—</span></div>
+          </div>
+
+          <div class="panel-box">
+            <h3 style="margin-bottom:10px;">Move Log</h3>
+            <div class="move-log" id="moveLog"></div>
+          </div>
+
+          <div class="panel-box">
+            <h3 style="margin-bottom:10px;">Hidden Observatory Note</h3>
+            <div class="small-muted">Only opens if you beat the bot.</div>
+            <div class="unlock-box" id="unlockBox">
+              You won.
+              <br><br>
+              So here is the truth I hid behind the game:
+              <br><br>
+              If you can move through a sky full of calculations and still find your way to checkmate,
+              then maybe that is what my heart has been trying to say too —
+              <strong>I do not just admire you. I keep imagining a future softened by your presence.</strong>
+              <br><br>
+              And if the universe ever let me choose one impossible certainty,
+              I think I would choose <strong>you</strong>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="victory-particles" id="victoryParticles"></div>
+
+  <script>
+    // ENTRY / LOADER / MUSIC
+    const entryOverlay = document.getElementById('entryOverlay');
+    const loader = document.getElementById('loader');
+    const enterMusicBtn = document.getElementById('enterMusicBtn');
+    const enterSilentBtn = document.getElementById('enterSilentBtn');
+    const audio = document.getElementById('bg-music');
+
+    async function startExperience(withMusic){
+      entryOverlay.classList.add('hide');
+      loader.classList.add('show');
+
+      if(withMusic){
+        try { await audio.play(); } catch(e) {}
+      } else {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+
+      setTimeout(()=>{
+        loader.classList.remove('show');
+        loader.classList.add('hide');
+      }, 2200);
+    }
+
+    enterMusicBtn.addEventListener('click', ()=> startExperience(true));
+    enterSilentBtn.addEventListener('click', ()=> startExperience(false));
+
+    // STARS
+    const starsContainer = document.getElementById('stars');
+    for(let i=0;i<90;i++){
+      const s = document.createElement('div');
+      s.className='star';
+      s.style.left=Math.random()*100+'vw';
+      s.style.top=Math.random()*100+'vh';
+      s.style.animationDelay=Math.random()*3+'s';
+      s.style.opacity=Math.random();
+      s.style.transform=`scale(${0.8 + Math.random()*1.2})`;
+      starsContainer.appendChild(s);
+    }
+
+    // VIRGO CONSTELLATION
+    const starNodes = [...document.querySelectorAll('.star-node')];
+    const starHint = document.getElementById('starHint');
+    const meterFill = document.getElementById('meterFill');
+    const meterNote = document.getElementById('meterNote');
+    const virgoMessage = document.getElementById('virgoMessage');
+
+    const lines = [
+      document.getElementById('vline1'),
+      document.getElementById('vline2'),
+      document.getElementById('vline3'),
+      document.getElementById('vline4'),
+      document.getElementById('vline5'),
+      document.getElementById('vline6'),
+      document.getElementById('vline7')
+    ];
+
+    let virgoProgress = 0;
+
+    function updateConstellationMeter(){
+      const pct = Math.round((virgoProgress / starNodes.length) * 100);
+      meterFill.style.width = pct + '%';
+
+      if(pct === 0){
+        meterNote.textContent = '0% complete — Virgo is waiting for its first light.';
+      } else if(pct < 40){
+        meterNote.textContent = `${pct}% complete — the constellation is beginning to reveal itself.`;
+      } else if(pct < 80){
+        meterNote.textContent = `${pct}% complete — Virgo is remembering its full shape.`;
+      } else if(pct < 100){
+        meterNote.textContent = `${pct}% complete — one final star remains before the message appears.`;
+      } else {
+        meterNote.textContent = '100% complete — Virgo is whole, and the sky has said what it wanted to say.';
+      }
+
+      lines.forEach((line, idx)=>{
+        if(idx < virgoProgress - 1) line.classList.add('lit');
+        else line.classList.remove('lit');
+      });
+    }
+
+    starNodes.forEach(node=>{
+      node.addEventListener('click', ()=>{
+        const expected = virgoProgress + 1;
+        const order = Number(node.dataset.order);
+
+        if(order === expected){
+          node.classList.add('active');
+          virgoProgress++;
+          starHint.textContent = `${node.dataset.name} connected.`;
+          updateConstellationMeter();
+
+          if(virgoProgress === starNodes.length){
+            starHint.textContent = 'Virgo completed.';
+            virgoMessage.style.display = 'block';
+          }
+        } else if(order <= virgoProgress){
+          starHint.textContent = `${node.dataset.name} is already part of Virgo.`;
+        } else {
+          starHint.textContent = `Not yet. Follow Virgo in order — star ${expected} comes next.`;
+        }
+      });
+    });
+
+    updateConstellationMeter();
+
+    // TELESCOPE
+    const scopeVisual = document.getElementById('scopeVisual');
+    const scopeCircle = document.getElementById('scopeCircle');
+    const scopeMessage = document.getElementById('scopeMessage');
+    const visions = [
+      'Through this lens, I see <span>ordinary moments becoming extraordinary</span> simply because you are there.',
+      'I see a future where <span>silence stops being empty</span> and starts feeling shared.',
+      'I see your name quietly appearing inside plans <span>I never admitted were personal</span>.',
+      'I see a life becoming less frightening because <span>it is no longer imagined alone</span>.',
+      'I see the strangest miracle: tomorrow stops feeling abstract <span>the moment you are part of it</span>.'
+    ];
+    let visionIndex = 0;
+
+    scopeVisual.addEventListener('click', ()=>{
+      visionIndex = (visionIndex + 1) % visions.length;
+      scopeCircle.style.transform = 'translate(-50%,-50%) scale(1.07)';
+      setTimeout(()=>{
+        scopeCircle.style.transform = 'translate(-50%,-50%) scale(1)';
+      }, 180);
+      scopeMessage.innerHTML = visions[visionIndex];
+    });
+
+    // TICKETS
+    document.querySelectorAll('.ticket').forEach(ticket=>{
+      ticket.addEventListener('click', ()=> ticket.classList.toggle('open'));
+    });
+
+    // LETTER
+    const letterPaper = document.getElementById('letterPaper');
+    const typeLetterBtn = document.getElementById('typeLetterBtn');
+    const showFullLetterBtn = document.getElementById('showFullLetterBtn');
+
+    const fullLetter = `Dear You,
+
+I know the present still feels unfinished, and maybe that is why I keep writing from ahead.
+Just to tell you this: some futures arrive quietly.
+Not with fireworks, but with relief.
+Not with spectacle, but with the deep peace of realizing
+the person you kept hoping for never truly left your heart's horizon.
+
+If you are there, tomorrow feels less like a mystery and more like a promise.
+
+— From a future that finally learned what it was waiting for`;
+
+    let typingInterval = null;
+
+    function renderLetterText(text, cursor=false){
+      letterPaper.innerHTML = text.replace(/\n/g,'<br>') + (cursor ? '<span class="typewriter-cursor">|</span>' : '');
+    }
+
+    typeLetterBtn.addEventListener('click', ()=>{
+      if(typingInterval) clearInterval(typingInterval);
+      let i = 0;
+      typingInterval = setInterval(()=>{
+        renderLetterText(fullLetter.slice(0, i), true);
+        i++;
+        if(i > fullLetter.length){
+          clearInterval(typingInterval);
+          renderLetterText(fullLetter, false);
+        }
+      }, 16);
+    });
+
+    showFullLetterBtn.addEventListener('click', ()=>{
+      if(typingInterval) clearInterval(typingInterval);
+      renderLetterText(fullLetter, false);
+    });
+
+    renderLetterText('Press "Write the Letter" to reveal tomorrow.', false);
+
+    // SECRET / WISH
+    const secretBtn = document.getElementById('secretBtn');
+    const secretBox = document.getElementById('secretBox');
+    secretBtn.addEventListener('click', ()=>{
+      secretBox.classList.toggle('show');
+      secretBtn.textContent = secretBox.classList.contains('show') ? 'Hide Hidden Future' : 'Reveal Hidden Future';
+    });
+
+    const wishInput = document.getElementById('wishInput');
+    const wishBtn = document.getElementById('wishBtn');
+    const wishList = document.getElementById('wishList');
+
+    function saveWish(){
+      const text = wishInput.value.trim();
+      if(!text) return;
+      const item = document.createElement('div');
+      item.className='wish-item';
+      item.textContent='✦ ' + text;
+      wishList.prepend(item);
+      wishInput.value='';
+    }
+
+    wishBtn.addEventListener('click', saveWish);
+    wishInput.addEventListener('keydown', e=>{
+      if(e.key==='Enter') saveWish();
+    });
+
+    // CHESS MODAL
+    const openChessBtn = document.getElementById('openChessBtn');
+    const closeChessBtn = document.getElementById('closeChessBtn');
+    const chessModal = document.getElementById('chessModal');
+
+    openChessBtn.addEventListener('click', ()=>{
+      chessModal.classList.add('show');
+      document.body.style.overflow='hidden';
+      renderBoard();
+    });
+
+    closeChessBtn.addEventListener('click', ()=>{
+      chessModal.classList.remove('show');
+      document.body.style.overflow='';
+    });
+
+    // SOUND
+    let soundOn = true;
+    const soundToggleBtn = document.getElementById('soundToggleBtn');
+    soundToggleBtn.addEventListener('click', ()=>{
+      soundOn = !soundOn;
+      soundToggleBtn.textContent = soundOn ? 'On' : 'Off';
+    });
+
+    let audioCtx = null;
+    function beep(freq=520, duration=0.06, type='sine', vol=0.02){
+      if(!soundOn) return;
+      try{
+        if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.value = vol;
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.stop(audioCtx.currentTime + duration);
+      }catch(e){}
+    }
+
+    function playMoveSound(capture=false){
+      if(capture){
+        beep(380, 0.08, 'triangle', 0.03);
+        setTimeout(()=>beep(250, 0.06, 'triangle', 0.02), 45);
+      } else {
+        beep(540, 0.05, 'sine', 0.02);
+      }
+    }
+
+    // VICTORY PARTICLES
+    const victoryParticles = document.getElementById('victoryParticles');
+    function createVictoryParticles(){
+      victoryParticles.innerHTML = '';
+      const colors = ['#cdbfe9','#fff0cf','#ffffff','#e8ddff','#f3e3c6'];
+      for(let i=0;i<44;i++){
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random()*100 + 'vw';
+        p.style.top = (-10 - Math.random()*20) + 'px';
+        p.style.background = colors[Math.floor(Math.random()*colors.length)];
+        p.style.width = (6 + Math.random()*8) + 'px';
+        p.style.height = p.style.width;
+        p.style.animationDuration = (2.2 + Math.random()*1.4) + 's';
+        p.style.animationDelay = (Math.random()*0.5) + 's';
+        victoryParticles.appendChild(p);
+      }
+      setTimeout(()=>victoryParticles.innerHTML='', 4000);
+    }
+
+    // CHESS ENGINE
+    const boardEl = document.getElementById('board');
+    const statusEl = document.getElementById('status');
+    const moveLogEl = document.getElementById('moveLog');
+    const whiteCapsEl = document.getElementById('whiteCaps');
+    const blackCapsEl = document.getElementById('blackCaps');
+    const unlockBox = document.getElementById('unlockBox');
+    const newGameBtn = document.getElementById('newGameBtn');
+    const undoBtn = document.getElementById('undoBtn');
+    const hintBtn = document.getElementById('hintBtn');
+
+    const PIECES = {
+      P:'♙', N:'♘', B:'♗', R:'♖', Q:'♕', K:'♔',
+      p:'♟', n:'♞', b:'♝', r:'♜', q:'♛', k:'♚'
+    };
+
+    let game = null;
+
+    function cloneBoard(board){
+      return board.map(r => r.slice());
+    }
+
+    function createInitialBoard(){
+      return [
+        ['r','n','b','q','k','b','n','r'],
+        ['p','p','p','p','p','p','p','p'],
+        ['','','','','','','',''],
+        ['','','','','','','',''],
+        ['','','','','','','',''],
+        ['','','','','','','',''],
+        ['P','P','P','P','P','P','P','P'],
+        ['R','N','B','Q','K','B','N','R']
+      ];
+    }
+
+    function createGame(){
+      return {
+        board: createInitialBoard(),
+        turn: 'w',
+        selected: null,
+        legalMoves: [],
+        history: [],
+        moveTexts: [],
+        whiteCaptured: [],
+        blackCaptured: [],
+        castling: { wK:true, wQ:true, bK:true, bQ:true },
+        enPassant: null,
+        lastMove: null,
+        gameOver: false,
+        result: ''
+      };
+    }
+
+    function isWhite(p){ return p && p === p.toUpperCase(); }
+    function isBlack(p){ return p && p === p.toLowerCase(); }
+    function colorOf(p){ return !p ? null : (isWhite(p) ? 'w' : 'b'); }
+    function inBounds(r,c){ return r>=0 && r<8 && c>=0 && c<8; }
+    function alg(r,c){ return 'abcdefgh'[c] + (8-r); }
+
+    function pieceValue(piece){
+      const vals = {p:100,n:320,b:330,r:500,q:900,k:20000};
+      return vals[piece.toLowerCase()] || 0;
+    }
+
+    function findKing(board, color){
+      const target = color==='w' ? 'K' : 'k';
+      for(let r=0;r<8;r++){
+        for(let c=0;c<8;c++){
+          if(board[r][c] === target) return {r,c};
+        }
+      }
+      return null;
+    }
+
+    function squareAttacked(board, r, c, byColor){
+      if(byColor==='w'){
+        const rr = r+1;
+        if(inBounds(rr,c-1) && board[rr][c-1]==='P') return true;
+        if(inBounds(rr,c+1) && board[rr][c+1]==='P') return true;
+      } else {
+        const rr = r-1;
+        if(inBounds(rr,c-1) && board[rr][c-1]==='p') return true;
+        if(inBounds(rr,c+1) && board[rr][c+1]==='p') return true;
+      }
+
+      const knight = byColor==='w' ? 'N' : 'n';
+      const jumps = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+      for(const [dr,dc] of jumps){
+        const rr=r+dr, cc=c+dc;
+        if(inBounds(rr,cc) && board[rr][cc]===knight) return true;
+      }
+
+      const bishop = byColor==='w' ? 'B' : 'b';
+      const queen  = byColor==='w' ? 'Q' : 'q';
+      for(const [dr,dc] of [[1,1],[1,-1],[-1,1],[-1,-1]]){
+        let rr=r+dr, cc=c+dc;
+        while(inBounds(rr,cc)){
+          const p = board[rr][cc];
+          if(p){
+            if(p===bishop || p===queen) return true;
+            break;
+          }
+          rr+=dr; cc+=dc;
+        }
+      }
+
+      const rook = byColor==='w' ? 'R' : 'r';
+      for(const [dr,dc] of [[1,0],[-1,0],[0,1],[0,-1]]){
+        let rr=r+dr, cc=c+dc;
+        while(inBounds(rr,cc)){
+          const p = board[rr][cc];
+          if(p){
+            if(p===rook || p===queen) return true;
+            break;
+          }
+          rr+=dr; cc+=dc;
+        }
+      }
+
+      const king = byColor==='w' ? 'K' : 'k';
+      for(let dr=-1;dr<=1;dr++){
+        for(let dc=-1;dc<=1;dc++){
+          if(dr===0 && dc===0) continue;
+          const rr=r+dr, cc=c+dc;
+          if(inBounds(rr,cc) && board[rr][cc]===king) return true;
+        }
+      }
+
+      return false;
+    }
+
+    function inCheck(board, color){
+      const king = findKing(board, color);
+      if(!king) return false;
+      return squareAttacked(board, king.r, king.c, color==='w' ? 'b' : 'w');
+    }
+
+    function pseudoMovesFor(state, r, c){
+      const board = state.board;
+      const piece = board[r][c];
+      if(!piece) return [];
+      const color = colorOf(piece);
+      const moves = [];
+
+      const add = (tr,tc,extra={})=>{
+        if(inBounds(tr,tc)) moves.push({from:{r,c}, to:{r:tr,c:tc}, ...extra});
+      };
+
+      const slide = dirs=>{
+        for(const [dr,dc] of dirs){
+          let rr=r+dr, cc=c+dc;
+          while(inBounds(rr,cc)){
+            const target = board[rr][cc];
+            if(!target){
+              add(rr,cc);
+            } else {
+              if(colorOf(target)!==color) add(rr,cc);
+              break;
+            }
+            rr+=dr; cc+=dc;
+          }
+        }
+      };
+
+      switch(piece.toLowerCase()){
+        case 'p': {
+          const dir = color==='w' ? -1 : 1;
+          const startRow = color==='w' ? 6 : 1;
+          const promoRow = color==='w' ? 0 : 7;
+
+          if(inBounds(r+dir,c) && !board[r+dir][c]){
+            add(r+dir,c,{promotion:(r+dir===promoRow)});
+            if(r===startRow && !board[r+2*dir][c]){
+              add(r+2*dir,c,{doublePawn:true});
+            }
+          }
+
+          for(const dc of [-1,1]){
+            const rr=r+dir, cc=c+dc;
+            if(inBounds(rr,cc) && board[rr][cc] && colorOf(board[rr][cc])!==color){
+              add(rr,cc,{promotion:(rr===promoRow)});
+            }
+          }
+
+          if(state.enPassant){
+            const ep = state.enPassant;
+            if(color==='w' && r===3 && ep.row===2 && Math.abs(c-ep.col)===1){
+              add(2, ep.col, {enPassantCapture:true});
+            }
+            if(color==='b' && r===4 && ep.row===5 && Math.abs(c-ep.col)===1){
+              add(5, ep.col, {enPassantCapture:true});
+            }
+          }
+          break;
+        }
+        case 'n':
+          [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]].forEach(([dr,dc])=>{
+            const rr=r+dr, cc=c+dc;
+            if(!inBounds(rr,cc)) return;
+            const target = board[rr][cc];
+            if(!target || colorOf(target)!==color) add(rr,cc);
+          });
+          break;
+        case 'b':
+          slide([[1,1],[1,-1],[-1,1],[-1,-1]]);
+          break;
+        case 'r':
+          slide([[1,0],[-1,0],[0,1],[0,-1]]);
+          break;
+        case 'q':
+          slide([[1,1],[1,-1],[-1,1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]]);
+          break;
+        case 'k':
+          for(let dr=-1;dr<=1;dr++){
+            for(let dc=-1;dc<=1;dc++){
+              if(dr===0 && dc===0) continue;
+              const rr=r+dr, cc=c+dc;
+              if(!inBounds(rr,cc)) continue;
+              const target=board[rr][cc];
+              if(!target || colorOf(target)!==color) add(rr,cc);
+            }
+          }
+          if(color==='w' && r===7 && c===4){
+            if(state.castling.wK && !board[7][5] && !board[7][6]) add(7,6,{castle:'K'});
+            if(state.castling.wQ && !board[7][1] && !board[7][2] && !board[7][3]) add(7,2,{castle:'Q'});
+          }
+          if(color==='b' && r===0 && c===4){
+            if(state.castling.bK && !board[0][5] && !board[0][6]) add(0,6,{castle:'K'});
+            if(state.castling.bQ && !board[0][1] && !board[0][2] && !board[0][3]) add(0,2,{castle:'Q'});
+          }
+          break;
+      }
+
+      return moves;
+    }
+
+    function applyMove(state, move){
+      const next = {
+        board: cloneBoard(state.board),
+        turn: state.turn === 'w' ? 'b' : 'w',
+        selected: null,
+        legalMoves: [],
+        history: state.history.slice(),
+        moveTexts: state.moveTexts.slice(),
+        whiteCaptured: state.whiteCaptured.slice(),
+        blackCaptured: state.blackCaptured.slice(),
+        castling: {...state.castling},
+        enPassant: null,
+        lastMove: { from:{...move.from}, to:{...move.to} },
+        gameOver: false,
+        result: ''
+      };
+
+      const board = next.board;
+      const piece = board[move.from.r][move.from.c];
+      let captured = board[move.to.r][move.to.c];
+
+      if(move.enPassantCapture){
+        if(colorOf(piece)==='w'){
+          captured = board[3][move.to.c];
+          board[3][move.to.c] = '';
+        } else {
+          captured = board[4][move.to.c];
+          board[4][move.to.c] = '';
+        }
+      }
+
+      if(captured){
+        if(colorOf(captured)==='w') next.whiteCaptured.push(captured);
+        else next.blackCaptured.push(captured);
+      }
+
+      board[move.from.r][move.from.c] = '';
+      board[move.to.r][move.to.c] = piece;
+
+      if(move.promotion){
+        board[move.to.r][move.to.c] = colorOf(piece)==='w' ? 'Q' : 'q';
+      }
+
+      if(move.castle==='K'){
+        if(colorOf(piece)==='w'){
+          board[7][5] = board[7][7];
+          board[7][7] = '';
+        } else {
+          board[0][5] = board[0][7];
+          board[0][7] = '';
+        }
+      } else if(move.castle==='Q'){
+        if(colorOf(piece)==='w'){
+          board[7][3] = board[7][0];
+          board[7][0] = '';
+        } else {
+          board[0][3] = board[0][0];
+          board[0][0] = '';
+        }
+      }
+
+      if(piece==='K'){ next.castling.wK=false; next.castling.wQ=false; }
+      if(piece==='k'){ next.castling.bK=false; next.castling.bQ=false; }
+
+      if(move.from.r===7 && move.from.c===0) next.castling.wQ=false;
+      if(move.from.r===7 && move.from.c===7) next.castling.wK=false;
+      if(move.from.r===0 && move.from.c===0) next.castling.bQ=false;
+      if(move.from.r===0 && move.from.c===7) next.castling.bK=false;
+
+      if(move.to.r===7 && move.to.c===0) next.castling.wQ=false;
+      if(move.to.r===7 && move.to.c===7) next.castling.wK=false;
+      if(move.to.r===0 && move.to.c===0) next.castling.bQ=false;
+      if(move.to.r===0 && move.to.c===7) next.castling.bK=false;
+
+      if(piece.toLowerCase()==='p' && Math.abs(move.to.r - move.from.r)===2){
+        next.enPassant = {
+          row: (move.from.r + move.to.r) / 2,
+          col: move.from.c
+        };
+      }
+
+      return next;
+    }
+
+    function legalMovesFor(state, r, c){
+      const piece = state.board[r][c];
+      if(!piece) return [];
+      const color = colorOf(piece);
+      if(color !== state.turn) return [];
+
+      const pseudo = pseudoMovesFor(state, r, c);
+      const legal = [];
+
+      for(const mv of pseudo){
+        if(mv.castle){
+          const row = color==='w' ? 7 : 0;
+          if(inCheck(state.board, color)) continue;
+          if(mv.castle==='K'){
+            if(squareAttacked(state.board,row,5,color==='w'?'b':'w')) continue;
+            if(squareAttacked(state.board,row,6,color==='w'?'b':'w')) continue;
+          } else {
+            if(squareAttacked(state.board,row,3,color==='w'?'b':'w')) continue;
+            if(squareAttacked(state.board,row,2,color==='w'?'b':'w')) continue;
+          }
+        }
+
+        const next = applyMove(state, mv);
+        if(!inCheck(next.board, color)) legal.push(mv);
+      }
+
+      return legal;
+    }
+
+    function allLegalMoves(state, color=state.turn){
+      const temp = {...state, turn: color};
+      const out = [];
+      for(let r=0;r<8;r++){
+        for(let c=0;c<8;c++){
+          const p = temp.board[r][c];
+          if(p && colorOf(p)===color){
+            out.push(...legalMovesFor(temp, r, c));
+          }
+        }
+      }
+      return out;
+    }
+
+    function resultIfAny(state){
+      const moves = allLegalMoves(state, state.turn);
+      const check = inCheck(state.board, state.turn);
+      if(moves.length===0){
+        if(check){
+          return state.turn==='w' ? 'Black wins by checkmate.' : 'White wins by checkmate.';
+        }
+        return 'Draw by stalemate.';
+      }
+      return null;
+    }
+
+    function evaluate(state){
+      let score = 0;
+      for(let r=0;r<8;r++){
+        for(let c=0;c<8;c++){
+          const p = state.board[r][c];
+          if(!p) continue;
+          const val = pieceValue(p);
+
+          if(isWhite(p)) score += val;
+          else score -= val;
+
+          const centerBonus = (3.5 - Math.abs(3.5-c)) + (3.5 - Math.abs(3.5-r));
+          if(p.toLowerCase()==='n' || p.toLowerCase()==='b'){
+            score += isWhite(p) ? centerBonus*5 : -centerBonus*5;
+          }
+          if(p.toLowerCase()==='p'){
+            score += isWhite(p) ? (6-r)*7 : -(r-1)*7;
+          }
+        }
+      }
+
+      const whiteMob = allLegalMoves({...state, turn:'w'}, 'w').length;
+      const blackMob = allLegalMoves({...state, turn:'b'}, 'b').length;
+      score += (whiteMob - blackMob) * 1.4;
+      return score;
+    }
+
+    function moveToString(move, before){
+      const piece = before.board[move.from.r][move.from.c];
+      const target = before.board[move.to.r][move.to.c];
+      const capture = !!target || move.enPassantCapture;
+      if(move.castle==='K') return 'O-O';
+      if(move.castle==='Q') return 'O-O-O';
+      const name = piece.toLowerCase()==='p' ? '' : piece.toUpperCase();
+      const pawnPrefix = (piece.toLowerCase()==='p' && capture) ? alg(move.from.r, move.from.c)[0] : '';
+      return `${name}${pawnPrefix}${capture?'x':''}${alg(move.to.r, move.to.c)}${move.promotion?'=Q':''}`;
+    }
+
+    function orderedMoves(state, moves){
+      return moves.slice().sort((a,b)=>{
+        const ta = state.board[a.to.r][a.to.c];
+        const tb = state.board[b.to.r][b.to.c];
+        const sa = (ta ? pieceValue(ta) : 0) + (a.castle ? 35 : 0) + (a.promotion ? 800 : 0);
+        const sb = (tb ? pieceValue(tb) : 0) + (b.castle ? 35 : 0) + (b.promotion ? 800 : 0);
+        return sb - sa;
+      });
+    }
+
+    function minimax(state, depth, alpha, beta, maximizing){
+      const terminal = resultIfAny(state);
+      if(terminal){
+        if(terminal === 'White wins by checkmate.') return { score: 1000000 };
+        if(terminal === 'Black wins by checkmate.') return { score: -1000000 };
+        return { score: 0 };
+      }
+
+      if(depth === 0){
+        return { score: evaluate(state) };
+      }
+
+      const color = maximizing ? 'w' : 'b';
+      let moves = allLegalMoves({...state, turn:color}, color);
+      moves = orderedMoves({...state, turn:color}, moves);
+
+      if(maximizing){
+        let bestScore = -Infinity;
+        let bestMove = moves[0] || null;
+        for(const mv of moves){
+          const next = applyMove({...state, turn:color}, mv);
+          const ev = minimax(next, depth-1, alpha, beta, false);
+          if(ev.score > bestScore){
+            bestScore = ev.score;
+            bestMove = mv;
+          }
+          alpha = Math.max(alpha, bestScore);
+          if(beta <= alpha) break;
+        }
+        return { score: bestScore, move: bestMove };
+      } else {
+        let bestScore = Infinity;
+        let bestMove = moves[0] || null;
+        for(const mv of moves){
+          const next = applyMove({...state, turn:color}, mv);
+          const ev = minimax(next, depth-1, alpha, beta, true);
+          if(ev.score < bestScore){
+            bestScore = ev.score;
+            bestMove = mv;
+          }
+          beta = Math.min(beta, bestScore);
+          if(beta <= alpha) break;
+        }
+        return { score: bestScore, move: bestMove };
+      }
+    }
+
+    function chooseBotMove(state){
+      let moves = allLegalMoves(state, 'b');
+      if(!moves.length) return null;
+      moves = orderedMoves({...state, turn:'b'}, moves);
+
+      for(const mv of moves){
+        const next = applyMove({...state, turn:'b'}, mv);
+        const res = resultIfAny(next);
+        if(res === 'Black wins by checkmate.') return mv;
+      }
+
+      const best = minimax({...state, turn:'b'}, 3, -Infinity, Infinity, false);
+      if(best.move){
+        const legal = moves.some(m =>
+          m.from.r===best.move.from.r &&
+          m.from.c===best.move.from.c &&
+          m.to.r===best.move.to.r &&
+          m.to.c===best.move.to.c &&
+          (!!m.castle === !!best.move.castle) &&
+          (!!m.enPassantCapture === !!best.move.enPassantCapture)
+        );
+        if(legal) return best.move;
+      }
+
+      return moves[0];
+    }
+
+    function setStatus(text){
+      statusEl.innerHTML = text;
+    }
+
+    function refreshMoveLog(){
+      const items = game.moveTexts.slice(-20).reverse();
+      moveLogEl.innerHTML = items.map(t => `<div class="move-entry">${t}</div>`).join('');
+    }
+
+    function renderBoard(){
+      const frag = document.createDocumentFragment();
+
+      for(let r=0;r<8;r++){
+        for(let c=0;c<8;c++){
+          const sq = document.createElement('div');
+          sq.className = `square ${((r+c)%2===1)?'dark':'light'}`;
+          sq.dataset.r = r;
+          sq.dataset.c = c;
+
+          if(game.selected && game.selected.r===r && game.selected.c===c){
+            sq.classList.add('selected');
+          }
+
+          if(game.lastMove){
+            if((game.lastMove.from.r===r && game.lastMove.from.c===c) ||
+               (game.lastMove.to.r===r && game.lastMove.to.c===c)){
+              sq.classList.add('lastmove');
+            }
+          }
+
+          const legal = game.legalMoves.find(m => m.to.r===r && m.to.c===c);
+          if(legal){
+            const target = game.board[r][c];
+            if(target || legal.enPassantCapture) sq.classList.add('capture');
+            else sq.classList.add('legal');
+          }
+
+          const piece = game.board[r][c];
+          if(piece){
+            const pieceSpan = document.createElement('span');
+            pieceSpan.className = 'piece';
+            pieceSpan.textContent = PIECES[piece];
+            sq.appendChild(pieceSpan);
+          }
+
+          sq.addEventListener('click', onSquareClick);
+          frag.appendChild(sq);
+        }
+      }
+
+      boardEl.innerHTML = '';
+      boardEl.appendChild(frag);
+
+      whiteCapsEl.textContent = game.whiteCaptured.length ? game.whiteCaptured.map(p=>PIECES[p]).join(' ') : '—';
+      blackCapsEl.textContent = game.blackCaptured.length ? game.blackCaptured.map(p=>PIECES[p]).join(' ') : '—';
+      refreshMoveLog();
+    }
+
+    function finalizeResultIfAny(){
+      const result = resultIfAny(game);
+      if(result){
+        game.gameOver = true;
+        game.result = result;
+        setStatus(`<strong>${result}</strong>`);
+        if(result === 'White wins by checkmate.'){
+          unlockBox.classList.add('show');
+          createVictoryParticles();
+          beep(640, 0.10, 'triangle', 0.04);
+          setTimeout(()=>beep(820, 0.14, 'triangle', 0.035), 120);
+        }
+        return true;
+      }
+      return false;
+    }
+
+    function makeMove(move, byBot=false){
+      const before = JSON.parse(JSON.stringify(game));
+      const notation = moveToString(move, before);
+      const capture = !!before.board[move.to.r][move.to.c] || !!move.enPassantCapture;
+
+      game.history.push(JSON.parse(JSON.stringify(before)));
+      game = applyMove(game, move);
+      game.history = before.history.concat([before]);
+      game.moveTexts = before.moveTexts.concat([(byBot ? 'Bot: ' : 'You: ') + notation]);
+
+      playMoveSound(capture);
+      renderBoard();
+
+      if(finalizeResultIfAny()) return;
+
+      const side = game.turn==='w' ? 'White' : 'Black';
+      const chk = inCheck(game.board, game.turn);
+      setStatus(`${side} to move.${chk ? ' ' + side + ' is in check.' : ''}`);
+    }
+
+    function onSquareClick(e){
+      if(game.gameOver) return;
+      if(game.turn !== 'w') return;
+
+      const r = +e.currentTarget.dataset.r;
+      const c = +e.currentTarget.dataset.c;
+      const piece = game.board[r][c];
+
+      const chosen = game.legalMoves.find(m => m.to.r===r && m.to.c===c);
+      if(chosen){
+        makeMove(chosen, false);
+        game.selected = null;
+        game.legalMoves = [];
+        renderBoard();
+
+        if(!game.gameOver){
+          setStatus('Bot is thinking...');
+          setTimeout(botMove, 160);
+        }
+        return;
+      }
+
+      if(piece && colorOf(piece)==='w'){
+        game.selected = {r,c};
+        game.legalMoves = legalMovesFor(game, r, c);
+        beep(700, 0.03, 'sine', 0.01);
+      } else {
+        game.selected = null;
+        game.legalMoves = [];
+      }
+
+      renderBoard();
+    }
+
+    function botMove(){
+      if(game.gameOver || game.turn!=='b') return;
+
+      const legal = allLegalMoves(game, 'b');
+      if(!legal.length){
+        finalizeResultIfAny();
+        return;
+      }
+
+      let move = chooseBotMove(game);
+      if(!move) move = legal[0];
+
+      const stillLegal = legal.some(m =>
+        m.from.r===move.from.r &&
+        m.from.c===move.from.c &&
+        m.to.r===move.to.r &&
+        m.to.c===move.to.c &&
+        (!!m.castle === !!move.castle) &&
+        (!!m.enPassantCapture === !!move.enPassantCapture)
+      );
+
+      if(!stillLegal) move = legal[0];
+
+      makeMove(move, true);
+      game.selected = null;
+      game.legalMoves = [];
+      renderBoard();
+    }
+
+    function startNewGame(){
+      game = createGame();
+      unlockBox.classList.remove('show');
+      setStatus('You are <strong>White</strong>. Tap or click a piece, then tap/click a destination.');
+      renderBoard();
+    }
+
+    function undoLastFullMove(){
+      if(game.history.length >= 2){
+        game = JSON.parse(JSON.stringify(game.history[game.history.length - 2]));
+      } else if(game.history.length === 1){
+        game = JSON.parse(JSON.stringify(game.history[0]));
+      } else {
+        return;
+      }
+
+      if(game.moveTexts.length >= 2){
+        game.moveTexts = game.moveTexts.slice(0, -2);
+      } else if(game.moveTexts.length === 1){
+        game.moveTexts = [];
+      }
+
+      game.selected = null;
+      game.legalMoves = [];
+      game.gameOver = false;
+      game.result = '';
+      unlockBox.classList.remove('show');
+      setStatus('Move undone. Your turn.');
+      renderBoard();
+      beep(420, 0.05, 'sine', 0.02);
+    }
+
+    function getHint(){
+      if(game.gameOver || game.turn!=='w') return;
+      let moves = allLegalMoves(game, 'w');
+      if(!moves.length) return;
+      moves = orderedMoves({...game, turn:'w'}, moves);
+
+      let bestScore = -Infinity;
+      let bestMove = moves[0];
+
+      for(const mv of moves){
+        const next = applyMove({...game, turn:'w'}, mv);
+        let sc = evaluate(next);
+        const res = resultIfAny(next);
+        if(res === 'White wins by checkmate.') sc += 1000000;
+        if(inCheck(next.board, 'b')) sc += 50;
+        const target = game.board[mv.to.r][mv.to.c];
+        if(target) sc += pieceValue(target) * 0.2;
+
+        if(sc > bestScore){
+          bestScore = sc;
+          bestMove = mv;
+        }
+      }
+
+      setStatus(`Hint: consider <strong>${moveToString(bestMove, game)}</strong>`);
+      beep(760, 0.04, 'triangle', 0.02);
+    }
+
+    newGameBtn.addEventListener('click', startNewGame);
+    undoBtn.addEventListener('click', undoLastFullMove);
+    hintBtn.addEventListener('click', getHint);
+
+    window.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape' && chessModal.classList.contains('show')){
+        chessModal.classList.remove('show');
+        document.body.style.overflow='';
+      }
+    });
+
+    startNewGame();
+  </script>
+</body>
+</html>

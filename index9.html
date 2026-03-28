@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 9 — After the Noise, Still You</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0c0611;
+      --bg2:#16081d;
+      --panel:rgba(255,255,255,0.08);
+      --panel2:rgba(255,255,255,0.05);
+      --border:rgba(255,255,255,0.14);
+      --text:#fff7fc;
+      --muted:#dbcddd;
+      --accent:#f35fc7;
+      --accent2:#8f63ff;
+      --accent3:#ffd595;
+      --gold:#ffd88f;
+      --shadow:0 20px 60px rgba(0,0,0,0.35);
+      --radius:30px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:'Poppins',sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 18% 20%, rgba(243,95,199,.16), transparent 28%),
+        radial-gradient(circle at 82% 16%, rgba(143,99,255,.18), transparent 28%),
+        radial-gradient(circle at 52% 85%, rgba(255,213,149,.10), transparent 22%),
+        linear-gradient(135deg,#0b0410 0%, #17091c 55%, #100518 100%);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background-image:
+        radial-gradient(2px 2px at 10% 18%, rgba(255,255,255,.5) 40%, transparent 41%),
+        radial-gradient(1.5px 1.5px at 26% 65%, rgba(255,255,255,.4) 40%, transparent 41%),
+        radial-gradient(2px 2px at 78% 12%, rgba(255,255,255,.5) 40%, transparent 41%),
+        radial-gradient(1.5px 1.5px at 92% 28%, rgba(255,255,255,.35) 40%, transparent 41%),
+        radial-gradient(2px 2px at 65% 80%, rgba(255,255,255,.25) 40%, transparent 41%),
+        radial-gradient(1.5px 1.5px at 48% 10%, rgba(255,255,255,.35) 40%, transparent 41%);
+      opacity:.7;
+      z-index:0;
+    }
+
+    .loading-screen{
+      position:fixed;
+      inset:0;
+      z-index:3000;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:14px;
+      background:
+        radial-gradient(circle at center, rgba(243,95,199,.10), transparent 30%),
+        linear-gradient(180deg,#09030d,#130717 60%,#09030d);
+      transition:opacity .8s ease, visibility .8s ease;
+    }
+    .loading-screen.hidden{
+      opacity:0;
+      visibility:hidden;
+    }
+    .loading-icon{
+      font-size:54px;
+      filter:drop-shadow(0 0 18px rgba(243,95,199,.4));
+      animation:pulse 1.8s infinite ease-in-out;
+    }
+    @keyframes pulse{
+      0%,100%{transform:scale(1)}
+      50%{transform:scale(1.12)}
+    }
+    .loading-screen h1{
+      margin:0;
+      font-size:clamp(2rem,4vw,3.6rem);
+      font-weight:700;
+      text-align:center;
+    }
+    .loading-screen .sub1,
+    .loading-screen .sub2{
+      margin:0;
+      text-align:center;
+      color:var(--muted);
+      max-width:760px;
+      padding:0 20px;
+      line-height:1.8;
+    }
+    .loader{
+      width:min(500px,82vw);
+      height:10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      overflow:hidden;
+      margin-top:10px;
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .loader-fill{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));
+      box-shadow:0 0 20px rgba(243,95,199,.35);
+      animation:loadBar 2.8s ease forwards;
+    }
+    @keyframes loadBar{
+      from{width:0}
+      to{width:100%}
+    }
+
+    .entry-overlay{
+      position:fixed;
+      inset:0;
+      z-index:2500;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      background:rgba(7,2,11,.78);
+      backdrop-filter:blur(12px);
+      transition:opacity .7s ease, visibility .7s ease;
+    }
+    .entry-overlay.hidden{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+
+    .entry-card, .hero, .section{
+      background:linear-gradient(135deg, rgba(255,255,255,.09), rgba(255,255,255,.04));
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(16px);
+    }
+
+    .entry-card{
+      width:min(860px,95vw);
+      border-radius:36px;
+      padding:48px 30px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .entry-card::before, .hero::before, .section::before{
+      content:"";
+      position:absolute;
+      inset:-15%;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 20% 28%, rgba(243,95,199,.16), transparent 22%),
+        radial-gradient(circle at 82% 18%, rgba(143,99,255,.16), transparent 25%),
+        radial-gradient(circle at 50% 85%, rgba(255,213,149,.08), transparent 18%);
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 18px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      font-size:.88rem;
+      font-weight:600;
+      color:#f4e8f2;
+      position:relative;
+      z-index:1;
+    }
+
+    .entry-card h2{
+      position:relative;
+      z-index:1;
+      margin:20px 0 12px;
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(3.2rem,7vw,5.8rem);
+      line-height:.95;
+      font-weight:700;
+    }
+    .gradient{
+      background:linear-gradient(90deg,#fff,#ffd7eb,#ffd595);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      color:transparent;
+    }
+    .entry-text{
+      position:relative;
+      z-index:1;
+      max-width:700px;
+      margin:0 auto 26px;
+      color:var(--muted);
+      line-height:1.9;
+      font-size:1.05rem;
+    }
+
+    .btn-row{
+      position:relative;
+      z-index:1;
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:16px;
+    }
+
+    .btn{
+      border:none;
+      cursor:pointer;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:16px 28px;
+      border-radius:999px;
+      font-family:'Poppins',sans-serif;
+      font-size:1rem;
+      font-weight:600;
+      color:white;
+      transition:.28s ease;
+    }
+    .btn:hover{transform:translateY(-2px)}
+    .btn-primary{
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      box-shadow:0 10px 30px rgba(243,95,199,.25);
+    }
+    .btn-secondary{
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+    }
+
+    .toast{
+      position:fixed;
+      top:18px;
+      left:50%;
+      transform:translateX(-50%);
+      z-index:2600;
+      padding:14px 24px;
+      border-radius:999px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      color:#fff;
+      font-weight:700;
+      box-shadow:var(--shadow);
+      opacity:0;
+      pointer-events:none;
+      transition:.4s ease;
+    }
+    .toast.show{
+      opacity:1;
+      top:28px;
+    }
+
+    .top-badge{
+      position:sticky;
+      top:16px;
+      z-index:20;
+      width:fit-content;
+      margin:18px auto 0;
+      padding:12px 28px;
+      border-radius:999px;
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.12);
+      backdrop-filter:blur(14px);
+      box-shadow:var(--shadow);
+      font-family:'Great Vibes',cursive;
+      font-size:2rem;
+      line-height:1;
+    }
+
+    .container{
+      position:relative;
+      z-index:1;
+      width:min(1200px,92vw);
+      margin:28px auto 130px;
+    }
+
+    .hero{
+      position:relative;
+      overflow:hidden;
+      border-radius:36px;
+      padding:44px 34px;
+    }
+    .hero-content{
+      position:relative;
+      z-index:1;
+      text-align:center;
+      max-width:980px;
+      margin:0 auto;
+    }
+    .hero h1{
+      margin:18px 0 18px;
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(3.5rem,8vw,7rem);
+      line-height:.94;
+      font-weight:700;
+    }
+    .hero-line{
+      margin:0 auto;
+      max-width:920px;
+      color:#f9ebf7;
+      font-size:clamp(1.08rem,2vw,1.42rem);
+      line-height:1.95;
+    }
+
+    .section{
+      position:relative;
+      overflow:hidden;
+      border-radius:30px;
+      padding:34px;
+      margin-top:28px;
+    }
+    .section-inner{
+      position:relative;
+      z-index:1;
+    }
+    .section h2{
+      margin:12px 0 14px;
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(2.2rem,4.6vw,4.1rem);
+      line-height:1;
+    }
+    .section p{
+      margin:0 0 12px;
+      color:var(--muted);
+      line-height:1.95;
+      font-size:1.03rem;
+    }
+    .deep-text{
+      color:#fff0f8 !important;
+      font-size:1.09rem !important;
+    }
+
+    .cards{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+      gap:18px;
+      margin-top:20px;
+    }
+    .card{
+      padding:22px;
+      border-radius:24px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.1);
+      cursor:pointer;
+      transition:.3s ease;
+    }
+    .card:hover{
+      transform:translateY(-4px);
+      background:rgba(255,255,255,.08);
+    }
+    .card .icon{
+      font-size:1.5rem;
+      display:block;
+      margin-bottom:10px;
+    }
+    .card h3{
+      margin:0;
+      font-size:1.1rem;
+      color:#fff6fb;
+    }
+    .card .reveal{
+      max-height:0;
+      overflow:hidden;
+      opacity:0;
+      transition:max-height .45s ease, opacity .45s ease;
+      margin-top:12px;
+      color:#f3e5ef;
+      line-height:1.85;
+      font-size:.96rem;
+    }
+    .card.active .reveal{
+      max-height:220px;
+      opacity:1;
+    }
+
+    .steady-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:16px;
+      margin-top:18px;
+    }
+    .steady-item{
+      padding:18px 20px;
+      border-radius:20px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.1);
+      color:#fff2fb;
+      line-height:1.8;
+      font-weight:500;
+    }
+
+    .repair-wrap{
+      display:grid;
+      grid-template-columns:1.06fr .94fr;
+      gap:24px;
+      align-items:center;
+    }
+    .repair-box{
+      min-height:320px;
+      border-radius:28px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.1);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
+      text-align:center;
+    }
+
+    .heart-wrap{
+      position:relative;
+      width:170px;
+      height:150px;
+      margin-bottom:24px;
+      filter:drop-shadow(0 0 22px rgba(243,95,199,.25));
+    }
+    .heart-shape{
+      position:absolute;
+      width:84px;
+      height:130px;
+      background:linear-gradient(180deg,#ff6abf,#ff5f8e);
+      border-radius:84px 84px 0 0;
+      top:18px;
+    }
+    .heart-left{
+      left:34px;
+      transform:rotate(-45deg);
+      transform-origin:0 100%;
+    }
+    .heart-right{
+      right:34px;
+      transform:rotate(45deg);
+      transform-origin:100% 100%;
+    }
+
+    .thread-line{
+      position:absolute;
+      width:2px;
+      height:0;
+      top:24px;
+      left:84px;
+      background:linear-gradient(180deg,#fff7cf,#ffd595);
+      box-shadow:0 0 10px rgba(255,213,149,.8);
+      transition:height 2.5s linear;
+      z-index:4;
+    }
+    .stitch{
+      position:absolute;
+      width:18px;
+      height:4px;
+      border-radius:4px;
+      background:#ffe3a8;
+      left:76px;
+      opacity:0;
+      box-shadow:0 0 8px rgba(255,213,149,.55);
+      transition:opacity .35s ease;
+      z-index:5;
+    }
+    .s1{top:38px}
+    .s2{top:60px}
+    .s3{top:82px}
+    .s4{top:104px}
+    .s5{top:126px}
+
+    .heart-wrap.repaired .thread-line{height:106px}
+    .heart-wrap.repaired .stitch{opacity:1}
+
+    .hold-button{
+      width:min(320px,90%);
+      height:58px;
+      border-radius:999px;
+      position:relative;
+      overflow:hidden;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.16);
+      cursor:pointer;
+      user-select:none;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:600;
+      margin-top:8px;
+    }
+    .hold-fill{
+      position:absolute;
+      inset:0;
+      width:0%;
+      background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));
+      transition:width .08s linear;
+    }
+    .hold-label{
+      position:relative;
+      z-index:1;
+    }
+    .repair-msg{
+      min-height:58px;
+      margin-top:16px;
+      color:#fff2fb;
+      line-height:1.85;
+    }
+
+    .star-zone{
+      text-align:center;
+    }
+    .star-field{
+      position:relative;
+      height:250px;
+      border-radius:28px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.1);
+      overflow:hidden;
+      margin-top:12px;
+    }
+    .star{
+      position:absolute;
+      top:50%;
+      width:92px;
+      height:92px;
+      margin-top:-46px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:radial-gradient(circle at 35% 35%, #fff7d3, #ffd283 48%, #f7a3de 82%);
+      box-shadow:0 0 28px rgba(255,210,131,.4);
+      color:#2b0b20;
+      font-weight:700;
+      transition:left 1.5s ease, transform 1.5s ease;
+    }
+    .star::before{
+      content:"✦";
+      position:absolute;
+      top:-18px;
+      color:#ffe39d;
+      text-shadow:0 0 12px rgba(255,227,157,.8);
+      font-size:1.3rem;
+    }
+    .star.me{left:16%}
+    .star.you{left:72%}
+    .star-field.aligned .star.me{left:39%}
+    .star-field.aligned .star.you{left:52%}
+    .same-msg{
+      min-height:56px;
+      margin-top:14px;
+      color:#fff1fa;
+      line-height:1.9;
+    }
+
+    .letter-box{
+      margin-top:18px;
+      padding:24px;
+      border-radius:24px;
+      background:rgba(255,255,255,.045);
+      border:1px solid rgba(255,255,255,.1);
+    }
+    .type-line{
+      opacity:0;
+      transform:translateY(10px);
+      transition:.55s ease;
+      color:#fff1f8;
+      line-height:2;
+      margin-bottom:12px;
+    }
+    .type-line.show{
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    .final-reassure{
+      margin-top:18px;
+      text-align:center;
+    }
+    .reassure-text{
+      max-height:0;
+      overflow:hidden;
+      opacity:0;
+      transition:max-height .6s ease, opacity .6s ease;
+      margin-top:14px;
+      color:#fff1fa;
+      line-height:2;
+    }
+    .reassure-text.show{
+      max-height:260px;
+      opacity:1;
+    }
+
+    .final-line{
+      margin:0;
+      text-align:center;
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(2.2rem,5vw,4.8rem);
+      line-height:1.08;
+    }
+
+    .nav-row{
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:16px;
+      margin-top:24px;
+    }
+
+    .audio-dock{
+      position:fixed;
+      right:20px;
+      bottom:20px;
+      z-index:30;
+      min-width:320px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:14px 16px;
+      border-radius:26px;
+      background:rgba(30,17,39,.86);
+      border:1px solid rgba(255,255,255,.12);
+      backdrop-filter:blur(14px);
+      box-shadow:var(--shadow);
+    }
+    .audio-btn{
+      width:48px;
+      height:48px;
+      border:none;
+      border-radius:50%;
+      cursor:pointer;
+      color:#fff;
+      font-size:1rem;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+    }
+    .audio-btn.secondary{
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .audio-meta{
+      flex:1;
+      min-width:0;
+    }
+    .audio-meta strong{
+      display:block;
+      font-size:.96rem;
+    }
+    .audio-meta span{
+      font-size:.82rem;
+      color:var(--muted);
+    }
+    .bars{
+      display:flex;
+      align-items:flex-end;
+      gap:4px;
+      height:26px;
+    }
+    .bars span{
+      width:4px;
+      border-radius:4px;
+      background:linear-gradient(180deg,#ffdcee,#ff83d2);
+      animation:bounce 1s infinite ease-in-out;
+      opacity:.9;
+    }
+    .bars span:nth-child(1){height:8px;animation-delay:.1s}
+    .bars span:nth-child(2){height:15px;animation-delay:.2s}
+    .bars span:nth-child(3){height:21px;animation-delay:.3s}
+    .bars span:nth-child(4){height:12px;animation-delay:.4s}
+    .bars span:nth-child(5){height:18px;animation-delay:.5s}
+    @keyframes bounce{
+      0%,100%{transform:scaleY(.7);opacity:.55}
+      50%{transform:scaleY(1.18);opacity:1}
+    }
+    .paused .bars span{
+      animation-play-state:paused;
+      opacity:.35;
+    }
+
+    @media (max-width:920px){
+      .repair-wrap{grid-template-columns:1fr}
+      .audio-dock{
+        left:12px;
+        right:12px;
+        bottom:12px;
+        min-width:auto;
+      }
+    }
+
+    @media (max-width:640px){
+      .entry-card,.hero,.section{padding:24px}
+      .entry-card h2{font-size:3.15rem}
+      .hero h1{font-size:3.7rem}
+      .hero-line{line-height:1.75}
+      .top-badge{font-size:1.6rem}
+      .star{width:78px;height:78px;margin-top:-39px;font-size:.88rem}
+      .star-field.aligned .star.me{left:35%}
+      .star-field.aligned .star.you{left:52%}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-icon">🤍</div>
+    <h1>Loading Chapter 9...</h1>
+    <p class="sub1">After the Noise, Still You</p>
+    <p class="sub2">Some love stories are not proven by never breaking tension, but by choosing each other gently again.</p>
+    <div class="loader"><div class="loader-fill"></div></div>
+  </div>
+
+  <div class="entry-overlay" id="entryOverlay">
+    <div class="entry-card">
+      <div class="pill">✨ Chapter Nine ✨</div>
+      <h2 class="gradient">After the Noise,<br>Still You</h2>
+      <p class="entry-text">
+        This page is not about sadness.
+        It is about certainty.
+        It is about the kind of love that does not become smaller after a hard moment,
+        but becomes more intentional, more careful, more honest, and more sure of where it wants to remain.
+      </p>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="enterMusicBtn">Enter With Music ✨</button>
+        <button class="btn btn-secondary" id="enterSilentBtn">Enter Silently</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">🤍 Chapter 9 loaded</div>
+
+  <div class="top-badge">Sinta ❤️ Chokie</div>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-content">
+        <div class="pill">After the Noise, Still You</div>
+        <h1>
+          Even after the noise,<br>
+          <span class="gradient">I still choose you.</span>
+        </h1>
+        <p class="hero-line">
+          “Even when our voices shake,<br>
+          even when misunderstanding stands between us for a while,<br>
+          the softest truth remains the same:<br>
+          I still love you, and I still want us.”
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-inner">
+        <div class="pill">Not to win, but to return</div>
+        <h2>Not to win an argument. To return to us.</h2>
+        <p class="deep-text">
+          This page is not about proving who was right.
+          It is about choosing each other again.
+          It is about being mature enough to admit that love is not protected by pride,
+          but by gentleness, honesty, patience, and the willingness to come back to understanding.
+        </p>
+        <p class="deep-text">
+          I do not want to hold your heart like something I need to defeat.
+          I want to hold it like something I need to understand.
+          I do not want a relationship where one person has to lose so the other can feel correct.
+          I want a relationship where even in difficult moments, we remember that we are still on the same side.
+        </p>
+        <p class="deep-text">
+          We may both get things wrong.
+          We may both feel hurt.
+          We may both struggle to say the perfect thing in the heat of a moment.
+          But even then, I do not want distance more than I want you.
+          I do not want silence more than I want peace between us.
+          I do not want ego more than I want the life we are trying to build together.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-inner">
+        <div class="pill">What I want you to feel with me</div>
+        <h2>What I always want your heart to feel beside mine</h2>
+        <p>Tap each one.</p>
+
+        <div class="cards">
+          <div class="card">
+            <span class="icon">🕊️</span>
+            <h3>Safe</h3>
+            <div class="reveal">
+              You do not need to fear that one difficult moment can erase how deeply I care for you.
+              My love is not so weak that tension can take it away.
+              I want you to feel secure in the truth that even when things are hard, I am still yours with gentleness.
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="icon">🎧</span>
+            <h3>Heard</h3>
+            <div class="reveal">
+              I do not want to only explain myself.
+              I want to understand you.
+              I want to hear what hurt you, what weighed on you, what you needed in that moment,
+              because loving you should include listening to your heart carefully, not just waiting for my turn to speak.
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="icon">🌙</span>
+            <h3>Chosen</h3>
+            <div class="reveal">
+              Even after tension, my heart still reaches for you, not away from you.
+              I want you to know that being upset does not make me less sure of you.
+              If anything, it reminds me that what we have matters enough to protect with more care.
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="icon">💗</span>
+            <h3>Loved</h3>
+            <div class="reveal">
+              My love for you does not disappear when emotions become difficult.
+              It does not become uncertain because a moment became imperfect.
+              I want you to feel that even when we struggle, you are still deeply loved, still precious, still home to me.
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="icon">✨</span>
+            <h3>Returned To</h3>
+            <div class="reveal">
+              No matter how loud a moment becomes, I still want us to come back gently.
+              Back to softness.
+              Back to truth.
+              Back to the part of us that remembers we are not enemies,
+              just two hearts learning how to love each other more carefully.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-inner">
+        <div class="pill">What fights can never change</div>
+        <h2>There are truths a hard moment cannot rewrite</h2>
+        <p class="deep-text">
+          Some things should stay steady.
+          Some things should not become fragile every time a conversation becomes hard.
+          If love is real, then it should still know itself even when the moment is imperfect.
+        </p>
+
+        <div class="steady-grid">
+          <div class="steady-item">They do not change that I love you deeply and sincerely.</div>
+          <div class="steady-item">They do not change that I still see a future with you.</div>
+          <div class="steady-item">They do not change that your feelings matter to me.</div>
+          <div class="steady-item">They do not change that I want closeness, not distance.</div>
+          <div class="steady-item">They do not change that I want us to feel safe again, not stuck in pride.</div>
+          <div class="steady-item">They do not change that even after a difficult moment, my heart still comes back to you.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-inner">
+        <div class="pill">Hold to Repair</div>
+        <h2>Choose repair over pride</h2>
+
+        <div class="repair-wrap">
+          <div class="repair-box">
+            <div class="heart-wrap" id="heartWrap">
+              <div class="heart-shape heart-left"></div>
+              <div class="heart-shape heart-right"></div>
+              <div class="thread-line"></div>
+              <div class="stitch s1"></div>
+              <div class="stitch s2"></div>
+              <div class="stitch s3"></div>
+              <div class="stitch s4"></div>
+              <div class="stitch s5"></div>
+            </div>
+
+            <div class="hold-button" id="holdButton">
+              <div class="hold-fill" id="holdFill"></div>
+              <div class="hold-label" id="holdLabel">Hold to Choose Repair</div>
+            </div>
+
+            <div class="repair-msg" id="repairMsg"></div>
+          </div>
+
+          <div>
+            <p class="deep-text">
+              This is not about something being broken.
+              It is about choosing to mend the moment instead of letting it grow colder.
+            </p>
+            <p class="deep-text">
+              Hold the button for a few seconds and let the thread come together.
+            </p>
+            <p class="deep-text">
+              Because love is not proven by never facing tension.
+              It is proven by the willingness to return with softness, humility, and care.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-inner">
+        <div class="pill">Same Side</div>
+        <h2>Bring us back to the same side</h2>
+        <div class="star-zone">
+          <p class="deep-text">
+            Hard moments can make it feel like we are standing apart.
+            But I never want love to become me versus you.
+          </p>
+
+          <div class="star-field" id="starField">
+            <div class="star me">me</div>
+            <div class="star you">you</div>
+          </div>
+
+          <div style="margin-top:18px;">
+            <button class="btn btn-primary" id="sameSideBtn">Bring us back to the same side</button>
+          </div>
+
+          <div class="same-msg" id="sameMsg"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-inner">
+        <div class="pill">Healing Letter</div>
+        <h2>What I really want you to know</h2>
+        <p class="deep-text">
+          This is not just an apology.
+          It is reassurance.
+          It is intention.
+          It is my heart saying clearly that after hard moments, I still know where it wants to stay.
+        </p>
+
+        <button class="btn btn-primary" id="revealLetterBtn">Reveal the letter slowly</button>
+
+        <div class="letter-box" id="letterBox">
+          <div class="type-line">I know we both hurt sometimes.</div>
+          <div class="type-line">I know mistakes can happen, words can land imperfectly, and emotions can become heavier than we meant them to.</div>
+          <div class="type-line">I am not minimizing that.</div>
+          <div class="type-line">I am not pretending that difficult moments do not matter.</div>
+          <div class="type-line">They do matter, because your heart matters to me.</div>
+          <div class="type-line">But what I want you to know is that these moments do not make me unsure of you.</div>
+          <div class="type-line">They do not make me love you less.</div>
+          <div class="type-line">They do not make your place in my heart fragile.</div>
+          <div class="type-line">I do not want a love that only feels certain when everything is easy.</div>
+          <div class="type-line">I want a love that can be honest, human, and still deeply committed.</div>
+          <div class="type-line">A love that can pause, breathe, and return to tenderness.</div>
+          <div class="type-line">A love that says: even here, even now, even after this, I still choose you.</div>
+          <div class="type-line">I want us to feel safe again.</div>
+          <div class="type-line">Safe enough to speak honestly.</div>
+          <div class="type-line">Safe enough to admit when something hurt.</div>
+          <div class="type-line">Safe enough to repair without fear that one hard moment will undo everything beautiful between us.</div>
+          <div class="type-line">Because what I want with you is not something shallow.</div>
+          <div class="type-line">I want to build a love that survives honesty, tension, growth, and repair.</div>
+          <div class="type-line">A love that does not run from discomfort, but learns how to hold each other better through it.</div>
+          <div class="type-line">A love that remains soft, even when life is not.</div>
+          <div class="type-line">And if there is one truth I want to leave in your hands, it is this:</div>
+          <div class="type-line">after the noise, after the misunderstanding, after the imperfect moment, my heart still comes back to you with intention.</div>
+        </div>
+
+        <div class="final-reassure">
+          <button class="btn btn-secondary" id="reassureBtn">Open final reassurance</button>
+          <div class="reassure-text" id="reassureText">
+            I cannot promise a relationship with no difficult moments.
+            I cannot promise that we will never misunderstand each other, never get overwhelmed, or never say something imperfectly.
+            But I can promise this:
+            I will never want pride more than I want peace with you.
+            I will never want distance more than I want understanding.
+            And I will keep choosing the kind of love that returns, listens, learns, and reaches for you again.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-inner">
+        <div class="pill">What matters most</div>
+        <h2>What matters most</h2>
+        <p class="deep-text">
+          We may fight.
+          We may misunderstand.
+          We may say things imperfectly.
+          But if love keeps bringing us back to tenderness,
+          then maybe that is what matters most.
+        </p>
+        <p class="deep-text" style="margin-top:18px;">
+          Some small fights do not pull two hearts apart.
+          Sometimes they teach them how to hold each other better.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-inner">
+        <div class="pill">Final Promise</div>
+        <h2>A promise I want you to believe</h2>
+        <p class="deep-text">
+          I cannot promise a love without difficult moments.
+          But I can promise a love that still reaches for you after them.
+        </p>
+        <p class="deep-text">
+          I can promise that I do not measure us by one tense conversation.
+          I measure us by the way my heart still wants to protect what we have,
+          still wants to understand you,
+          still wants to come closer,
+          still wants to choose you with calm, depth, and intention.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-inner">
+        <div class="pill">Ending</div>
+        <h2 class="final-line">
+          “Even after the noise,<br>
+          if my heart gets one final answer,<br>
+          <span class="gradient">it is still you.</span>”
+        </h2>
+
+        <div class="nav-row">
+          <a href="index8.html" class="btn btn-secondary">← Back to Page 8</a>
+          <a href="index10.html" class="btn btn-secondary">Go to Next Chapter →</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="audio-dock paused" id="audioDock">
+    <button class="audio-btn" id="playPauseBtn">▶</button>
+    <button class="audio-btn secondary" id="restartBtn">↺</button>
+    <button class="audio-btn secondary" id="muteBtn">🔊</button>
+    <div class="audio-meta">
+      <strong>Chapter 9 Song</strong>
+      <span id="audioState">Waiting to enter</span>
+    </div>
+    <div class="bars">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <audio id="bgMusic" loop>
+    <source src="song9.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const loadingScreen = document.getElementById('loadingScreen');
+    const entryOverlay = document.getElementById('entryOverlay');
+    const toast = document.getElementById('toast');
+
+    const bgMusic = document.getElementById('bgMusic');
+    const enterMusicBtn = document.getElementById('enterMusicBtn');
+    const enterSilentBtn = document.getElementById('enterSilentBtn');
+
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const muteBtn = document.getElementById('muteBtn');
+    const audioDock = document.getElementById('audioDock');
+    const audioState = document.getElementById('audioState');
+
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        loadingScreen.classList.add('hidden');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2200);
+      }, 2900);
+    });
+
+    function hideEntry(){
+      entryOverlay.classList.add('hidden');
+    }
+
+    async function playMusic(){
+      try{
+        await bgMusic.play();
+        playPauseBtn.textContent = '❚❚';
+        audioState.textContent = 'Playing song9.mp3';
+        audioDock.classList.remove('paused');
+      }catch(e){
+        audioState.textContent = 'Tap play to start music';
+      }
+    }
+
+    function pauseMusic(){
+      bgMusic.pause();
+      playPauseBtn.textContent = '▶';
+      audioState.textContent = 'Paused';
+      audioDock.classList.add('paused');
+    }
+
+    enterMusicBtn.addEventListener('click', async () => {
+      hideEntry();
+      await playMusic();
+    });
+
+    enterSilentBtn.addEventListener('click', () => {
+      hideEntry();
+      pauseMusic();
+      audioState.textContent = 'Entered silently';
+    });
+
+    playPauseBtn.addEventListener('click', async () => {
+      if(bgMusic.paused){
+        await playMusic();
+      }else{
+        pauseMusic();
+      }
+    });
+
+    restartBtn.addEventListener('click', async () => {
+      bgMusic.currentTime = 0;
+      await playMusic();
+    });
+
+    muteBtn.addEventListener('click', () => {
+      bgMusic.muted = !bgMusic.muted;
+      muteBtn.textContent = bgMusic.muted ? '🔇' : '🔊';
+    });
+
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', () => {
+        card.classList.toggle('active');
+      });
+    });
+
+    const holdButton = document.getElementById('holdButton');
+    const holdFill = document.getElementById('holdFill');
+    const holdLabel = document.getElementById('holdLabel');
+    const heartWrap = document.getElementById('heartWrap');
+    const repairMsg = document.getElementById('repairMsg');
+
+    let holdProgress = 0;
+    let holdInterval = null;
+    let repaired = false;
+
+    function startHold(){
+      if(repaired) return;
+      clearInterval(holdInterval);
+      holdInterval = setInterval(() => {
+        holdProgress += 2.5;
+        if(holdProgress >= 100){
+          holdProgress = 100;
+          clearInterval(holdInterval);
+          repaired = true;
+          heartWrap.classList.add('repaired');
+          holdLabel.textContent = 'Repair Chosen';
+          repairMsg.textContent = '“We were never meant to be perfect. We were meant to keep choosing repair over pride.”';
+        }
+        holdFill.style.width = holdProgress + '%';
+      }, 70);
+    }
+
+    function stopHold(){
+      if(repaired) return;
+      clearInterval(holdInterval);
+      const reverse = setInterval(() => {
+        holdProgress -= 4;
+        if(holdProgress <= 0){
+          holdProgress = 0;
+          clearInterval(reverse);
+        }
+        holdFill.style.width = holdProgress + '%';
+      }, 16);
+    }
+
+    ['mousedown','touchstart'].forEach(evt => holdButton.addEventListener(evt, startHold));
+    ['mouseup','mouseleave','touchend','touchcancel'].forEach(evt => holdButton.addEventListener(evt, stopHold));
+
+    const sameSideBtn = document.getElementById('sameSideBtn');
+    const starField = document.getElementById('starField');
+    const sameMsg = document.getElementById('sameMsg');
+
+    sameSideBtn.addEventListener('click', () => {
+      starField.classList.add('aligned');
+      sameMsg.textContent = 'We are not me versus you. We are us versus the moment that hurt us. And every time it matters, I will choose us.';
+    });
+
+    const revealLetterBtn = document.getElementById('revealLetterBtn');
+    const lines = document.querySelectorAll('.type-line');
+    let letterStarted = false;
+
+    revealLetterBtn.addEventListener('click', () => {
+      if(letterStarted) return;
+      letterStarted = true;
+      lines.forEach((line, index) => {
+        setTimeout(() => {
+          line.classList.add('show');
+        }, index * 820);
+      });
+    });
+
+    const reassureBtn = document.getElementById('reassureBtn');
+    const reassureText = document.getElementById('reassureText');
+
+    reassureBtn.addEventListener('click', () => {
+      reassureText.classList.toggle('show');
+      reassureBtn.textContent = reassureText.classList.contains('show')
+        ? 'Close reassurance'
+        : 'Open final reassurance';
+    });
+  </script>
+</body>
+</html>

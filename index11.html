@@ -1,0 +1,1659 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 11 — Moonlit Confession</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg1:#0f0619;
+      --bg2:#180a2c;
+      --bg3:#0c1733;
+      --text:#fbf8ff;
+      --muted:#d7cce8;
+      --soft:#b7a9cc;
+      --glass:rgba(255,255,255,0.08);
+      --border:rgba(255,255,255,0.13);
+      --shadow:0 20px 60px rgba(0,0,0,0.38);
+      --theme1:#ff64d5;
+      --theme2:#9b6cff;
+      --theme3:#74e9ff;
+      --theme4:#ffe07a;
+    }
+
+    body.theme-softmoon{
+      --theme1:#ff7ddb;
+      --theme2:#9a7cff;
+      --theme3:#7be8ff;
+      --theme4:#ffe590;
+    }
+    body.theme-pinkdream{
+      --theme1:#ff4dbf;
+      --theme2:#ff8add;
+      --theme3:#ffc9f0;
+      --theme4:#fff0c6;
+    }
+    body.theme-bluenight{
+      --theme1:#7d8fff;
+      --theme2:#4dcdf7;
+      --theme3:#92efff;
+      --theme4:#e8f7ff;
+    }
+    body.theme-starglow{
+      --theme1:#ffd86b;
+      --theme2:#ff86cf;
+      --theme3:#8ff7c2;
+      --theme4:#fff2ad;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:'Poppins',sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(255,100,213,.18), transparent 24%),
+        radial-gradient(circle at 85% 18%, rgba(116,233,255,.15), transparent 28%),
+        radial-gradient(circle at 50% 80%, rgba(155,108,255,.14), transparent 28%),
+        linear-gradient(135deg, var(--bg1), var(--bg2) 48%, var(--bg3));
+      min-height:100vh;
+      overflow-x:hidden;
+      position:relative;
+      transition:background .8s ease;
+    }
+
+    a{text-decoration:none;color:inherit}
+    button{font-family:'Poppins',sans-serif}
+
+    .container{
+      width:min(1180px, calc(100% - 30px));
+      margin:0 auto;
+      position:relative;
+      z-index:3;
+    }
+
+    .stars, .particles, .blobs, .fall-layer{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      overflow:hidden;
+    }
+
+    .star-dot{
+      position:absolute;
+      border-radius:50%;
+      background:#fff;
+      animation:twinkle linear infinite;
+    }
+    @keyframes twinkle{
+      0%,100%{opacity:.18; transform:scale(.7)}
+      50%{opacity:.95; transform:scale(1.35)}
+    }
+
+    .particle{
+      position:absolute;
+      width:4px;
+      height:4px;
+      border-radius:50%;
+      background:rgba(255,255,255,.45);
+      animation:floatParticle linear infinite;
+      filter:blur(.5px);
+    }
+    @keyframes floatParticle{
+      from{transform:translateY(100vh) translateX(0); opacity:0}
+      10%{opacity:.7}
+      to{transform:translateY(-10vh) translateX(18px); opacity:0}
+    }
+
+    .blob{
+      position:absolute;
+      border-radius:50%;
+      filter:blur(65px);
+      opacity:.22;
+      transition:transform .25s ease;
+    }
+    .blob.one{width:320px;height:320px;left:3%;top:10%;background:rgba(255,100,213,.25)}
+    .blob.two{width:360px;height:360px;right:3%;top:8%;background:rgba(116,233,255,.18)}
+    .blob.three{width:300px;height:300px;left:38%;bottom:8%;background:rgba(155,108,255,.18)}
+
+    .glass{
+      background:linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.045));
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
+      border-radius:32px;
+      position:relative;
+      overflow:hidden;
+    }
+    .glass::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(135deg, rgba(255,255,255,.05), transparent 28%, transparent 72%, rgba(255,255,255,.03));
+      pointer-events:none;
+    }
+
+    .btn{
+      position:relative;
+      border:none;
+      cursor:pointer;
+      border-radius:999px;
+      padding:16px 26px;
+      font-weight:700;
+      font-size:1rem;
+      color:#fff;
+      transition:transform .25s ease, box-shadow .25s ease;
+      overflow:hidden;
+    }
+    .btn:hover{transform:translateY(-2px)}
+    .btn:active{transform:scale(.98)}
+    .btn-primary{
+      background:linear-gradient(90deg, var(--theme1), var(--theme2), var(--theme3));
+      box-shadow:0 14px 30px rgba(139,92,246,.28);
+    }
+    .btn-secondary{
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:var(--shadow);
+    }
+    .btn-outline{
+      background:transparent;
+      border:1px solid rgba(255,255,255,.15);
+    }
+
+    .btn .ripple{
+      position:absolute;
+      border-radius:50%;
+      transform:scale(0);
+      animation:ripple .6s linear;
+      background:rgba(255,255,255,.35);
+      pointer-events:none;
+    }
+    @keyframes ripple{
+      to{transform:scale(4); opacity:0}
+    }
+
+    .section{padding:34px 0}
+    .section-title{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:16px;
+      margin-bottom:18px;
+      flex-wrap:wrap;
+    }
+    .section-title h2{
+      margin:0;
+      font-family:'Playfair Display',serif;
+      font-size:clamp(1.8rem, 3vw, 2.8rem);
+      letter-spacing:-.02em;
+    }
+    .section-title p{
+      margin:8px 0 0;
+      color:var(--muted);
+      line-height:1.8;
+      max-width:760px;
+    }
+
+    .loader{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,100,213,.18), transparent 25%),
+        radial-gradient(circle at 80% 18%, rgba(116,233,255,.15), transparent 26%),
+        linear-gradient(135deg, #0f0619, #170929, #0a142f);
+      transition:opacity .85s ease, visibility .85s ease;
+    }
+    .loader.hide{opacity:0;visibility:hidden}
+    .loader-card{
+      width:min(560px, calc(100% - 30px));
+      padding:40px 30px;
+      text-align:center;
+      border-radius:32px;
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.12);
+      backdrop-filter:blur(18px);
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .loader-moon-wrap{
+      width:120px;height:120px;position:relative;margin:0 auto 20px;
+    }
+    .loader-moon{
+      width:88px;height:88px;border-radius:50%;position:absolute;inset:0;margin:auto;
+      background:radial-gradient(circle at 35% 35%, #fff9d8, #ffe38f 45%, #f2bf3d 90%);
+      box-shadow:0 0 35px rgba(255,224,122,.45), 0 0 70px rgba(255,224,122,.16);
+      animation:moonPulse 2.5s ease-in-out infinite;
+    }
+    .loader-orbit,.loader-orbit2{
+      position:absolute;inset:0;border-radius:50%;border:2px solid transparent;
+    }
+    .loader-orbit{
+      border-top-color:var(--theme1);
+      border-right-color:var(--theme2);
+      border-bottom-color:var(--theme3);
+      animation:spin 5s linear infinite;
+    }
+    .loader-orbit2{
+      inset:12px;
+      border-left-color:rgba(255,255,255,.65);
+      border-top-color:rgba(255,255,255,.15);
+      animation:spinReverse 8s linear infinite;
+    }
+    .loader-orbit-star{
+      position:absolute;width:10px;height:10px;border-radius:50%;background:#fff;
+      box-shadow:0 0 10px rgba(255,255,255,.65);top:6px;left:50%;transform:translateX(-50%);
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes spinReverse{to{transform:rotate(-360deg)}}
+    @keyframes moonPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+    .loader h1{
+      margin:0;
+      font-size:clamp(2rem, 4vw, 3.2rem);
+      font-weight:800;
+      letter-spacing:-.03em;
+    }
+    .loader-sub{margin:14px 0 8px;color:var(--muted);min-height:26px}
+    .loader-percent{font-weight:800;margin:8px 0 14px;font-size:1.1rem;color:#fff}
+    .loader-bar{
+      width:100%;height:14px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;
+      border:1px solid rgba(255,255,255,.08);position:relative;
+    }
+    .loader-bar-fill{
+      width:0%;height:100%;border-radius:inherit;
+      background:linear-gradient(90deg, var(--theme1), var(--theme2), var(--theme3), var(--theme4));
+      position:relative;
+    }
+    .loader-bar-fill::after{
+      content:"";position:absolute;inset:0;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.65), transparent);
+      animation:shine 1.4s linear infinite;
+    }
+    @keyframes shine{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+
+    .topbar{
+      position:sticky;top:12px;z-index:30;padding-top:14px;display:flex;justify-content:flex-start;
+    }
+    .brand-pill{
+      display:inline-flex;align-items:center;gap:10px;padding:12px 20px;border-radius:999px;
+      background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+      backdrop-filter:blur(12px);box-shadow:var(--shadow);font-family:'Great Vibes',cursive;
+      font-size:2rem;line-height:1;
+    }
+
+    .hero{
+      min-height:90vh;display:flex;align-items:center;padding:24px 0 10px;
+    }
+    .hero-card{padding:36px}
+    .hero-grid{
+      display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center;
+    }
+    .badge{
+      display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border-radius:999px;
+      text-transform:uppercase;letter-spacing:.08em;font-size:.84rem;font-weight:700;
+      background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);margin-bottom:22px;
+    }
+    .hero-title{
+      margin:0 0 12px;font-family:'Playfair Display',serif;
+      font-size:clamp(2.8rem, 6vw, 5rem);line-height:.97;letter-spacing:-.035em;position:relative;
+    }
+    .hero-title .script{
+      display:block;font-family:'Great Vibes',cursive;font-size:clamp(3rem, 8vw, 6.3rem);line-height:.9;
+      background:linear-gradient(90deg, #fff, var(--theme1), var(--theme3), var(--theme4));
+      -webkit-background-clip:text;background-clip:text;color:transparent;position:relative;
+    }
+    .title-shimmer{
+      position:absolute;inset:0;background:linear-gradient(110deg, transparent 20%, rgba(255,255,255,.5) 45%, transparent 68%);
+      transform:translateX(-120%);animation:titleSweep 5s ease-in-out infinite;pointer-events:none;mix-blend-mode:screen;
+    }
+    @keyframes titleSweep{0%,70%,100%{transform:translateX(-120%)}30%{transform:translateX(120%)}}
+    .hero-desc{
+      color:var(--muted);line-height:1.9;font-size:1.06rem;max-width:760px;margin:0 0 24px;
+    }
+    .hero-actions{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+    .pill-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .tiny-pill{
+      padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.13);color:#fff;font-size:.92rem;
+    }
+    .hero-note{margin-top:14px;color:var(--soft);font-size:.98rem}
+
+    .moon-side{display:flex;justify-content:center;align-items:center}
+    .moon-badge{
+      width:290px;height:290px;position:relative;display:grid;place-items:center;cursor:pointer;
+    }
+    .moon-ring,.moon-ring2,.moon-ring3{
+      position:absolute;border-radius:50%;border:2px solid transparent;
+    }
+    .moon-ring{
+      inset:0;border-top-color:var(--theme1);border-right-color:var(--theme2);border-bottom-color:var(--theme3);
+      animation:spin 10s linear infinite;filter:drop-shadow(0 0 18px rgba(255,255,255,.1));
+    }
+    .moon-ring2{
+      inset:18px;border-left-color:rgba(255,255,255,.55);border-top-color:rgba(255,255,255,.12);
+      animation:spinReverse 13s linear infinite;
+    }
+    .moon-ring3{
+      inset:36px;border-right-color:rgba(255,255,255,.24);border-bottom-color:rgba(255,255,255,.1);
+      animation:spin 18s linear infinite;
+    }
+    .moon-core{
+      width:160px;height:160px;border-radius:50%;position:relative;z-index:4;display:flex;align-items:center;justify-content:center;
+      flex-direction:column;background:radial-gradient(circle at 35% 35%, #fff9df, #ffe48e 44%, #f4bf35 86%, #c88700 100%);
+      color:#301700;box-shadow:0 0 45px rgba(255,224,122,.38), 0 0 90px rgba(255,224,122,.18);animation:moonFloat 4.2s ease-in-out infinite;
+    }
+    .moon-core.flash{animation:moonFlash .5s ease}
+    @keyframes moonFlash{
+      0%{box-shadow:0 0 45px rgba(255,224,122,.38), 0 0 90px rgba(255,224,122,.18)}
+      50%{box-shadow:0 0 70px rgba(255,255,255,.45), 0 0 120px rgba(255,224,122,.35)}
+      100%{box-shadow:0 0 45px rgba(255,224,122,.38), 0 0 90px rgba(255,224,122,.18)}
+    }
+    @keyframes moonFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    .moon-num{
+      font-family:'Playfair Display',serif;font-size:4.4rem;line-height:.92;font-weight:800;
+    }
+    .moon-chapter{
+      font-size:.88rem;text-transform:uppercase;letter-spacing:.18em;font-weight:800;
+    }
+    .orbit-spark{
+      position:absolute;width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 10px rgba(255,255,255,.7);
+    }
+    .orbit-spark.one{top:12px;left:50%;transform:translateX(-50%)}
+    .orbit-spark.two{right:26px;top:50%;transform:translateY(-50%)}
+    .orbit-spark.three{left:28px;bottom:24px}
+
+    .path-grid{
+      display:grid;grid-template-columns:repeat(5,1fr);gap:16px;
+    }
+    .path-card{
+      padding:22px;min-height:165px;transition:transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+    }
+    .path-card:hover{
+      transform:translateY(-6px);box-shadow:0 18px 42px rgba(0,0,0,.28), 0 0 28px rgba(255,255,255,.05);
+      border-color:rgba(255,255,255,.2);
+    }
+    .path-num{
+      width:44px;height:44px;display:grid;place-items:center;border-radius:50%;
+      background:linear-gradient(135deg, var(--theme1), var(--theme2), var(--theme3));
+      box-shadow:0 10px 22px rgba(139,92,246,.25);font-weight:800;margin-bottom:14px;
+    }
+    .path-card h3{margin:0 0 8px;font-size:1.05rem}
+    .path-card p{margin:0;color:var(--muted);font-size:.94rem;line-height:1.7}
+
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+    .card-pad{padding:28px}
+    .box{
+      border-radius:24px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.1);padding:18px;
+    }
+
+    .typewriter-box{
+      min-height:160px;color:#fff;line-height:1.9;white-space:pre-wrap;position:relative;
+    }
+    .typing-glow{
+      box-shadow:0 0 30px rgba(255,255,255,.04), 0 0 24px rgba(155,108,255,.09) inset;
+    }
+
+    .envelope-scene{
+      min-height:290px;display:flex;justify-content:center;align-items:center;perspective:1200px;position:relative;
+    }
+    .lux-envelope{
+      width:310px;height:200px;position:relative;cursor:pointer;transform-style:preserve-3d;
+    }
+    .env-body{
+      position:absolute;inset:0;border-radius:20px;background:linear-gradient(145deg, rgba(255,255,255,.13), rgba(255,255,255,.06));
+      border:1px solid rgba(255,255,255,.15);box-shadow:var(--shadow);overflow:hidden;
+    }
+    .env-body::before{
+      content:"";position:absolute;inset:0;background:linear-gradient(145deg, transparent 49.4%, rgba(255,255,255,.12) 49.5%, rgba(255,255,255,.12) 50.5%, transparent 50.6%);
+      opacity:.7;
+    }
+    .env-flap{
+      position:absolute;left:0;right:0;top:0;height:104px;clip-path:polygon(0 0,100% 0,50% 100%);
+      background:linear-gradient(145deg, rgba(255,255,255,.18), rgba(255,255,255,.09));
+      transform-origin:top center;transition:transform .8s ease;z-index:5;border-top-left-radius:20px;border-top-right-radius:20px;border-top:1px solid rgba(255,255,255,.12);
+    }
+    .env-letter{
+      position:absolute;left:20px;right:20px;top:38px;height:148px;border-radius:18px;background:rgba(255,255,255,.13);
+      border:1px solid rgba(255,255,255,.14);box-shadow:0 10px 25px rgba(0,0,0,.18);padding:18px;line-height:1.72;color:#fff;
+      transform:translateY(0);transition:top .8s ease, transform .8s ease;z-index:2;overflow:auto;opacity:.95;
+    }
+    .lux-envelope.open .env-flap{transform:rotateX(180deg)}
+    .lux-envelope.open .env-letter{top:-40px;transform:translateY(-10px) scale(1.02)}
+
+    .orbit-wrap{
+      min-height:420px;display:grid;place-items:center;position:relative;
+    }
+    .orbit-system{
+      width:340px;height:340px;position:relative;animation:spin 28s linear infinite;
+    }
+    .orbit-track{
+      position:absolute;inset:0;border-radius:50%;border:1px dashed rgba(255,255,255,.15);
+    }
+    .orbit-center{
+      width:128px;height:128px;border-radius:50%;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+      background:radial-gradient(circle at 35% 35%, #fff9df, #ffe38e 44%, #f4bf35 86%, #c88700 100%);
+      box-shadow:0 0 35px rgba(255,224,122,.34);display:grid;place-items:center;text-align:center;color:#301700;font-weight:800;z-index:3;border:2px solid rgba(255,255,255,.2);
+    }
+    .orbit-item{
+      position:absolute;width:88px;height:88px;border-radius:50%;display:grid;place-items:center;text-align:center;
+      border:1px solid rgba(255,255,255,.18);background:linear-gradient(145deg, rgba(255,255,255,.15), rgba(255,255,255,.07));
+      color:#fff;font-weight:700;cursor:pointer;box-shadow:0 10px 24px rgba(0,0,0,.26);
+      transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;z-index:4;
+    }
+    .orbit-item:hover{
+      transform:scale(1.08);box-shadow:0 16px 34px rgba(0,0,0,.34), 0 0 18px rgba(255,255,255,.08);
+    }
+    .orbit-item.active{
+      border-color:rgba(255,255,255,.4);box-shadow:0 0 22px rgba(255,255,255,.14), 0 16px 34px rgba(0,0,0,.34);
+    }
+    .orbit-item.one{left:50%;top:-4px;transform:translateX(-50%)}
+    .orbit-item.two{right:-4px;top:50%;transform:translateY(-50%)}
+    .orbit-item.three{left:50%;bottom:-4px;transform:translateX(-50%)}
+    .orbit-item.four{left:-4px;top:50%;transform:translateY(-50%)}
+    .fade-message{
+      min-height:100px;display:flex;align-items:center;line-height:1.85;transition:opacity .3s ease, transform .3s ease;
+    }
+
+    .output-box{
+      min-height:110px;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.85;font-size:1.04rem;
+    }
+
+    /* Moon Fragment Match */
+    .match-grid{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:16px;
+      margin-top:18px;
+    }
+    .match-card{
+      height:120px;
+      perspective:1000px;
+      cursor:pointer;
+    }
+    .match-inner{
+      width:100%;
+      height:100%;
+      position:relative;
+      transform-style:preserve-3d;
+      transition:transform .6s ease;
+    }
+    .match-card.flipped .match-inner,
+    .match-card.matched .match-inner{
+      transform:rotateY(180deg);
+    }
+    .match-face{
+      position:absolute;
+      inset:0;
+      border-radius:24px;
+      backface-visibility:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:14px;
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:var(--shadow);
+    }
+    .match-front{
+      background:linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.05));
+      color:#fff;
+      font-size:1.8rem;
+    }
+    .match-back{
+      background:linear-gradient(145deg, rgba(255,255,255,.15), rgba(255,255,255,.07));
+      color:#fff;
+      font-weight:700;
+      font-size:1.1rem;
+      transform:rotateY(180deg);
+    }
+    .match-card.matched .match-back{
+      box-shadow:0 0 24px rgba(255,255,255,.12), 0 0 30px rgba(155,108,255,.16);
+      border-color:rgba(255,255,255,.28);
+    }
+    .match-message{
+      margin-top:18px;
+      min-height:86px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      line-height:1.8;
+    }
+
+    .heart-panel{padding:28px}
+    .stats-row{
+      display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px;
+    }
+    .chip{
+      padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);font-size:.92rem;
+    }
+    .meter{
+      width:100%;height:14px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);margin-bottom:18px;
+    }
+    .meter-fill{
+      width:0%;height:100%;border-radius:inherit;background:linear-gradient(90deg, var(--theme1), var(--theme2), var(--theme3), var(--theme4));transition:width .35s ease;position:relative;
+    }
+    .meter-fill::after{
+      content:"";position:absolute;inset:0;background:linear-gradient(90deg, transparent, rgba(255,255,255,.45), transparent);animation:shine 1.4s linear infinite;
+    }
+    .progress-wrap{
+      display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-bottom:16px;
+    }
+    .ring{
+      width:78px;height:78px;border-radius:50%;
+      background:conic-gradient(var(--theme3) 0deg, rgba(255,255,255,.08) 0deg);
+      display:grid;place-items:center;position:relative;flex:0 0 auto;
+    }
+    .ring::before{
+      content:"";position:absolute;inset:8px;border-radius:50%;background:rgba(18,10,34,.85);border:1px solid rgba(255,255,255,.08);
+    }
+    .ring span{
+      position:relative;z-index:2;font-weight:800;font-size:.95rem;
+    }
+    .heart-stage{
+      min-height:230px;border-radius:26px;background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.13);position:relative;overflow:hidden;
+    }
+    .hidden-heart{
+      position:absolute;width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.09);
+      border:1px solid rgba(255,255,255,.16);cursor:pointer;user-select:none;box-shadow:0 0 18px rgba(255,100,213,.25);
+      animation:heartPulse 1.8s ease-in-out infinite;transition:transform .25s ease, opacity .25s ease, box-shadow .25s ease;z-index:2;
+    }
+    .hidden-heart:hover{transform:scale(1.14)}
+    .hidden-heart.found{
+      opacity:.22;pointer-events:none;transform:scale(.72);
+    }
+    @keyframes heartPulse{
+      0%,100%{box-shadow:0 0 12px rgba(255,100,213,.22)}
+      50%{box-shadow:0 0 28px rgba(255,100,213,.42)}
+    }
+
+    .unlock-card{
+      display:none;margin-top:22px;padding:30px;text-align:center;animation:fadeUp .6s ease;
+    }
+    .unlock-card.show{display:block}
+    .unlock-card h3{
+      margin:0 0 12px;font-family:'Playfair Display',serif;font-size:2rem;
+    }
+    .unlock-card p{
+      margin:0 auto;color:var(--muted);max-width:760px;line-height:1.9;
+    }
+    @keyframes fadeUp{
+      from{opacity:0;transform:translateY(14px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+
+    .falling-star{
+      position:absolute;width:34px;height:34px;display:grid;place-items:center;font-size:1.2rem;cursor:pointer;pointer-events:auto;
+      filter:drop-shadow(0 0 10px rgba(255,255,255,.35));animation:fallStar linear forwards;user-select:none;
+    }
+    .falling-star::after{
+      content:"";position:absolute;width:42px;height:2px;right:100%;top:50%;transform:translateY(-50%);
+      background:linear-gradient(90deg, rgba(255,255,255,.0), rgba(255,255,255,.55));opacity:.7;
+    }
+    @keyframes fallStar{
+      0%{transform:translateY(-60px) rotate(0deg); opacity:0}
+      8%{opacity:1}
+      100%{transform:translateY(110vh) rotate(180deg); opacity:.95}
+    }
+
+    .player{
+      position:fixed;right:16px;bottom:16px;z-index:80;width:min(430px, calc(100% - 24px));
+      border-radius:28px;padding:14px;background:rgba(32,22,49,.82);border:1px solid rgba(255,255,255,.12);
+      backdrop-filter:blur(16px);box-shadow:var(--shadow);display:flex;gap:12px;align-items:center;transition:box-shadow .3s ease, border-color .3s ease;
+    }
+    .player.playing{
+      box-shadow:0 0 28px rgba(255,255,255,.08), 0 0 35px rgba(139,92,246,.18), var(--shadow);
+      border-color:rgba(255,255,255,.18);
+    }
+    .disc{
+      width:58px;height:58px;border-radius:50%;background:conic-gradient(from 45deg, var(--theme1), var(--theme2), var(--theme3), var(--theme4), var(--theme1));
+      display:grid;place-items:center;box-shadow:0 10px 24px rgba(139,92,246,.25);
+      animation:spin 7s linear infinite;animation-play-state:paused;flex:0 0 auto;position:relative;
+    }
+    .player.playing .disc{animation-play-state:running}
+    .disc::before{
+      content:"";width:20px;height:20px;border-radius:50%;background:#130a1f;border:2px solid rgba(255,255,255,.16);display:block;
+    }
+
+    .player-main{flex:1;min-width:0}
+    .player-main h4{
+      margin:0;font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .player-main p{
+      margin:2px 0 8px;color:var(--muted);font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .player-line{
+      height:6px;width:100%;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;border:1px solid rgba(255,255,255,.08);margin-bottom:8px;
+    }
+    .player-progress{
+      width:0%;height:100%;background:linear-gradient(90deg, var(--theme1), var(--theme2), var(--theme3));border-radius:inherit;
+    }
+    .player-bottom{
+      display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;
+    }
+    .player-controls{
+      display:flex;gap:10px;align-items:center;
+    }
+    .icon-btn{
+      width:44px;height:44px;border:none;border-radius:50%;cursor:pointer;color:#fff;font-weight:800;
+      background:linear-gradient(135deg, var(--theme1), var(--theme2), var(--theme3));box-shadow:0 10px 24px rgba(139,92,246,.25);transition:transform .25s ease;
+    }
+    .icon-btn:hover{transform:translateY(-2px)}
+    .bars{
+      display:flex;align-items:flex-end;gap:4px;height:24px;
+    }
+    .bars span{
+      width:4px;border-radius:999px;background:linear-gradient(180deg, var(--theme3), #fff);animation:bars 1s ease-in-out infinite;
+    }
+    .bars span:nth-child(1){height:8px;animation-delay:.1s}
+    .bars span:nth-child(2){height:18px;animation-delay:.25s}
+    .bars span:nth-child(3){height:12px;animation-delay:.4s}
+    .bars span:nth-child(4){height:22px;animation-delay:.2s}
+    .bars span:nth-child(5){height:14px;animation-delay:.5s}
+    @keyframes bars{
+      0%,100%{transform:scaleY(.5);opacity:.45}
+      50%{transform:scaleY(1.2);opacity:1}
+    }
+    .bars.paused span{animation-play-state:paused;opacity:.4}
+    .volume-wrap{
+      display:flex;align-items:center;gap:8px;min-width:120px;
+    }
+    .volume-wrap input{
+      width:100px;accent-color:#c7c0ff;
+    }
+
+    .toast{
+      position:fixed;left:50%;bottom:100px;transform:translateX(-50%) translateY(20px);z-index:110;opacity:0;pointer-events:none;
+      padding:12px 18px;border-radius:999px;background:rgba(17,11,30,.9);border:1px solid rgba(255,255,255,.12);
+      box-shadow:var(--shadow);backdrop-filter:blur(12px);transition:all .35s ease;color:#fff;
+    }
+    .toast.show{
+      opacity:1;transform:translateX(-50%) translateY(0);
+    }
+
+    .spark{
+      position:fixed;width:8px;height:8px;border-radius:50%;z-index:120;pointer-events:none;
+      background:radial-gradient(circle, #fff, var(--theme1), transparent 70%);animation:sparkOut .8s ease forwards;
+    }
+    @keyframes sparkOut{
+      from{opacity:1;transform:translate(0,0) scale(1)}
+      to{opacity:0;transform:translate(var(--dx), var(--dy)) scale(.2)}
+    }
+
+    .confetti{
+      position:fixed;width:10px;height:10px;z-index:120;pointer-events:none;border-radius:50%;animation:confettiFall 1.8s ease forwards;
+    }
+    @keyframes confettiFall{
+      from{opacity:1; transform:translateY(0) rotate(0deg)}
+      to{opacity:0; transform:translateY(120px) rotate(360deg)}
+    }
+
+    .nav-row{
+      display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:10px;
+    }
+    .footer-space{height:92px}
+
+    .reveal{
+      opacity:0;transform:translateY(20px);transition:all .8s ease;
+    }
+    .reveal.show{
+      opacity:1;transform:translateY(0);
+    }
+
+    @media (max-width:1100px){
+      .hero-grid{grid-template-columns:1fr}
+      .path-grid{grid-template-columns:repeat(3,1fr)}
+    }
+    @media (max-width:780px){
+      .grid-2{grid-template-columns:1fr}
+      .path-grid{grid-template-columns:1fr 1fr}
+      .hero-card,.card-pad,.heart-panel{padding:22px}
+      .moon-badge{width:240px;height:240px}
+      .moon-core{width:140px;height:140px}
+      .brand-pill{font-size:1.6rem}
+      .player{left:12px;right:12px;width:auto;bottom:12px}
+      .match-grid{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width:520px){
+      .path-grid{grid-template-columns:1fr}
+      .hero-actions{flex-direction:column;align-items:stretch}
+      .btn{width:100%}
+      .topbar{padding-top:10px}
+      .match-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body class="theme-softmoon">
+  <div class="blobs">
+    <div class="blob one"></div>
+    <div class="blob two"></div>
+    <div class="blob three"></div>
+  </div>
+  <div class="stars" id="stars"></div>
+  <div class="particles" id="particles"></div>
+  <div class="fall-layer" id="fallLayer"></div>
+
+  <div class="loader" id="loader">
+    <div class="loader-card">
+      <div class="loader-moon-wrap">
+        <div class="loader-orbit"><div class="loader-orbit-star"></div></div>
+        <div class="loader-orbit2"></div>
+        <div class="loader-moon"></div>
+      </div>
+      <h1>Loading Chapter 11...</h1>
+      <div class="loader-sub" id="loaderSub">Gathering moonlight...</div>
+      <div class="loader-percent" id="loaderPercent">0%</div>
+      <div class="loader-bar">
+        <div class="loader-bar-fill" id="loaderBarFill"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="topbar">
+      <div class="brand-pill">Sinta ❤️ Chokie</div>
+    </div>
+
+    <section class="hero section">
+      <div class="hero-card glass reveal">
+        <div class="hero-grid">
+          <div>
+            <div class="badge">🌙 Chapter 11 • Moonlit Confession</div>
+
+            <h1 class="hero-title">
+              Meet Me
+              <span class="script">Where the Moonlight Stays</span>
+              <span class="title-shimmer"></span>
+            </h1>
+
+            <p class="hero-desc">
+              In Chapter 11, everything slows into softer light. This is a place for hidden feelings,
+              glowing memories, playful discoveries, and the kind of love that feels strongest when the world goes quiet.
+            </p>
+
+            <div class="hero-actions">
+              <button class="btn btn-primary" id="enterMusicBtn">Enter With Music 🌌</button>
+              <button class="btn btn-secondary" id="enterSilentBtn">Enter Quietly</button>
+              <button class="btn btn-outline" id="moodBtn">Tap the Moon to Change Mood</button>
+            </div>
+
+            <div class="pill-row">
+              <div class="tiny-pill">Current Mood: <strong id="moodLabel">Soft Moon</strong></div>
+              <div class="tiny-pill">Song: <strong>Moonlight</strong></div>
+              <div class="tiny-pill">Flow: <strong>10 ← 11 → 12</strong></div>
+            </div>
+
+            <div class="hero-note">
+              Click stars, find hidden hearts, open the envelope, reveal the confession, match the moon fragments, and unlock the heart of this chapter.
+            </div>
+          </div>
+
+          <div class="moon-side">
+            <div class="moon-badge" id="moonBadge">
+              <div class="moon-ring"></div>
+              <div class="moon-ring2"></div>
+              <div class="moon-ring3"></div>
+              <div class="orbit-spark one"></div>
+              <div class="orbit-spark two"></div>
+              <div class="orbit-spark three"></div>
+              <div class="moon-core" id="moonCore">
+                <div class="moon-num">11</div>
+                <div class="moon-chapter">Chapter</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="moonPathSection">
+      <div class="section-title">
+        <div>
+          <h2>Tonight’s Moon Path ✨</h2>
+          <p>Five pieces of this chapter, each carrying a feeling, a memory, or a little glow made just for your person.</p>
+        </div>
+      </div>
+
+      <div class="path-grid">
+        <div class="path-card glass">
+          <div class="path-num">1</div>
+          <h3>Silent Thought</h3>
+          <p>The kind of feeling that doesn’t need noise to be real.</p>
+        </div>
+        <div class="path-card glass">
+          <div class="path-num">2</div>
+          <h3>Hidden Feeling</h3>
+          <p>A small truth waiting for the right moment to shine.</p>
+        </div>
+        <div class="path-card glass">
+          <div class="path-num">3</div>
+          <h3>Midnight Memory</h3>
+          <p>A soft memory that glows brighter every time it returns.</p>
+        </div>
+        <div class="path-card glass">
+          <div class="path-num">4</div>
+          <h3>Soft Promise</h3>
+          <p>Something gentle, steady, and meant with the whole heart.</p>
+        </div>
+        <div class="path-card glass">
+          <div class="path-num">5</div>
+          <h3>Chapter Glow</h3>
+          <p>The warmth left behind after every hidden piece is found.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="grid-2">
+        <div class="glass card-pad">
+          <div class="section-title">
+            <div>
+              <h2>Read What I Couldn’t Say Out Loud</h2>
+              <p>A confession that appears slowly, like it was waiting for the night to become quiet enough.</p>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="confessionBtn">Reveal Secret Confession</button>
+          <div class="box typewriter-box" id="typewriterBox" style="margin-top:18px;"></div>
+        </div>
+
+        <div class="glass card-pad">
+          <div class="section-title">
+            <div>
+              <h2>Open the Envelope 💌</h2>
+              <p>A letter hidden inside the chapter, waiting for one click to unfold.</p>
+            </div>
+          </div>
+
+          <div class="envelope-scene">
+            <div class="lux-envelope" id="envelope">
+              <div class="env-body"></div>
+              <div class="env-flap"></div>
+              <div class="env-letter">
+                If I could send only one late-night truth through this little envelope, it would be this:
+                <br><br>
+                You make ordinary moments feel warmer, softer, and more worth remembering.
+                Even when everything gets quiet, your presence stays bright in my mind.
+                <br><br>
+                If moonlight had a favorite person to fall on gently, I think it would choose you.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="grid-2">
+        <div class="glass card-pad">
+          <div class="section-title">
+            <div>
+              <h2>Memory Orbit 🌙</h2>
+              <p>Tap each orbiting memory to reveal a different piece of the heart.</p>
+            </div>
+          </div>
+
+          <div class="orbit-wrap">
+            <div class="orbit-system" id="orbitSystem">
+              <div class="orbit-track"></div>
+              <div class="orbit-center">Moon<br>Core</div>
+              <button class="orbit-item one" data-key="memory">Memory</button>
+              <button class="orbit-item two" data-key="truth">Truth</button>
+              <button class="orbit-item three" data-key="wish">Wish</button>
+              <button class="orbit-item four" data-key="promise">Promise</button>
+            </div>
+          </div>
+
+          <div class="box fade-message" id="orbitMessage">
+            Touch one of the glowing orbs to reveal a moonlit message.
+          </div>
+        </div>
+
+        <div class="glass card-pad">
+          <div class="section-title">
+            <div>
+              <h2>Moonlight Compliment Generator</h2>
+              <p>Click whenever your love needs another sweet line from the stars.</p>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <button class="btn btn-primary" id="complimentBtn">Tell Me Something Sweet</button>
+            <button class="btn btn-secondary" id="wishBtn">Make a Wish</button>
+          </div>
+
+          <div class="box output-box" id="complimentOutput" style="margin-top:18px;">
+            Press a button and let the chapter say something soft.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="glass card-pad">
+        <div class="section-title">
+          <div>
+            <h2>Moon Fragment Match 🌙</h2>
+            <p>Flip the glowing fragments and find the matching pairs. Some pieces only make sense when they find each other.</p>
+          </div>
+        </div>
+
+        <div class="match-grid" id="matchGrid"></div>
+
+        <div class="box match-message" id="matchMessage">
+          Find the pairs: Moon ↔ Light, Heart ↔ Glow, Us ↔ Always.
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="glass heart-panel">
+        <div class="section-title">
+          <div>
+            <h2>Find the Hidden Hearts ❤️</h2>
+            <p>There are five hidden hearts in this moonlit field. Find them all to unlock the final message.</p>
+          </div>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="ring" id="progressRing"><span id="ringPercent">0%</span></div>
+          <div style="flex:1;min-width:220px;">
+            <div class="stats-row">
+              <div class="chip">Hearts Found: <strong id="heartCount">0</strong>/5</div>
+              <div class="chip">Moonlight Meter: <strong id="meterText">0%</strong></div>
+            </div>
+            <div class="meter"><div class="meter-fill" id="meterFill"></div></div>
+          </div>
+        </div>
+
+        <div class="heart-stage" id="heartStage">
+          <div class="hidden-heart" data-id="1" style="top:18px;left:18px;">💖</div>
+          <div class="hidden-heart" data-id="2" style="top:40px;right:52px;">💗</div>
+          <div class="hidden-heart" data-id="3" style="bottom:22px;left:18%;">💘</div>
+          <div class="hidden-heart" data-id="4" style="bottom:24px;right:16%;">💞</div>
+          <div class="hidden-heart" data-id="5" style="top:50%;left:50%;transform:translate(-50%,-50%);">💕</div>
+        </div>
+
+        <div class="glass unlock-card" id="unlockCard">
+          <h3>You Found the Heart of Chapter 11</h3>
+          <p>
+            If this chapter feels warm, it’s because every little part of it was made with love in mind.
+            Every hidden heart, every glowing line, every soft reveal was waiting for the one person
+            who could make moonlight feel even more beautiful just by being here.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="grid-2">
+        <div class="glass card-pad">
+          <div class="section-title">
+            <div>
+              <h2>Catch the Falling Stars ⭐</h2>
+              <p>Stars fall across the page. Click them before they disappear to collect tiny sweet messages.</p>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="dropStarsBtn">Drop More Stars</button>
+          <div class="box" id="starMessageBox" style="margin-top:18px; min-height:100px; display:flex; align-items:center; line-height:1.8;">
+            Catch a falling star to see a hidden mini-message.
+          </div>
+        </div>
+
+        <div class="glass card-pad">
+          <div class="section-title">
+            <div>
+              <h2>Late Night Note</h2>
+              <p>Not every chapter needs noise to feel powerful. Some are written in pauses, glances, and the things we almost say but mean deeply.</p>
+            </div>
+          </div>
+          <div class="box" style="line-height:1.8;">
+            “Some feelings don’t fade at night — they glow.”
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="glass card-pad">
+        <div class="section-title">
+          <div>
+            <h2>Chapter Navigation</h2>
+            <p>Move through the story while keeping the same dreamy universe alive.</p>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <a class="btn btn-secondary" href="index10.html">← Back to Chapter 10</a>
+          <a class="btn btn-primary" href="index12.html">Continue to Chapter 12 →</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-space"></div>
+  </div>
+
+  <div class="player" id="player">
+    <div class="disc"></div>
+    <div class="player-main">
+      <h4>Chapter 11 Song</h4>
+      <p>Now playing Moonlight</p>
+      <div class="player-line"><div class="player-progress" id="playerProgress"></div></div>
+      <div class="player-bottom">
+        <div class="player-controls">
+          <button class="icon-btn" id="playPauseBtn">▶</button>
+          <button class="icon-btn" id="muteBtn">🔊</button>
+          <div class="bars paused" id="bars"><span></span><span></span><span></span><span></span><span></span></div>
+        </div>
+        <div class="volume-wrap">
+          <span style="font-size:.9rem;color:var(--muted);">Vol</span>
+          <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.7">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <audio id="chapterAudio" src="song11.mp3" preload="auto" loop></audio>
+
+  <script>
+    const loader = document.getElementById('loader');
+    const loaderPercent = document.getElementById('loaderPercent');
+    const loaderBarFill = document.getElementById('loaderBarFill');
+    const loaderSub = document.getElementById('loaderSub');
+
+    const loaderSubs = [
+      'Gathering moonlight...',
+      'Collecting hidden feelings...',
+      'Wrapping memories in starlight...',
+      'Preparing your chapter...'
+    ];
+
+    let loadVal = 0;
+    let subIndex = 0;
+    const subInterval = setInterval(() => {
+      loaderSub.textContent = loaderSubs[subIndex % loaderSubs.length];
+      subIndex++;
+    }, 700);
+
+    const loadInterval = setInterval(() => {
+      loadVal += Math.floor(Math.random() * 8) + 3;
+      if (loadVal > 100) loadVal = 100;
+      loaderPercent.textContent = loadVal + '%';
+      loaderBarFill.style.width = loadVal + '%';
+
+      if (loadVal >= 100) {
+        clearInterval(loadInterval);
+        clearInterval(subInterval);
+        setTimeout(() => loader.classList.add('hide'), 500);
+      }
+    }, 140);
+
+    const stars = document.getElementById('stars');
+    const particles = document.getElementById('particles');
+
+    for(let i=0;i<120;i++){
+      const s = document.createElement('div');
+      s.className = 'star-dot';
+      const size = Math.random() > .88 ? 3 : 2;
+      s.style.width = size + 'px';
+      s.style.height = size + 'px';
+      s.style.left = Math.random()*100 + '%';
+      s.style.top = Math.random()*100 + '%';
+      s.style.animationDuration = (2 + Math.random()*5) + 's';
+      s.style.animationDelay = Math.random()*4 + 's';
+      stars.appendChild(s);
+    }
+
+    for(let i=0;i<38;i++){
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random()*100 + '%';
+      p.style.top = Math.random()*100 + '%';
+      p.style.animationDuration = (10 + Math.random()*12) + 's';
+      p.style.animationDelay = Math.random()*10 + 's';
+      particles.appendChild(p);
+    }
+
+    const blob1 = document.querySelector('.blob.one');
+    const blob2 = document.querySelector('.blob.two');
+    const blob3 = document.querySelector('.blob.three');
+
+    document.addEventListener('mousemove', (e)=>{
+      const x = (e.clientX / window.innerWidth - 0.5) * 18;
+      const y = (e.clientY / window.innerHeight - 0.5) * 18;
+      blob1.style.transform = `translate(${x}px, ${y}px)`;
+      blob2.style.transform = `translate(${-x}px, ${-y}px)`;
+      blob3.style.transform = `translate(${x*0.5}px, ${-y*0.7}px)`;
+    });
+
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting) entry.target.classList.add('show');
+      });
+    }, { threshold: 0.18 });
+    reveals.forEach(r=>io.observe(r));
+
+    document.querySelectorAll('.btn').forEach(btn=>{
+      btn.addEventListener('click', function(e){
+        const rect = this.getBoundingClientRect();
+        const circle = document.createElement('span');
+        circle.className = 'ripple';
+        const size = Math.max(rect.width, rect.height);
+        circle.style.width = circle.style.height = size + 'px';
+        circle.style.left = (e.clientX - rect.left - size/2) + 'px';
+        circle.style.top = (e.clientY - rect.top - size/2) + 'px';
+        this.appendChild(circle);
+        setTimeout(()=>circle.remove(), 650);
+      });
+    });
+
+    const toast = document.getElementById('toast');
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(()=>toast.classList.remove('show'), 1800);
+    }
+
+    function burstSparks(x, y, count=12){
+      for(let i=0;i<count;i++){
+        const sp = document.createElement('div');
+        sp.className = 'spark';
+        sp.style.left = x + 'px';
+        sp.style.top = y + 'px';
+        sp.style.setProperty('--dx', ((Math.random()*90)-45)+'px');
+        sp.style.setProperty('--dy', ((Math.random()*90)-45)+'px');
+        document.body.appendChild(sp);
+        setTimeout(()=>sp.remove(), 800);
+      }
+    }
+
+    function confettiBurst(x, y, count=26){
+      const colors = ['#ff6cd8','#8f7bff','#74e9ff','#ffe07a','#ffffff','#91f7c6'];
+      for(let i=0;i<count;i++){
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = x + 'px';
+        c.style.top = y + 'px';
+        c.style.background = colors[Math.floor(Math.random()*colors.length)];
+        c.style.transform = `translate(${(Math.random()*120)-60}px, ${(Math.random()*40)-20}px)`;
+        c.style.animationDuration = (1.3 + Math.random()*1.2)+'s';
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(), 2000);
+      }
+    }
+
+    document.addEventListener('click', e => burstSparks(e.clientX, e.clientY, 7));
+    document.addEventListener('mousemove', (e)=>{
+      if(Math.random() < 0.4){
+        const sp = document.createElement('div');
+        sp.className = 'spark';
+        sp.style.left = e.clientX + 'px';
+        sp.style.top = e.clientY + 'px';
+        sp.style.width = '5px';
+        sp.style.height = '5px';
+        sp.style.setProperty('--dx', ((Math.random()*20)-10)+'px');
+        sp.style.setProperty('--dy', ((Math.random()*20)-10)+'px');
+        document.body.appendChild(sp);
+        setTimeout(()=>sp.remove(), 800);
+      }
+    });
+
+    const audio = document.getElementById('chapterAudio');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const muteBtn = document.getElementById('muteBtn');
+    const volumeSlider = document.getElementById('volumeSlider');
+    const playerProgress = document.getElementById('playerProgress');
+    const player = document.getElementById('player');
+    const bars = document.getElementById('bars');
+
+    audio.volume = .7;
+
+    async function playAudio(){
+      try{
+        await audio.play();
+        playPauseBtn.textContent = '❚❚';
+        bars.classList.remove('paused');
+        player.classList.add('playing');
+        addProgress(10, 'music-start');
+        showToast('Moonlight is playing ✨');
+      }catch(e){
+        showToast('Tap again to allow music');
+      }
+    }
+
+    function pauseAudio(){
+      audio.pause();
+      playPauseBtn.textContent = '▶';
+      bars.classList.add('paused');
+      player.classList.remove('playing');
+      showToast('Music paused');
+    }
+
+    playPauseBtn.addEventListener('click', async ()=>{
+      if(audio.paused) await playAudio();
+      else pauseAudio();
+    });
+
+    muteBtn.addEventListener('click', ()=>{
+      audio.muted = !audio.muted;
+      muteBtn.textContent = audio.muted ? '🔇' : '🔊';
+      showToast(audio.muted ? 'Muted' : 'Unmuted');
+    });
+
+    volumeSlider.addEventListener('input', ()=>{
+      audio.volume = volumeSlider.value;
+    });
+
+    setInterval(()=>{
+      if(audio.duration && !isNaN(audio.duration)){
+        const pct = (audio.currentTime / audio.duration) * 100;
+        playerProgress.style.width = pct + '%';
+      } else if(!audio.paused) {
+        const current = parseFloat(playerProgress.style.width || '0');
+        playerProgress.style.width = ((current + 1) % 100) + '%';
+      }
+    }, 500);
+
+    const enterMusicBtn = document.getElementById('enterMusicBtn');
+    const enterSilentBtn = document.getElementById('enterSilentBtn');
+    enterMusicBtn.addEventListener('click', async ()=>{
+      await playAudio();
+      document.getElementById('moonPathSection').scrollIntoView({behavior:'smooth'});
+    });
+    enterSilentBtn.addEventListener('click', ()=>{
+      pauseAudio();
+      addProgress(4, 'entered-silent');
+      document.getElementById('moonPathSection').scrollIntoView({behavior:'smooth'});
+      showToast('Entered quietly 🌙');
+    });
+
+    const moods = [
+      { cls:'theme-softmoon', label:'Soft Moon' },
+      { cls:'theme-pinkdream', label:'Pink Dream' },
+      { cls:'theme-bluenight', label:'Blue Night' },
+      { cls:'theme-starglow', label:'Star Glow' }
+    ];
+    let moodIndex = 0;
+    const moodBtn = document.getElementById('moodBtn');
+    const moonBadge = document.getElementById('moonBadge');
+    const moodLabel = document.getElementById('moodLabel');
+    const moonCore = document.getElementById('moonCore');
+
+    function setMood(i){
+      moods.forEach(m=>document.body.classList.remove(m.cls));
+      document.body.classList.add(moods[i].cls);
+      moodLabel.textContent = moods[i].label;
+      moonCore.classList.remove('flash');
+      void moonCore.offsetWidth;
+      moonCore.classList.add('flash');
+    }
+    function cycleMood(){
+      moodIndex = (moodIndex + 1) % moods.length;
+      setMood(moodIndex);
+      addProgress(6, 'mood-'+moodIndex);
+      showToast('Mood changed to ' + moods[moodIndex].label);
+    }
+    moodBtn.addEventListener('click', cycleMood);
+    moonBadge.addEventListener('click', cycleMood);
+
+    let progress = 0;
+    const progressFlags = new Set();
+    const meterFill = document.getElementById('meterFill');
+    const meterText = document.getElementById('meterText');
+    const ringPercent = document.getElementById('ringPercent');
+    const progressRing = document.getElementById('progressRing');
+    const unlockCard = document.getElementById('unlockCard');
+
+    function renderProgress(){
+      meterFill.style.width = progress + '%';
+      meterText.textContent = progress + '%';
+      ringPercent.textContent = progress + '%';
+      progressRing.style.background = `conic-gradient(var(--theme3) ${progress * 3.6}deg, rgba(255,255,255,.08) 0deg)`;
+      if(progress >= 100){
+        unlockFinal();
+      }
+    }
+
+    function addProgress(value, key){
+      if(key && progressFlags.has(key)) return;
+      if(key) progressFlags.add(key);
+      progress = Math.min(100, progress + value);
+      renderProgress();
+    }
+
+    let finalUnlocked = false;
+    function unlockFinal(){
+      if(finalUnlocked) return;
+      finalUnlocked = true;
+      unlockCard.classList.add('show');
+      showToast('You unlocked the heart of Chapter 11 💖');
+      confettiBurst(window.innerWidth/2, window.innerHeight/2, 40);
+    }
+
+    const confessionText = `Somehow, even in the quietest moments, you become the loudest feeling in my heart.
+
+You are the kind of person who makes darkness feel softer, distance feel shorter, and ordinary nights feel like they were meant to glow.
+
+If I ever struggle to say everything I feel, just know this:
+you are one of the most beautiful reasons my thoughts keep returning to light.`;
+
+    const confessionBtn = document.getElementById('confessionBtn');
+    const typewriterBox = document.getElementById('typewriterBox');
+    let confessionStarted = false;
+
+    confessionBtn.addEventListener('click', ()=>{
+      if(confessionStarted){
+        showToast('The confession is already glowing 💜');
+        return;
+      }
+      confessionStarted = true;
+      typewriterBox.textContent = '';
+      typewriterBox.classList.add('typing-glow');
+      let i = 0;
+      const typing = setInterval(()=>{
+        typewriterBox.textContent += confessionText.charAt(i);
+        i++;
+        if(i >= confessionText.length){
+          clearInterval(typing);
+          typewriterBox.classList.remove('typing-glow');
+        }
+      }, 17);
+      addProgress(14, 'confession');
+      showToast('Secret confession revealed');
+    });
+
+    const envelope = document.getElementById('envelope');
+    let envelopeOpened = false;
+    envelope.addEventListener('click', (e)=>{
+      envelope.classList.toggle('open');
+      if(!envelopeOpened){
+        envelopeOpened = true;
+        addProgress(10, 'envelope');
+        confettiBurst(e.clientX, e.clientY, 18);
+      }
+      showToast(envelope.classList.contains('open') ? 'Envelope opened 💌' : 'Envelope closed');
+    });
+
+    const orbitMessage = document.getElementById('orbitMessage');
+    const orbitItems = document.querySelectorAll('.orbit-item');
+    const orbitMap = {
+      memory: 'A Memory: Even the smallest moment with you stays in my mind longer than entire days without you.',
+      truth: 'A Truth: You make calm feel beautiful, and somehow you make silence feel safe.',
+      wish: 'A Wish: If I could keep one feeling forever, it would be the warmth of being close to you.',
+      promise: 'A Promise: No matter how quiet the night gets, I’ll always leave a little light for you.'
+    };
+    const orbitSeen = new Set();
+
+    orbitItems.forEach(item=>{
+      item.addEventListener('click', ()=>{
+        orbitItems.forEach(i=>i.classList.remove('active'));
+        item.classList.add('active');
+        orbitMessage.style.opacity = '0';
+        orbitMessage.style.transform = 'translateY(8px)';
+        setTimeout(()=>{
+          orbitMessage.textContent = orbitMap[item.dataset.key];
+          orbitMessage.style.opacity = '1';
+          orbitMessage.style.transform = 'translateY(0)';
+        }, 180);
+
+        if(!orbitSeen.has(item.dataset.key)){
+          orbitSeen.add(item.dataset.key);
+          addProgress(8, 'orbit-'+item.dataset.key);
+        }
+        showToast(item.textContent.trim() + ' revealed');
+      });
+    });
+
+    const compliments = [
+      "You are softer than midnight and brighter than stars.",
+      "Even the moon would pause just to admire your glow.",
+      "You make silence feel safe and closeness feel effortless.",
+      "A thousand stars, and I would still notice you first.",
+      "You are the warmest part of even the coldest night.",
+      "If moonlight had a favorite person, I think it would be you.",
+      "You make ordinary moments feel worth remembering forever.",
+      "There’s something about you that turns calm into magic."
+    ];
+    const wishes = [
+      "My wish already came true when you entered this chapter.",
+      "I wished for peace, and then I thought of you.",
+      "Some wishes don’t fall from the sky. They walk into your life.",
+      "If I get one wish tonight, I spend it on one more moment with you.",
+      "I asked the stars for something beautiful. They reminded me of you."
+    ];
+
+    const complimentBtn = document.getElementById('complimentBtn');
+    const wishBtn = document.getElementById('wishBtn');
+    const complimentOutput = document.getElementById('complimentOutput');
+
+    complimentBtn.addEventListener('click', ()=>{
+      complimentOutput.textContent = compliments[Math.floor(Math.random()*compliments.length)];
+      addProgress(10, 'compliment');
+      showToast('A sweet line appeared ✨');
+    });
+
+    wishBtn.addEventListener('click', ()=>{
+      complimentOutput.textContent = wishes[Math.floor(Math.random()*wishes.length)];
+      addProgress(8, 'wish-button');
+      showToast('A wish answered 🌠');
+    });
+
+    // Moon Fragment Match
+    const matchGrid = document.getElementById('matchGrid');
+    const matchMessage = document.getElementById('matchMessage');
+
+    const pairMap = {
+      moon: 'light',
+      light: 'moon',
+      heart: 'glow',
+      glow: 'heart',
+      us: 'always',
+      always: 'us'
+    };
+
+    const pairLines = {
+      'light-moon': 'Moon + Light → You make my nights gentler.',
+      'glow-heart': 'Heart + Glow → Some feelings shine quietly.',
+      'always-us': 'Us + Always → My favorite future still has you in it.'
+    };
+
+    const fragmentData = [
+      { key:'moon', label:'Moon' },
+      { key:'light', label:'Light' },
+      { key:'heart', label:'Heart' },
+      { key:'glow', label:'Glow' },
+      { key:'us', label:'Us' },
+      { key:'always', label:'Always' }
+    ];
+
+    function shuffle(arr){
+      return [...arr].sort(()=>Math.random()-0.5);
+    }
+
+    let flippedCards = [];
+    let lockBoard = false;
+    let matchedPairs = 0;
+    const matchedPairKeys = new Set();
+
+    function buildMatchGame(){
+      matchGrid.innerHTML = '';
+      const shuffled = shuffle(fragmentData);
+
+      shuffled.forEach(item=>{
+        const card = document.createElement('div');
+        card.className = 'match-card';
+        card.dataset.key = item.key;
+        card.innerHTML = `
+          <div class="match-inner">
+            <div class="match-face match-front">🌙</div>
+            <div class="match-face match-back">${item.label}</div>
+          </div>
+        `;
+        card.addEventListener('click', ()=>handleMatchCard(card));
+        matchGrid.appendChild(card);
+      });
+    }
+
+    function normalizedPairKey(a, b){
+      return [a, b].sort().join('-');
+    }
+
+    function handleMatchCard(card){
+      if(lockBoard) return;
+      if(card.classList.contains('flipped') || card.classList.contains('matched')) return;
+
+      card.classList.add('flipped');
+      flippedCards.push(card);
+
+      if(flippedCards.length === 2){
+        lockBoard = true;
+        const [first, second] = flippedCards;
+        const key1 = first.dataset.key;
+        const key2 = second.dataset.key;
+
+        if(pairMap[key1] === key2){
+          first.classList.add('matched');
+          second.classList.add('matched');
+
+          const pairKey = normalizedPairKey(key1, key2);
+          if(!matchedPairKeys.has(pairKey)){
+            matchedPairKeys.add(pairKey);
+            matchedPairs++;
+            addProgress(8, 'match-'+pairKey);
+          }
+
+          const line = pairLines[pairKey];
+          if(line) matchMessage.textContent = line;
+          showToast('Matched ✨');
+
+          flippedCards = [];
+          lockBoard = false;
+
+          if(matchedPairs === 3){
+            matchMessage.textContent = 'Every piece still leads back to you.';
+            addProgress(12, 'match-complete');
+            confettiBurst(window.innerWidth/2, window.innerHeight/2, 26);
+            showToast('Moon Fragment Match completed 🌙');
+          }
+        } else {
+          matchMessage.textContent = 'Not every piece belongs together. Try again.';
+          setTimeout(()=>{
+            first.classList.remove('flipped');
+            second.classList.remove('flipped');
+            flippedCards = [];
+            lockBoard = false;
+          }, 850);
+        }
+      }
+    }
+
+    buildMatchGame();
+
+    const hiddenHearts = document.querySelectorAll('.hidden-heart');
+    const heartCount = document.getElementById('heartCount');
+    let foundHearts = 0;
+    const heartToasts = [
+      'You found a hidden piece of me.',
+      'A soft little secret just opened.',
+      'Another heart found 💖',
+      'You keep finding the sweetest parts.',
+      'Every hidden heart was waiting for you.'
+    ];
+
+    hiddenHearts.forEach(heart=>{
+      heart.addEventListener('click', (e)=>{
+        if(heart.classList.contains('found')) return;
+        heart.classList.add('found');
+        foundHearts++;
+        heartCount.textContent = foundHearts;
+        addProgress(10, 'heart-'+heart.dataset.id);
+        showToast(heartToasts[Math.min(foundHearts-1, heartToasts.length-1)]);
+        burstSparks(e.clientX, e.clientY, 16);
+
+        if(foundHearts === 5){
+          unlockFinal();
+          confettiBurst(window.innerWidth/2, window.innerHeight/2, 50);
+        }
+      });
+    });
+
+    const fallLayer = document.getElementById('fallLayer');
+    const dropStarsBtn = document.getElementById('dropStarsBtn');
+    const starMessageBox = document.getElementById('starMessageBox');
+    const starMessages = [
+      "You’re my favorite thought.",
+      "Caught one of my feelings.",
+      "Moonlight looks better with you.",
+      "You glow differently.",
+      "You make nights feel kinder.",
+      "This page shines because you're in it.",
+      "Some hearts speak best in silence.",
+      "Even in darkness, I keep finding your light."
+    ];
+
+    let lastCatchTime = 0;
+    let combo = 0;
+
+    function spawnStar(){
+      const star = document.createElement('div');
+      star.className = 'falling-star';
+      star.textContent = '⭐';
+      star.style.left = (Math.random()*92) + 'vw';
+      star.style.top = '-40px';
+      star.style.animationDuration = (4.8 + Math.random()*3.5) + 's';
+
+      star.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        const msg = starMessages[Math.floor(Math.random()*starMessages.length)];
+        starMessageBox.textContent = msg;
+        const now = Date.now();
+        combo = (now - lastCatchTime < 1200) ? combo + 1 : 1;
+        lastCatchTime = now;
+
+        addProgress(2);
+        if(combo >= 2) showToast('Star caught ⭐ Combo x' + combo);
+        else showToast('Star caught ⭐');
+        burstSparks(e.clientX, e.clientY, 15);
+        star.remove();
+      });
+
+      fallLayer.appendChild(star);
+      setTimeout(()=>star.remove(), 9500);
+    }
+
+    dropStarsBtn.addEventListener('click', ()=>{
+      for(let i=0;i<6;i++){
+        setTimeout(spawnStar, i*260);
+      }
+      addProgress(5, 'drop-stars-btn');
+      showToast('More stars are falling ✨');
+    });
+
+    setInterval(()=>{
+      if(Math.random() > 0.28) spawnStar();
+    }, 2100);
+
+    bars.classList.add('paused');
+    setMood(0);
+    renderProgress();
+  </script>
+</body>
+</html>
+```

@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1453,7 +1454,7 @@
           <div class="journey-icon">💌</div>
           <div class="journey-info">
             <span class="journey-label">First Confession of Love</span>
-            <span class="journey-date">February 6, 2025</span>
+            <span class="journey-date">January 6, 2026</span>
           </div>
         </div>
 
@@ -1463,7 +1464,7 @@
           <div class="journey-icon">💞</div>
           <div class="journey-info">
             <span class="journey-label">Our 2 Month Anniversary</span>
-            <span class="journey-date">March 6, 2025</span>
+            <span class="journey-date">March 6, 2026</span>
           </div>
         </div>
       </section>
@@ -1527,7 +1528,7 @@
     </div>
   </div>
 
-  <audio id="bgMusic" preload="auto" loop playsinline>
+  <audio id="bgMusic" preload="auto" loop>
     <source src="./song.mp3" type="audio/mpeg" />
     Your browser does not support the audio element.
   </audio>
@@ -1563,13 +1564,12 @@
     const totalMinutesEl = document.getElementById("totalMinutes");
     const totalSecondsEl = document.getElementById("totalSeconds");
 
-    const anniversaryDate = new Date("March 6, 2025 00:00:00").getTime();
-    const confessionDate = new Date("February 6, 2025 00:00:00").getTime();
+    const anniversaryDate = new Date("March 6, 2026 00:00:00").getTime();
+    const confessionDate = new Date("January 6, 2026 00:00:00").getTime();
 
     let isPlaying = false;
     let typedSequence = "";
     let lastTrail = 0;
-    let wantsMusic = false;
 
     window.addEventListener("load", () => {
       setTimeout(() => loader.classList.add("hide"), 2200);
@@ -1585,15 +1585,13 @@
 
     async function playMusic() {
       try {
-        bgMusic.muted = false;
         bgMusic.volume = 0.78;
+        bgMusic.currentTime = bgMusic.currentTime || 0;
         await bgMusic.play();
         setMusicUI(true);
-        return true;
       } catch (e) {
         console.log("Playback blocked:", e);
         musicStatus.textContent = "Tap play again";
-        return false;
       }
     }
 
@@ -1603,45 +1601,27 @@
     }
 
     enterMusicBtn.addEventListener("click", async () => {
-      wantsMusic = true;
-      musicStatus.textContent = "Starting music...";
-
-      const started = await playMusic();
-
       introOverlay.classList.add("hide");
+      await playMusic();
       heartExplosion(window.innerWidth / 2, window.innerHeight / 2);
-
-      if (started) {
-        toast("✨ Music started for you, Chokie");
-      } else {
-        toast("🎵 Tap the play button once more if needed");
-      }
+      toast("✨ Music started for you, Chokie");
     });
 
     enterSilentBtn.addEventListener("click", () => {
-      wantsMusic = false;
-      pauseMusic();
       introOverlay.classList.add("hide");
+      pauseMusic();
       musicStatus.textContent = "Entered silently";
       toast("💫 Entered silently");
     });
 
-    playPauseBtn.addEventListener("click", async () => {
-      if (bgMusic.paused) {
-        wantsMusic = true;
-        const started = await playMusic();
-        if (!started) toast("🎵 Browser still blocked it — tap again");
-      } else {
-        pauseMusic();
-      }
+    playPauseBtn.addEventListener("click", () => {
+      if (bgMusic.paused) playMusic();
+      else pauseMusic();
     });
 
-    restartBtn.addEventListener("click", async () => {
+    restartBtn.addEventListener("click", () => {
       bgMusic.currentTime = 0;
-      if (bgMusic.paused) {
-        wantsMusic = true;
-        await playMusic();
-      }
+      if (bgMusic.paused) playMusic();
       heartExplosion(window.innerWidth - 100, window.innerHeight - 80);
     });
 
@@ -1656,10 +1636,6 @@
     bgMusic.addEventListener("play", () => setMusicUI(true));
     bgMusic.addEventListener("pause", () => {
       if (!bgMusic.ended) setMusicUI(false);
-    });
-    bgMusic.addEventListener("error", () => {
-      console.log("Audio file failed to load.");
-      musicStatus.textContent = "Audio failed to load";
     });
 
     function updateCountdown() {
@@ -1909,3 +1885,4 @@
   </script>
 </body>
 </html>
+```

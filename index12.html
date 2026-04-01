@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Final Chapter Arises</title>
+  <style>
+    :root{
+      --bg1:#111317;--bg2:#1c2027;--bg3:#0c0e11;
+      --panel:rgba(255,255,255,.08);--panel2:rgba(255,255,255,.12);--line:rgba(255,255,255,.14);
+      --text:rgba(255,248,240,.96);--muted:rgba(255,230,205,.76);
+      --orange:#ff7a00;--orange2:#ff9d2f;--blue:#2ea8ff;--blue2:#7bd1ff;--yellow:#ffd93d;--yellow2:#fff07c;
+      --good:rgba(180,255,190,.25);--bad:rgba(255,120,120,.20)
+    }
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{width:100%;min-height:100%;overflow-x:hidden;font-family:Georgia,serif;background:#000;color:var(--text);scroll-behavior:smooth}
+    body{
+      position:relative;overflow-y:auto;
+      background:
+        radial-gradient(circle at 50% 12%, rgba(255,122,0,.14), transparent 18%),
+        radial-gradient(circle at 18% 80%, rgba(46,168,255,.12), transparent 20%),
+        radial-gradient(circle at 82% 14%, rgba(255,217,61,.11), transparent 18%),
+        linear-gradient(180deg, #171b21 0%, #121419 40%, #0d0f13 100%);
+    }
+    button,input{font-family:inherit}
+    #filmGrain{position:fixed;inset:0;pointer-events:none;z-index:5000;opacity:.08;mix-blend-mode:soft-light;background-image:radial-gradient(circle at 20% 30%, rgba(255,255,255,.08) 0 1px, transparent 2px),radial-gradient(circle at 70% 65%, rgba(255,255,255,.05) 0 1px, transparent 2px);background-size:160px 160px,190px 190px;animation:grainMove .35s steps(2) infinite}
+    @keyframes grainMove{0%{transform:translate(0,0)}25%{transform:translate(-1px,1px)}50%{transform:translate(1px,-1px)}75%{transform:translate(1px,1px)}100%{transform:translate(0,0)}}
+    #vignette{position:fixed;inset:0;pointer-events:none;z-index:4900;background:radial-gradient(circle at center, transparent 32%, rgba(0,0,0,.18) 58%, rgba(0,0,0,.54) 100%)}
+    #sweetToast{position:fixed;left:50%;top:20px;transform:translateX(-50%) translateY(-25px);z-index:7000;opacity:0;pointer-events:none;padding:14px 20px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));backdrop-filter:blur(10px);color:#fff7ef;box-shadow:0 10px 30px rgba(0,0,0,.24);text-align:center;max-width:min(92vw,760px);transition:all .45s ease;line-height:1.5}
+    #sweetToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .mainBtn{position:relative;border:none;cursor:pointer;padding:16px 28px;min-width:220px;border-radius:999px;text-transform:uppercase;letter-spacing:2px;font-size:.92rem;color:#fff;background:linear-gradient(180deg, rgba(255,217,61,.24), rgba(255,122,0,.12));border:1px solid rgba(255,217,61,.28);backdrop-filter:blur(12px);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 12px 28px rgba(0,0,0,.26);transition:.35s;overflow:hidden}
+    .mainBtn::before{content:"";position:absolute;top:0;left:-130%;width:62%;height:100%;transform:skewX(-24deg);background:linear-gradient(90deg, transparent, rgba(255,255,255,.32), transparent);transition:left .85s ease}
+    .mainBtn:hover::before{left:140%}
+    .mainBtn:hover{transform:translateY(-3px) scale(1.02);border-color:rgba(46,168,255,.45);background:linear-gradient(180deg, rgba(46,168,255,.22), rgba(255,122,0,.16));box-shadow:0 0 18px rgba(255,217,61,.18),0 0 30px rgba(46,168,255,.14),0 18px 30px rgba(0,0,0,.28)}
+    .miniBtn{padding:10px 14px;border:none;cursor:pointer;border-radius:999px;color:#fff;background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.12);box-shadow:0 8px 18px rgba(0,0,0,.16);transition:.25s}
+    .miniBtn:hover{transform:translateY(-2px);background:linear-gradient(180deg, rgba(46,168,255,.18), rgba(255,122,0,.10));border-color:rgba(255,217,61,.26)}
+    .sectionTitle{text-align:center;color:#fff3cd;letter-spacing:4px;font-size:clamp(1.8rem,3vw,2.7rem);margin-top:14px;margin-bottom:10px;text-shadow:0 0 10px rgba(255,217,61,.14),0 0 20px rgba(46,168,255,.08)}
+    .sectionSub{text-align:center;color:rgba(255,234,205,.78);font-size:1.04rem;margin-bottom:22px;line-height:1.7}
+
+    #intro{position:fixed;inset:0;width:100vw;height:100vh;overflow:hidden;z-index:1;background:radial-gradient(circle at center, rgba(255,122,0,.12), transparent 20%),linear-gradient(180deg,#121417 0%, #0d1014 45%, #060708 100%)}
+    #introFlash{position:absolute;inset:0;z-index:20;pointer-events:none;background:radial-gradient(circle at center, rgba(255,255,255,.22), transparent 40%);opacity:.18;mix-blend-mode:screen;animation:introPulse 5s ease-in-out infinite alternate}
+    @keyframes introPulse{from{opacity:.06;transform:scale(1)}to{opacity:.22;transform:scale(1.06)}}
+    #introTitleBlock{position:absolute;top:8%;left:50%;transform:translateX(-50%);z-index:30;text-align:center;width:min(92vw,1100px);pointer-events:none}
+    #introMini{color:rgba(255,217,61,.86);letter-spacing:6px;font-size:.95rem;margin-bottom:14px;text-transform:uppercase;text-shadow:0 0 14px rgba(255,217,61,.10)}
+    #introHeadline{color:#fff;font-size:clamp(2rem,5vw,5rem);line-height:1.16;text-shadow:0 0 18px rgba(46,168,255,.18),0 0 28px rgba(255,122,0,.16),0 0 40px rgba(255,217,61,.08)}
+    #cinemaStage{position:absolute;inset:0;overflow:hidden;z-index:10}
+    .warriorSlide{position:absolute;inset:0;opacity:0;transform:scale(1.08);transition:opacity 1s ease, transform 2.6s ease, filter 1.2s ease;background-size:contain;background-repeat:no-repeat;background-position:center bottom;filter:blur(16px) brightness(.86) saturate(1.08)}
+    .warriorSlide.show{opacity:1;filter:blur(0) brightness(1) saturate(1.14)}
+    .moveL.show{animation:moveL 3.4s ease forwards}
+    .moveR.show{animation:moveR 3.4s ease forwards}
+    .zoomIn.show{animation:zoomIn 3.4s ease forwards}
+    .zoomOut.show{animation:zoomOut 3.4s ease forwards}
+    .driftUp.show{animation:driftUp 3.4s ease forwards}
+    .driftDown.show{animation:driftDown 3.4s ease forwards}
+    .swingIn.show{animation:swingIn 3.4s ease forwards}
+    .tiltPush.show{animation:tiltPush 3.4s ease forwards}
+    .burstZoom.show{animation:burstZoom 3.4s ease forwards}
+    .heroFinal.show{animation:heroFinal 4.6s ease forwards}
+    @keyframes moveL{0%{transform:translateX(-18%) scale(1.18)}50%{transform:translateX(3%) scale(1.04)}100%{transform:translateX(10%) scale(1)}}
+    @keyframes moveR{0%{transform:translateX(18%) scale(1.16)}50%{transform:translateX(-2%) scale(1.04)}100%{transform:translateX(-10%) scale(1)}}
+    @keyframes zoomIn{0%{transform:scale(1.28)}100%{transform:scale(1)}}
+    @keyframes zoomOut{0%{transform:scale(.92)}100%{transform:scale(1.12)}}
+    @keyframes driftUp{0%{transform:translateY(12%) scale(1.12)}100%{transform:translateY(-8%) scale(1)}}
+    @keyframes driftDown{0%{transform:translateY(-10%) scale(1.06)}100%{transform:translateY(8%) scale(1.02)}}
+    @keyframes swingIn{0%{transform:rotate(-4deg) scale(1.12)}100%{transform:rotate(2deg) scale(1)}}
+    @keyframes tiltPush{0%{transform:rotate(4deg) scale(1.18)}100%{transform:rotate(-1deg) scale(1)}}
+    @keyframes burstZoom{0%{transform:scale(1.32)}100%{transform:scale(1.02)}}
+    @keyframes heroFinal{0%{transform:scale(1.18)}40%{transform:scale(1.06)}100%{transform:scale(1)}}
+    #introOverlayTop,#introOverlayBottom{position:absolute;left:0;width:100%;height:18vh;z-index:25;pointer-events:none;background:linear-gradient(180deg, rgba(0,0,0,.92), rgba(0,0,0,0))}
+    #introOverlayTop{top:0}
+    #introOverlayBottom{bottom:0;transform:rotate(180deg)}
+    #introColorWash{position:absolute;inset:0;z-index:22;pointer-events:none;background:radial-gradient(circle at 20% 70%, rgba(255,122,0,.14), transparent 24%),radial-gradient(circle at 78% 18%, rgba(46,168,255,.12), transparent 24%),radial-gradient(circle at 50% 30%, rgba(255,217,61,.08), transparent 24%);mix-blend-mode:screen}
+    #entryButtons{position:absolute;left:50%;bottom:10%;transform:translateX(-50%);z-index:35;display:flex;gap:20px;opacity:0;pointer-events:none;transition:opacity 1.3s ease;justify-content:center;width:min(95vw,780px)}
+    #entryButtons.show{opacity:1;pointer-events:auto}
+
+    #loveSection{position:relative;width:100vw;min-height:100vh;display:none;overflow-x:hidden;overflow-y:auto;z-index:100;background:radial-gradient(circle at 50% 10%, rgba(255,122,0,.12), transparent 22%),radial-gradient(circle at 18% 72%, rgba(46,168,255,.10), transparent 20%),radial-gradient(circle at 82% 22%, rgba(255,217,61,.10), transparent 20%),linear-gradient(to bottom, #1b1f26 0%, #14181f 45%, #0f1217 100%);padding:36px 0 60px;animation:worldFade .9s ease}
+    @keyframes worldFade{from{opacity:0;filter:blur(8px)}to{opacity:1;filter:blur(0)}}
+    #loveSection.active{display:block}
+    #loveGlow{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(circle at 50% 24%, rgba(255,122,0,.08), transparent 26%),radial-gradient(circle at 20% 72%, rgba(46,168,255,.06), transparent 28%)}
+    .heartFloat{position:fixed;z-index:2;pointer-events:none;color:rgba(255,217,61,.14);animation:floatHeart linear infinite}
+    @keyframes floatHeart{0%{transform:translateY(100vh) scale(.7);opacity:0}15%{opacity:1}100%{transform:translateY(-15vh) scale(1.35);opacity:0}}
+    #romanceBox{position:relative;z-index:5;margin:0 auto 18px;width:min(1220px,95%);text-align:center;padding:8px 20px 22px}
+    #romanticText{display:inline-block;max-width:1140px;min-height:150px;padding-right:8px;border-right:2px solid rgba(255,255,255,.75);font-size:clamp(1.34rem,2.7vw,2.45rem);line-height:1.85;color:rgba(255,248,252,.97);text-shadow:0 0 14px rgba(46,168,255,.12)}
+    #miniLine{margin-top:16px;font-size:1rem;color:rgba(255,235,210,.74);letter-spacing:2px;opacity:0;transition:opacity 1.2s ease}
+    #miniLine.show{opacity:1}
+    #loveTopArea{position:relative;z-index:4;width:min(1300px,95%);margin:0 auto;display:grid;grid-template-columns:1.2fr .8fr;gap:18px;align-items:start}
+    #notePanel,#statsPanel{position:relative;padding:24px;border-radius:28px;background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,180,60,.03));border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 18px 32px rgba(0,0,0,.20),0 0 26px rgba(46,168,255,.07);overflow:hidden}
+    #notePanel::before,#statsPanel::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg, rgba(255,255,255,.05), transparent 38%, transparent 62%, rgba(255,255,255,.03))}
+    #notePanel h3,#statsPanel h3{margin-bottom:12px;font-size:1.16rem;letter-spacing:2px;text-transform:uppercase;color:#ffe89a}
+    #loveNoteText{color:rgba(255,245,250,.90);line-height:1.85;min-height:130px;font-size:1rem}
+    .statLine{color:rgba(255,245,250,.88);margin:10px 0;font-size:1rem;line-height:1.7}
+    #menuCards{position:relative;z-index:8;width:min(1300px,95%);margin:26px auto 40px;display:grid;grid-template-columns:repeat(3,minmax(260px,1fr));gap:18px}
+    .cardBtn{position:relative;min-height:132px;padding:24px 20px;text-align:left;cursor:pointer;color:#fff;border-radius:28px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,180,40,.045));backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 16px 24px rgba(0,0,0,.18);transition:.35s;overflow:hidden}
+    .cardBtn::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg, rgba(255,255,255,.05), transparent 35%, transparent 70%, rgba(255,255,255,.025));pointer-events:none}
+    .cardBtn:hover{transform:translateY(-5px) scale(1.015);background:linear-gradient(180deg, rgba(46,168,255,.12), rgba(255,122,0,.06));border-color:rgba(255,217,61,.34);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 0 24px rgba(46,168,255,.10),0 18px 30px rgba(0,0,0,.22)}
+    .cardBtn .big{display:block;margin-bottom:10px;font-size:1.03rem;letter-spacing:2px;text-transform:uppercase;color:#fff4be}
+    .cardBtn .small{display:block;font-size:.98rem;line-height:1.7;color:rgba(255,255,255,.78)}
+    #endButtonsWrap{width:min(1300px,95%);margin:0 auto 50px;display:flex;justify-content:center;gap:18px;flex-wrap:wrap;position:relative;z-index:10}
+
+    .modal{position:fixed;inset:0;z-index:8000;display:none;overflow:auto;padding:24px;background:rgba(0,0,0,.82);backdrop-filter:blur(14px);animation:modalFade .35s ease}
+    @keyframes modalFade{from{opacity:0}to{opacity:1}}
+    .modal.show{display:block}
+    .closeBtn{position:absolute;top:18px;right:22px;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:26px;cursor:pointer;z-index:9999;transition:.25s}
+    .closeBtn:hover{transform:scale(1.05);background:rgba(255,122,0,.18);border-color:rgba(255,217,61,.28)}
+    #crosswordWrap,#simonWrap,#sudokuWrap,#starGameWrap,#memoryWrap,#meterWrap,#shapesWrap{width:min(1240px,97%);margin:34px auto 0;position:relative;z-index:5}
+
+    #shapesToolbar{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:18px 0}
+    #shapesGameBox{position:relative;width:100%;height:min(76vh,780px);min-height:500px;border-radius:34px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:radial-gradient(circle at 50% 22%, rgba(255,217,61,.10), transparent 18%),radial-gradient(circle at 20% 70%, rgba(46,168,255,.08), transparent 18%),linear-gradient(180deg, #1f232b 0%, #171b21 40%, #0d0f13 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 18px 40px rgba(0,0,0,.30)}
+    #shapesCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+    #shapesHud{position:absolute;left:50%;top:18px;transform:translateX(-50%);z-index:5;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;width:min(95%,1000px)}
+    .shapesHudItem{padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));backdrop-filter:blur(10px);color:rgba(255,245,250,.92);font-size:.92rem}
+    #shapesOverlayText{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:5;text-align:center;color:rgba(255,235,245,.78);width:min(92%,900px);line-height:1.8;font-size:1rem}
+    #shapesMessage,#crosswordMessage,#starMessage,#memoryMessage,#meterMessage,#simonStatus,#sudokuMsg{text-align:center;margin-top:18px;min-height:30px;color:#ffe7ff;line-height:1.8;font-size:1rem}
+
+    #crossGrid{margin-top:12px;padding:22px;border-radius:28px;background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));border:1px solid rgba(255,255,255,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 16px 24px rgba(0,0,0,.18)}
+    .crossRow{display:flex;justify-content:center;gap:10px;margin:10px 0}
+    .emptyBox,.letterBox{width:72px;height:72px}.emptyBox{background:transparent}.letterBox{position:relative}
+    .letterBox input{width:100%;height:100%;text-align:center;text-transform:uppercase;font-size:1.9rem;font-weight:bold;color:#fff;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);outline:none;border-radius:16px;transition:.25s}
+    .letterBox input:focus{border-color:rgba(46,168,255,.52);background:rgba(255,255,255,.14);transform:scale(1.03)}
+    .letterBox small{position:absolute;top:4px;left:6px;font-size:.78rem;color:rgba(255,255,255,.56);pointer-events:none}
+    .correct{background:var(--good)!important;border-color:rgba(160,255,190,.55)!important}
+    .wrong{background:var(--bad)!important;border-color:rgba(255,120,120,.52)!important}
+    #clues{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:30px;padding:20px;border-radius:24px;background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.90);font-size:1.05rem;line-height:1.9}
+    #clues h3{color:#ffe180;margin-bottom:10px;font-size:1.2rem}
+
+    #smokeModal{padding:0}
+    #smokeCanvas{width:100%;height:100vh;display:block;background:linear-gradient(to top,#1a1612,#18293b 60%,#203d57)}
+    #smokeOverlayTitle{position:absolute;top:32px;left:50%;transform:translateX(-50%);z-index:9000;color:#fff7d8;letter-spacing:4px;text-align:center}
+
+    #simonWrap{text-align:center}
+    #simonGrid{width:360px;height:360px;margin:25px auto;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .simonBtn{border-radius:28px;opacity:.74;cursor:pointer;transition:.22s;box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 14px 20px rgba(0,0,0,.18)}
+    .simonBtn.active{opacity:1;box-shadow:0 0 36px rgba(255,255,255,.28);transform:scale(1.04)}
+    .sg{background:#39d87e}.sr{background:#ff7a00}.sb{background:#2ea8ff}.sy{background:#ffd93d}
+
+    #sudokuWrap{text-align:center}
+    #sudokuGrid{width:303px;margin:26px auto;display:grid;grid-template-columns:repeat(3,101px);gap:3px;padding:3px;border-radius:18px;background:rgba(255,255,255,.24)}
+    .sCell input{width:101px;height:101px;border:none;outline:none;text-align:center;font-size:2rem;color:#fff;background:rgba(255,255,255,.08)}
+
+    #starGameWrap{text-align:center}
+    #starArena{position:relative;width:100%;height:580px;overflow:hidden;border-radius:30px;border:1px solid rgba(255,255,255,.08);background:radial-gradient(circle at center, rgba(255,217,61,.06), transparent 24%),linear-gradient(to bottom,#132033,#0a0e14)}
+    #basket{position:absolute;bottom:18px;left:50%;width:126px;height:28px;transform:translateX(-50%);border-radius:20px 20px 10px 10px;background:linear-gradient(to right,#ff7a00,#ffd93d,#2ea8ff);box-shadow:0 0 18px rgba(255,180,40,.18)}
+    .fallStar{position:absolute;top:-30px;width:24px;height:24px;color:#fff7b8;font-size:24px;text-shadow:0 0 14px rgba(255,244,180,.8);pointer-events:none}
+    #starScore{margin-top:14px;color:#ffe7ff;font-size:1rem}
+
+    #memoryWrap{text-align:center}
+    #memoryGrid{width:min(560px,100%);margin:26px auto;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .memoryCard{aspect-ratio:1/1;border-radius:20px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:2.2rem;cursor:pointer;transition:.2s;user-select:none;box-shadow:0 12px 18px rgba(0,0,0,.14)}
+    .memoryCard:hover{transform:scale(1.03);box-shadow:0 0 22px rgba(46,168,255,.10),0 14px 20px rgba(0,0,0,.16)}
+    .memoryCard.flipped,.memoryCard.matched{background:rgba(255,217,61,.12)}
+
+    #meterWrap{text-align:center}
+    #meterBarOuter{width:min(720px,94%);margin:24px auto;height:28px;border-radius:20px;overflow:hidden;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12)}
+    #meterBarInner{width:0%;height:100%;background:linear-gradient(90deg,#ff7a00,#ffd93d,#2ea8ff);box-shadow:0 0 16px rgba(255,180,40,.22);transition:width .08s linear}
+    #tapHeart{width:130px;height:130px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:radial-gradient(circle, rgba(255,217,61,.25), rgba(255,122,0,.12));color:#fff;font-size:2.6rem;cursor:pointer;box-shadow:0 12px 24px rgba(0,0,0,.18),0 0 20px rgba(46,168,255,.10);transition:transform .1s ease}
+    #tapHeart:active{transform:scale(.96)}
+
+    #finalModal,#endStoryModal{background:radial-gradient(circle at center, rgba(255,122,0,.12), rgba(0,0,0,.9) 60%),rgba(0,0,0,.88)}
+    #finalBox{width:min(980px,92%);margin:8vh auto 0;text-align:center;padding:38px 30px;border-radius:30px;background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(14px);box-shadow:0 0 32px rgba(46,168,255,.08),0 18px 36px rgba(0,0,0,.22)}
+    #finalBox h2{color:#fff1b0;letter-spacing:5px;margin-bottom:18px;font-size:clamp(1.7rem,4vw,3.2rem)}
+    #finalTyping,#endStoryTyping{min-height:220px;max-width:820px;margin:0 auto;display:block;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.95;font-size:clamp(1rem,1.8vw,1.35rem);color:rgba(255,245,250,.97)}
+    #finalActions{margin-top:28px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+
+    @media (max-width:1050px){#loveTopArea{grid-template-columns:1fr}#menuCards{grid-template-columns:repeat(2,minmax(240px,1fr))}}
+    @media (max-width:768px){
+      #entryButtons{width:90%}
+      .mainBtn{width:100%;min-width:unset}
+      #menuCards{grid-template-columns:1fr}
+      #clues{grid-template-columns:1fr}
+      #simonGrid{width:290px;height:290px}
+      #introHeadline{font-size:2rem}
+      #romanticText{font-size:1.2rem}
+      #shapesGameBox{min-height:460px}
+      .emptyBox,.letterBox{width:52px;height:52px}
+      .letterBox input{font-size:1.35rem}
+      #shapesToolbar{padding:0 10px}
+    }
+  </style>
+</head>
+<body>
+  <div id="sweetToast"></div>
+  <div id="filmGrain"></div>
+
+  <section id="intro">
+    <div id="introFlash"></div>
+    <div id="introTitleBlock">
+      <div id="introMini">Final Sequence</div>
+      <div id="introHeadline">A storm of warriors.<br>A last door of light.</div>
+    </div>
+    <div id="cinemaStage">
+      <div class="warriorSlide moveL" style="background-image:url('warrior1.png')"></div>
+      <div class="warriorSlide moveR" style="background-image:url('warrior2.png')"></div>
+      <div class="warriorSlide zoomIn" style="background-image:url('warrior3.png')"></div>
+      <div class="warriorSlide zoomOut" style="background-image:url('warrior4.png')"></div>
+      <div class="warriorSlide driftUp" style="background-image:url('warrior5.png')"></div>
+      <div class="warriorSlide driftDown" style="background-image:url('warrior6.png')"></div>
+      <div class="warriorSlide swingIn" style="background-image:url('warrior7.png')"></div>
+      <div class="warriorSlide tiltPush" style="background-image:url('warrior8.png')"></div>
+      <div class="warriorSlide burstZoom" style="background-image:url('warrior9.png')"></div>
+      <div class="warriorSlide heroFinal" style="background-image:url('warrior10.png')"></div>
+    </div>
+    <div id="introColorWash"></div>
+    <div id="introOverlayTop"></div>
+    <div id="introOverlayBottom"></div>
+    <div id="entryButtons">
+      <button class="mainBtn" id="musicEnter">Enter With Music</button>
+    </div>
+  </section>
+
+  <section id="loveSection">
+    <div id="loveGlow"></div>
+    <div id="romanceBox">
+      <div id="romanticText"></div>
+      <div id="miniLine">Choose a memory, a little game, or a quiet place to stay for a while.</div>
+    </div>
+
+    <div id="loveTopArea">
+      <div id="notePanel">
+        <h3>Love Notes</h3>
+        <div id="loveNoteText">
+          If there is one thing I hope this page lets you feel, it is this: you are not something I hold lightly.
+          You are someone I want to be gentle with, safe with, patient with, and honest with.
+          I want you to feel chosen here.
+        </div>
+      </div>
+      <div id="statsPanel">
+        <h3>Little Progress</h3>
+        <div class="statLine" id="statShapes">Shapes of Us: not completed yet</div>
+        <div class="statLine" id="statCrossword">Crossword: not solved yet</div>
+        <div class="statLine" id="statSimon">Simon: not completed yet</div>
+        <div class="statLine" id="statSudoku">Sudoku: not completed yet</div>
+        <div class="statLine" id="statStars">Falling Stars: not completed yet</div>
+        <div class="statLine" id="statMemory">Memory Match: not completed yet</div>
+        <div class="statLine" id="statMeter">Love Meter: not completed yet</div>
+      </div>
+    </div>
+
+    <div id="menuCards">
+      <button class="cardBtn" onclick="openShapesGame()"><span class="big">Shapes of Us</span><span class="small">Guide glowing shapes across a quiet little world. Switch between them, jump carefully, and reach the light together.</span></button>
+      <button class="cardBtn" onclick="openCrossword()"><span class="big">Love Crossword</span><span class="small">A bigger, easier little puzzle made from simple words that feel warm in the mouth and true in the heart.</span></button>
+      <button class="cardBtn" onclick="openSmokeScene()"><span class="big">Whisper in the Smoke</span><span class="small">Fire, water, steam, and a line that rises like something too tender to stay hidden.</span></button>
+      <button class="cardBtn" onclick="openSimon()"><span class="big">Simon of Hearts</span><span class="small">Watch the glow, remember the rhythm, and hold onto what matters when the lights move quickly.</span></button>
+      <button class="cardBtn" onclick="openSudoku()"><span class="big">Soul Sudoku</span><span class="small">A tiny puzzle of order and patience, the kind that feels calmer when done beside someone gentle.</span></button>
+      <button class="cardBtn" onclick="openStarGame()"><span class="big">Falling Stars</span><span class="small">Catch enough starlight and let it become a quiet reminder that beautiful things can still be gathered.</span></button>
+      <button class="cardBtn" onclick="openMemoryGame()"><span class="big">Memory Match</span><span class="small">Turn over each hidden piece until the shapes find each other the way some feelings naturally do.</span></button>
+      <button class="cardBtn" onclick="openLoveMeter()"><span class="big">Love Meter</span><span class="small">Tap the heart until it overflows, not to prove anything, only to watch warmth become visible.</span></button>
+      <button class="cardBtn" onclick="showLoveNoteWithSong()"><span class="big">Open a Note</span><span class="small">A small letter, a soft breath, a sentence meant to hold you gently for a moment.</span></button>
+      <button class="cardBtn" onclick="openFinalSurprise()"><span class="big">One Last Door</span><span class="small">A final room of light waiting at the end, where the page says what it most wanted to say all along.</span></button>
+    </div>
+
+    <div id="endButtonsWrap">
+      <button class="mainBtn" onclick="restartStory()">Restart Story</button>
+      <button class="mainBtn" onclick="openEndStory()">End Story</button>
+    </div>
+  </section>
+
+  <div class="modal" id="shapesModal">
+    <button class="closeBtn" onclick="closeShapesGame()">&times;</button>
+    <div id="shapesWrap">
+      <h2 class="sectionTitle">Shapes of Us</h2>
+      <p class="sectionSub">Move, jump, switch shapes, choose difficulty, and bring them safely to the light.</p>
+      <div id="shapesToolbar">
+        <button class="miniBtn" onclick="setShapesDifficulty('easy')">Easy</button>
+        <button class="miniBtn" onclick="setShapesDifficulty('normal')">Normal</button>
+        <button class="miniBtn" onclick="setShapesDifficulty('hard')">Hard</button>
+        <button class="miniBtn" onclick="nextShapesMap()">Next Map</button>
+      </div>
+      <div id="shapesGameBox">
+        <canvas id="shapesCanvas"></canvas>
+        <div id="shapesHud">
+          <div class="shapesHudItem">Move: <b>← →</b> or <b>A D</b></div>
+          <div class="shapesHudItem">Jump: <b>Space</b> / <b>W</b> / <b>↑</b></div>
+          <div class="shapesHudItem">Switch Shape: <b>Tab</b> or <b>S</b></div>
+          <div class="shapesHudItem" id="shapesMapLabel">Map: 1</div>
+          <div class="shapesHudItem" id="shapesDifficultyLabel">Difficulty: Normal</div>
+        </div>
+        <div id="shapesOverlayText">How to play: move with ← → or A D, jump with Space / W / ↑, switch shape with Tab or S, and make every shape touch the glowing exit.</div>
+      </div>
+      <div style="margin-top:18px;text-align:center;"><button class="mainBtn" onclick="startShapesGame()">Restart Level</button></div>
+      <div id="shapesMessage"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="crosswordModal">
+    <button class="closeBtn" onclick="closeModalWithMusic('crosswordModal')">&times;</button>
+    <div id="crosswordWrap">
+      <h2 class="sectionTitle">Love Crossword</h2>
+      <p class="sectionSub">Bigger. Easier. Softer. Made to feel more like a smile than a test.</p>
+      <div id="crossGrid">
+        <div class="crossRow"><div class="emptyBox"></div><div class="letterBox"><small>3</small><input maxlength="1" data-word="smile" data-index="0"></div><div class="emptyBox"></div><div class="emptyBox"></div></div>
+        <div class="crossRow"><div class="emptyBox"></div><div class="letterBox"><input maxlength="1" data-word="smile" data-index="1"></div><div class="emptyBox"></div><div class="emptyBox"></div></div>
+        <div class="crossRow"><div class="letterBox"><small>1</small><input maxlength="1" data-word="love" data-index="0"></div><div class="letterBox"><input maxlength="1" data-word="love" data-index="1"></div><div class="letterBox"><input maxlength="1" data-word="love" data-index="2"></div><div class="letterBox"><input maxlength="1" data-word="love" data-index="3"></div></div>
+        <div class="crossRow"><div class="emptyBox"></div><div class="letterBox"><input maxlength="1" data-word="smile" data-index="2"></div><div class="emptyBox"></div><div class="letterBox"><small>2</small><input maxlength="1" data-word="care" data-index="0"></div></div>
+        <div class="crossRow"><div class="emptyBox"></div><div class="letterBox"><input maxlength="1" data-word="smile" data-index="3"></div><div class="emptyBox"></div><div class="letterBox"><input maxlength="1" data-word="care" data-index="1"></div></div>
+        <div class="crossRow"><div class="emptyBox"></div><div class="letterBox"><input maxlength="1" data-word="smile" data-index="4"></div><div class="emptyBox"></div><div class="letterBox"><input maxlength="1" data-word="care" data-index="2"></div></div>
+        <div class="crossRow"><div class="emptyBox"></div><div class="emptyBox"></div><div class="emptyBox"></div><div class="letterBox"><input maxlength="1" data-word="care" data-index="3"></div></div>
+      </div>
+      <div id="clues">
+        <div><h3>Across</h3><div>1. The softest four-letter feeling. <b>(4)</b> — Answer: <b>LOVE</b></div><div>2. What you give gently to someone important. <b>(4)</b> — Answer: <b>CARE</b></div></div>
+        <div><h3>Down</h3><div>3. A thing of yours that can change my whole day. <b>(5)</b> — Answer: <b>SMILE</b></div></div>
+      </div>
+      <div style="margin-top:18px;text-align:center;"><button class="mainBtn" onclick="checkCrossword()">Check Answers</button></div>
+      <div id="crosswordMessage"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="smokeModal">
+    <button class="closeBtn" onclick="closeSmokeScene()">&times;</button>
+    <div id="smokeOverlayTitle">Whisper in the Smoke</div>
+    <canvas id="smokeCanvas"></canvas>
+  </div>
+
+  <div class="modal" id="simonModal">
+    <button class="closeBtn" onclick="closeModalWithMusic('simonModal')">&times;</button>
+    <div id="simonWrap">
+      <h2 class="sectionTitle">Simon of Hearts</h2>
+      <p class="sectionSub">Watch the glow. Repeat the memory. Let attention become affection.</p>
+      <div id="simonGrid">
+        <div class="simonBtn sg" data-color="0"></div>
+        <div class="simonBtn sr" data-color="1"></div>
+        <div class="simonBtn sb" data-color="2"></div>
+        <div class="simonBtn sy" data-color="3"></div>
+      </div>
+      <div style="margin-top:18px;text-align:center;"><button class="mainBtn" onclick="startSimon()">Start Simon</button></div>
+      <div id="simonStatus"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="sudokuModal">
+    <button class="closeBtn" onclick="closeModalWithMusic('sudokuModal')">&times;</button>
+    <div id="sudokuWrap">
+      <h2 class="sectionTitle">Soul Sudoku</h2>
+      <p class="sectionSub">Use only 1, 2, and 3. A tiny order made gentle.</p>
+      <div id="sudokuGrid">
+        <div class="sCell"><input value="1" disabled></div>
+        <div class="sCell"><input id="s1" maxlength="1"></div>
+        <div class="sCell"><input value="3" disabled></div>
+        <div class="sCell"><input id="s2" maxlength="1"></div>
+        <div class="sCell"><input value="3" disabled></div>
+        <div class="sCell"><input id="s3" maxlength="1"></div>
+        <div class="sCell"><input value="3" disabled></div>
+        <div class="sCell"><input id="s4" maxlength="1"></div>
+        <div class="sCell"><input value="2" disabled></div>
+      </div>
+      <div style="margin-top:18px;text-align:center;"><button class="mainBtn" onclick="checkSudoku()">Check Sudoku</button></div>
+      <div id="sudokuMsg"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="starModal">
+    <button class="closeBtn" onclick="closeStarGame()">&times;</button>
+    <div id="starGameWrap">
+      <h2 class="sectionTitle">Falling Stars</h2>
+      <p class="sectionSub">Move the basket with mouse or finger and catch 8 stars.</p>
+      <div id="starArena"><div id="basket"></div></div>
+      <div style="margin-top:18px;text-align:center;"><button class="mainBtn" onclick="startStarGame()">Start Catching</button></div>
+      <div id="starScore">Stars caught: 0 / 8</div>
+      <div id="starMessage"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="memoryModal">
+    <button class="closeBtn" onclick="closeMemoryGame()">&times;</button>
+    <div id="memoryWrap">
+      <h2 class="sectionTitle">Memory Match</h2>
+      <p class="sectionSub">Turn each piece over and let the right things find each other.</p>
+      <div id="memoryGrid"></div>
+      <div style="margin-top:18px;text-align:center;"><button class="mainBtn" onclick="startMemoryGame()">Shuffle Again</button></div>
+      <div id="memoryMessage"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="meterModal">
+    <button class="closeBtn" onclick="closeMeterGame()">&times;</button>
+    <div id="meterWrap">
+      <h2 class="sectionTitle">Love Meter</h2>
+      <p class="sectionSub">Tap fast and watch warmth become visible before it fades.</p>
+      <div id="meterBarOuter"><div id="meterBarInner"></div></div>
+      <div style="display:flex;justify-content:center;"><button id="tapHeart">❤</button></div>
+      <div style="margin-top:18px;text-align:center;"><button class="mainBtn" onclick="startMeterGame()">Start Meter</button></div>
+      <div id="meterMessage"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="finalModal">
+    <button class="closeBtn" onclick="closeModalWithMusic('finalModal')">&times;</button>
+    <div id="finalBox">
+      <h2>One Last Door</h2>
+      <div id="finalTyping"></div>
+      <div id="finalActions">
+        <button class="mainBtn" onclick="showFinalLine()">Reveal Again</button>
+        <button class="mainBtn" onclick="closeModalWithMusic('finalModal')">Stay Here A Little Longer</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="endStoryModal">
+    <button class="closeBtn" onclick="closeModalWithMusic('endStoryModal')">&times;</button>
+    <div id="finalBox">
+      <h2>End of Story</h2>
+      <div id="endStoryTyping"></div>
+      <div id="finalActions">
+        <button class="mainBtn" onclick="showEndStoryText()">Read Again</button>
+        <button class="mainBtn" onclick="closeModalWithMusic('endStoryModal')">Hold This Moment</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="vignette"></div>
+
+  <audio id="song12" src="song12.mp3" loop></audio>
+  <audio id="song212" src="212.mp3" loop></audio>
+  <audio id="song213" src="213.mp3" loop></audio>
+  <audio id="song214" src="214.mp3" loop></audio>
+  <audio id="song215" src="215.mp3" loop></audio>
+  <audio id="song216" src="216.mp3" loop></audio>
+  <audio id="song217" src="217.mp3" loop></audio>
+  <audio id="song218" src="218.mp3" loop></audio>
+  <audio id="song219" src="219.mp3" loop></audio>
+  <audio id="song220" src="220.mp3" loop></audio>
+  <audio id="song221" src="221.mp3" loop></audio>
+  <audio id="voiceNote" src="voice.mp3"></audio>
+
+  <script>
+    const sweetToast=document.getElementById("sweetToast");
+    function toast(msg){ sweetToast.textContent=msg; sweetToast.classList.add("show"); clearTimeout(sweetToast._t); sweetToast._t=setTimeout(()=>sweetToast.classList.remove("show"),2800); }
+    function setStat(id,text){ const el=document.getElementById(id); if(el) el.textContent=text; }
+    function restartStory(){ window.location.href="index.html"; }
+
+    const mainSong=document.getElementById("song12");
+    const modalSongs={shapesModal:document.getElementById("song212"),crosswordModal:document.getElementById("song213"),smokeModal:document.getElementById("song214"),simonModal:document.getElementById("song215"),sudokuModal:document.getElementById("song216"),starModal:document.getElementById("song217"),memoryModal:document.getElementById("song218"),meterModal:document.getElementById("song219"),noteSong:document.getElementById("song220"),finalModal:document.getElementById("song221"),endStoryModal:document.getElementById("song221")};
+    function stopAllExtraSongs(){ Object.values(modalSongs).forEach(a=>{ if(!a) return; a.pause(); a.currentTime=0; }); }
+    function playMainSong(){ stopAllExtraSongs(); if(!mainSong) return; mainSong.loop=true; mainSong.volume=.88; mainSong.play().catch(()=>{}); }
+    function pauseMainSong(){ if(mainSong) mainSong.pause(); }
+    function playModalSong(key){ pauseMainSong(); stopAllExtraSongs(); const a=modalSongs[key]; if(a){ a.loop=true; a.volume=.92; a.play().catch(()=>{}); } }
+    function closeModalWithMusic(id){
+      const modal=document.getElementById(id);
+      if(modal) modal.classList.remove("show");
+
+      const voiceNote=document.getElementById("voiceNote");
+      if(voiceNote){ voiceNote.pause(); voiceNote.currentTime=0; }
+
+      if(id==="shapesModal") cancelAnimationFrame(shapesAnim);
+      if(id==="smokeModal"){ smokeRunning=false; cancelAnimationFrame(smokeAnim); }
+
+      stopAllExtraSongs();
+      if(loveSection.classList.contains("active")) mainSong.play().catch(()=>{});
+    }
+
+    const slides=[...document.querySelectorAll(".warriorSlide")];
+    const entryButtons=document.getElementById("entryButtons");
+    const intro=document.getElementById("intro");
+    const loveSection=document.getElementById("loveSection");
+    let slideIndex=0;
+    function playSlides(){
+      if(slideIndex>0) slides[slideIndex-1].classList.remove("show");
+      if(slideIndex<slides.length){ slides[slideIndex].classList.add("show"); slideIndex++; setTimeout(playSlides,2400); }
+      else setTimeout(()=>entryButtons.classList.add("show"),700);
+    }
+    setTimeout(playSlides,900);
+
+    document.getElementById("musicEnter").addEventListener("click",()=>{
+      playMainSong();
+      intro.style.opacity="0";
+      setTimeout(()=>{
+        intro.style.display="none";
+        loveSection.classList.add("active");
+        createHeartBackground();
+        startRomanticTyping();
+        startLoveNotesRotation();
+        window.scrollTo(0,0);
+      },650);
+      toast("Entering with music.");
+    });
+
+    const romanticLine="This may be the last chapter of this story, but I hope it feels less like an ending and more like a place where something softer begins — something steadier, gentler, safer, and more real for both of us.";
+    function startRomanticTyping(){
+      const box=document.getElementById("romanticText"), mini=document.getElementById("miniLine");
+      box.textContent=""; mini.classList.remove("show");
+      let i=0;
+      const t=setInterval(()=>{ box.textContent+=romanticLine[i]; i++; if(i>=romanticLine.length){ clearInterval(t); mini.classList.add("show"); } },28);
+    }
+    function createHeartBackground(){
+      for(let i=0;i<28;i++){
+        const h=document.createElement("div");
+        h.className="heartFloat";
+        h.innerHTML="❤";
+        h.style.left=Math.random()*100+"%";
+        h.style.fontSize=(16+Math.random()*34)+"px";
+        h.style.animationDuration=(7+Math.random()*6)+"s";
+        h.style.animationDelay=Math.random()*6+"s";
+        document.body.appendChild(h);
+      }
+    }
+
+    const noteBox=document.getElementById("loveNoteText");
+    const loveNotes=[
+      "If I could choose only one thing for you to feel from this page, it would be this: you are safe to be soft here. Safe to be honest. Safe to be tired. Safe to be fully yourself.",
+      "Some people arrive like noise. Some arrive like peace. You feel much closer to peace — the kind that makes the heart unclench without even realizing it.",
+      "I do not want something loud and fragile with you. I want something gentle and lasting. Something that knows how to hold warmth even on difficult days.",
+      "If life ever feels heavy, I hope what grows between us feels lighter than fear and steadier than doubt.",
+      "There is something deeply beautiful about being with someone who does not make love feel like pressure, but like rest.",
+      "You are not someone I want to impress for a moment. You are someone I want to care for with honesty, patience, reassurance, and real effort.",
+      "If this page remembers anything after it closes, I hope it remembers this: I wanted to make something that held you carefully."
+    ];
+    let noteInterval=null;
+    function startLoveNotesRotation(){ let idx=0; noteBox.textContent=loveNotes[idx]; if(noteInterval) clearInterval(noteInterval); noteInterval=setInterval(()=>{ idx=(idx+1)%loveNotes.length; noteBox.textContent=loveNotes[idx]; },5600); }
+    function showLoveNote(){ const note=loveNotes[Math.floor(Math.random()*loveNotes.length)]; noteBox.textContent=note; toast("A note opens softly."); }
+    function showLoveNoteWithSong(){ playModalSong("noteSong"); showLoveNote(); setTimeout(()=>{ stopAllExtraSongs(); if(loveSection.classList.contains("active")) mainSong.play().catch(()=>{}); },4200); }
+
+    function openShapesGame(){ document.getElementById("shapesModal").classList.add("show"); playModalSong("shapesModal"); startShapesGame(); }
+    function openCrossword(){ document.getElementById("crosswordModal").classList.add("show"); playModalSong("crosswordModal"); }
+    function openSmokeScene(){ document.getElementById("smokeModal").classList.add("show"); playModalSong("smokeModal"); startSmokeScene(); }
+    function openSimon(){ document.getElementById("simonModal").classList.add("show"); playModalSong("simonModal"); }
+    function openSudoku(){ document.getElementById("sudokuModal").classList.add("show"); playModalSong("sudokuModal"); }
+    function openStarGame(){ document.getElementById("starModal").classList.add("show"); playModalSong("starModal"); resetStarGame(); }
+    function openMemoryGame(){ document.getElementById("memoryModal").classList.add("show"); playModalSong("memoryModal"); startMemoryGame(); }
+    function openLoveMeter(){ document.getElementById("meterModal").classList.add("show"); playModalSong("meterModal"); resetMeterGame(); }
+    function openFinalSurprise(){ document.getElementById("finalModal").classList.add("show"); playModalSong("finalModal"); showFinalLine(); }
+    function openEndStory(){
+      document.getElementById("endStoryModal").classList.add("show");
+      playModalSong("endStoryModal");
+      const voiceNote=document.getElementById("voiceNote");
+      if(voiceNote){ voiceNote.pause(); voiceNote.currentTime=0; voiceNote.volume=1; voiceNote.play().catch(()=>{}); }
+      showEndStoryText();
+    }
+
+    const shapesCanvas=document.getElementById("shapesCanvas");
+    const shapesCtx=shapesCanvas.getContext("2d");
+    const shapesBox=document.getElementById("shapesGameBox");
+    const shapesMessage=document.getElementById("shapesMessage");
+    const shapesMapLabel=document.getElementById("shapesMapLabel");
+    const shapesDifficultyLabel=document.getElementById("shapesDifficultyLabel");
+    const shapesOverlayText=document.getElementById("shapesOverlayText");
+
+    let shapesGame=null, shapesAnim=null, keys={}, currentDifficulty="normal", currentMapIndex=0;
+
+    const SHAPE_PROFILES={
+      soft:{name:"Soft", color:"#ffb8da", w:42, h:42, speed:.82, jump:12.8, glow:"#ffb8da"},
+      steady:{name:"Steady", color:"#2ea8ff", w:56, h:72, speed:.70, jump:11.2, glow:"#2ea8ff"},
+      bright:{name:"Bright", color:"#ffd93d", w:34, h:34, speed:1.06, jump:13.5, glow:"#ffd93d"},
+      ember:{name:"Ember", color:"#ff7a00", w:48, h:30, speed:.96, jump:10.6, glow:"#ff7a00"},
+      dusk:{name:"Dusk", color:"#8bb3ff", w:38, h:58, speed:.78, jump:12.0, glow:"#8bb3ff"}
+    };
+    const DIFFICULTIES={
+      easy:{gravity:.58, friction:.88, active:["soft","steady"], hazards:false},
+      normal:{gravity:.62, friction:.86, active:["soft","steady","bright"], hazards:true},
+      hard:{gravity:.68, friction:.84, active:["soft","steady","bright","ember","dusk"], hazards:true}
+    };
+    const MAPS=[
+      function(h){ return { levelWidth:2200, exitX:1960, platforms:[{x:0,y:h-80,w:420,h:80},{x:520,y:h-130,w:220,h:28},{x:820,y:h-200,w:220,h:28},{x:1100,y:h-130,w:260,h:28},{x:1460,y:h-210,w:180,h:28},{x:1710,y:h-150,w:240,h:28},{x:1930,y:h-80,w:220,h:80}], hazards:[{x:760,y:h-24,w:110,h:24},{x:1380,y:h-24,w:130,h:24}]}; },
+      function(h){ return { levelWidth:2260, exitX:2010, platforms:[{x:0,y:h-80,w:300,h:80},{x:380,y:h-150,w:170,h:26},{x:620,y:h-230,w:170,h:26},{x:870,y:h-150,w:160,h:26},{x:1110,y:h-250,w:220,h:26},{x:1430,y:h-170,w:170,h:26},{x:1700,y:h-120,w:170,h:26},{x:1930,y:h-80,w:260,h:80}], hazards:[{x:530,y:h-24,w:90,h:24},{x:1340,y:h-24,w:120,h:24}]}; },
+      function(h){ return { levelWidth:2350, exitX:2100, platforms:[{x:0,y:h-80,w:260,h:80},{x:330,y:h-120,w:140,h:26},{x:560,y:h-185,w:160,h:26},{x:800,y:h-245,w:140,h:26},{x:1020,y:h-175,w:180,h:26},{x:1290,y:h-260,w:160,h:26},{x:1520,y:h-160,w:180,h:26},{x:1780,y:h-110,w:160,h:26},{x:1980,y:h-80,w:250,h:80}], hazards:[{x:455,y:h-24,w:90,h:24},{x:1180,y:h-24,w:130,h:24},{x:1860,y:h-24,w:90,h:24}]}; },
+      function(h){ return { levelWidth:2480, exitX:2210, platforms:[{x:0,y:h-80,w:220,h:80},{x:300,y:h-150,w:140,h:24},{x:520,y:h-220,w:120,h:24},{x:720,y:h-140,w:180,h:24},{x:990,y:h-220,w:170,h:24},{x:1240,y:h-300,w:160,h:24},{x:1490,y:h-190,w:200,h:24},{x:1780,y:h-120,w:150,h:24},{x:2010,y:h-200,w:150,h:24},{x:2220,y:h-80,w:240,h:80}], hazards:[{x:240,y:h-24,w:80,h:24},{x:880,y:h-24,w:90,h:24},{x:1680,y:h-24,w:100,h:24}]}; }
+    ];
+
+    function resizeShapesCanvas(){ if(!shapesCanvas||!shapesBox) return; shapesCanvas.width=shapesBox.clientWidth; shapesCanvas.height=shapesBox.clientHeight; }
+    function setShapesDifficulty(level){ currentDifficulty=level; shapesDifficultyLabel.textContent=`Difficulty: ${level.charAt(0).toUpperCase()+level.slice(1)}`; startShapesGame(); toast(`Difficulty set to ${level}.`); }
+    function nextShapesMap(){ currentMapIndex=(currentMapIndex+1)%MAPS.length; shapesMapLabel.textContent=`Map: ${currentMapIndex+1}`; startShapesGame(); toast(`Map ${currentMapIndex+1} loaded.`); }
+    function closeShapesGame(){ closeModalWithMusic("shapesModal"); }
+
+    function createShapesLevel(){
+      resizeShapesCanvas();
+      const h=shapesCanvas.height, diff=DIFFICULTIES[currentDifficulty], map=MAPS[currentMapIndex](h);
+      const starts=[{x:110,y:h-220},{x:190,y:h-275},{x:270,y:h-220},{x:340,y:h-220},{x:410,y:h-220}];
+      const players=diff.active.map((key,i)=>{
+        const p=SHAPE_PROFILES[key];
+        return {key,name:p.name,color:p.color,glow:p.glow,x:starts[i].x,y:starts[i].y,w:p.w,h:p.h,vx:0,vy:0,speed:p.speed,jump:p.jump,grounded:false,startX:starts[i].x,startY:starts[i].y,reached:false};
+      });
+      return {gravity:diff.gravity,friction:diff.friction,current:0,won:false,levelWidth:map.levelWidth,exit:{x:map.exitX,y:h-190,w:90,h:120},players,cameraX:0,platforms:map.platforms,hazards:diff.hazards?map.hazards:[]};
+    }
+
+    function startShapesGame(){
+      shapesGame=createShapesLevel();
+      shapesMessage.textContent="";
+      shapesMapLabel.textContent=`Map: ${currentMapIndex+1}`;
+      shapesDifficultyLabel.textContent=`Difficulty: ${currentDifficulty.charAt(0).toUpperCase()+currentDifficulty.slice(1)}`;
+      shapesOverlayText.textContent="How to play: move with ← → or A D, jump with Space / W / ↑, switch shape with Tab or S, and make every shape touch the glowing exit.";
+      cancelAnimationFrame(shapesAnim);
+      animateShapes();
+      toast("Shapes of Us begins.");
+    }
+
+    function rectIntersect(a,b){ return a.x<b.x+b.w && a.x+a.w>b.x && a.y<b.y+b.h && a.y+a.h>b.y; }
+    function updatePlayer(p,platforms,gravity,friction){
+      if(keys["ArrowLeft"]||keys["a"]||keys["A"]) p.vx-=p.speed;
+      if(keys["ArrowRight"]||keys["d"]||keys["D"]) p.vx+=p.speed;
+      p.vx*=friction; p.vy+=gravity; p.x+=p.vx; p.y+=p.vy; p.grounded=false;
+      platforms.forEach(pl=>{
+        const future={x:p.x,y:p.y,w:p.w,h:p.h};
+        if(rectIntersect(future,pl)){
+          const prevBottom=p.y+p.h-p.vy, prevTop=p.y-p.vy;
+          if(prevBottom<=pl.y+8){ p.y=pl.y-p.h; p.vy=0; p.grounded=true; }
+          else if(prevTop>=pl.y+pl.h-8){ p.y=pl.y+pl.h; p.vy=0; }
+          else if(p.x+p.w/2<pl.x+pl.w/2){ p.x=pl.x-p.w; p.vx=0; }
+          else{ p.x=pl.x+pl.w; p.vx=0; }
+        }
+      });
+      if(p.y>shapesCanvas.height+300){ p.x=p.startX; p.y=p.startY; p.vx=0; p.vy=0; }
+    }
+    function roundRectPath(ctx,x,y,w,h,r){
+      ctx.beginPath(); ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+      ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h); ctx.lineTo(x+r,y+h);
+      ctx.quadraticCurveTo(x,y+h,x,y+h-r); ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+    }
+    function drawRoundedRect(ctx,x,y,w,h,r,fill){ roundRectPath(ctx,x,y,w,h,r); ctx.fillStyle=fill; ctx.fill(); }
+    function drawHazard(ctx,hz){
+      const grad=ctx.createLinearGradient(hz.x,hz.y,hz.x,hz.y+hz.h);
+      grad.addColorStop(0,"rgba(255,122,0,0.95)");
+      grad.addColorStop(1,"rgba(255,40,0,0.65)");
+      drawRoundedRect(ctx,hz.x,hz.y,hz.w,hz.h,8,grad);
+      for(let i=0;i<hz.w;i+=16){
+        ctx.fillStyle="rgba(255,240,180,0.9)";
+        ctx.beginPath(); ctx.moveTo(hz.x+i,hz.y+hz.h); ctx.lineTo(hz.x+i+8,hz.y); ctx.lineTo(hz.x+i+16,hz.y+hz.h); ctx.closePath(); ctx.fill();
+      }
+    }
+
+    function drawShapesWorld(){
+      const g=shapesGame, ctx=shapesCtx, w=shapesCanvas.width, h=shapesCanvas.height;
+      ctx.clearRect(0,0,w,h);
+      const bg=ctx.createLinearGradient(0,0,0,h);
+      bg.addColorStop(0,"#20252d"); bg.addColorStop(.5,"#171b21"); bg.addColorStop(1,"#0d0f13");
+      ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+      for(let i=0;i<54;i++){ const sx=(i*173)%w, sy=(i*97)%h; ctx.fillStyle=`rgba(255,255,255,${0.03+(i%4)*0.02})`; ctx.fillRect(sx,sy,2,2); }
+
+      g.cameraX=Math.max(0,Math.min(g.levelWidth-w,g.players[g.current].x-w*.35));
+      ctx.save(); ctx.translate(-g.cameraX,0);
+
+      const exitGlow=ctx.createRadialGradient(g.exit.x+45,g.exit.y+60,10,g.exit.x+45,g.exit.y+60,130);
+      exitGlow.addColorStop(0,"rgba(255,240,160,0.38)");
+      exitGlow.addColorStop(.35,"rgba(255,217,61,0.22)");
+      exitGlow.addColorStop(1,"rgba(255,217,61,0)");
+      ctx.fillStyle=exitGlow; ctx.beginPath(); ctx.arc(g.exit.x+45,g.exit.y+60,130,0,Math.PI*2); ctx.fill();
+
+      g.platforms.forEach(pl=>{
+        const grad=ctx.createLinearGradient(pl.x,pl.y,pl.x,pl.y+pl.h);
+        grad.addColorStop(0,"rgba(255,255,255,0.16)");
+        grad.addColorStop(1,"rgba(255,122,0,0.16)");
+        drawRoundedRect(ctx,pl.x,pl.y,pl.w,pl.h,12,grad);
+        ctx.strokeStyle="rgba(255,255,255,0.08)";
+        ctx.strokeRect(pl.x,pl.y,pl.w,pl.h);
+      });
+
+      g.hazards.forEach(hz=>drawHazard(ctx,hz));
+
+      const gateGrad=ctx.createLinearGradient(g.exit.x,g.exit.y,g.exit.x,g.exit.y+g.exit.h);
+      gateGrad.addColorStop(0,"rgba(255,245,190,0.92)");
+      gateGrad.addColorStop(1,"rgba(255,217,61,0.45)");
+      drawRoundedRect(ctx,g.exit.x,g.exit.y,g.exit.w,g.exit.h,18,gateGrad);
+      drawRoundedRect(ctx,g.exit.x+14,g.exit.y+14,g.exit.w-28,g.exit.h-28,12,"rgba(255,255,255,0.35)");
+
+      g.players.forEach((p,idx)=>{
+        ctx.save();
+        ctx.shadowBlur=idx===g.current?24:14;
+        ctx.shadowColor=p.glow;
+        drawRoundedRect(ctx,p.x,p.y,p.w,p.h,10,p.color);
+        ctx.restore();
+
+        if(p.reached){
+          ctx.strokeStyle="rgba(255,217,61,0.8)";
+          ctx.lineWidth=2;
+          roundRectPath(ctx,p.x-4,p.y-4,p.w+8,p.h+8,12);
+          ctx.stroke();
+        }else if(idx===g.current){
+          ctx.strokeStyle="rgba(255,255,255,0.65)";
+          ctx.lineWidth=2;
+          roundRectPath(ctx,p.x-4,p.y-4,p.w+8,p.h+8,12);
+          ctx.stroke();
+        }
+      });
+
+      ctx.restore();
+      ctx.fillStyle="rgba(255,245,250,0.92)";
+      ctx.font="18px Georgia";
+      ctx.fillText(`Current Shape: ${g.players[g.current].name}`,26,h-26);
+    }
+
+    function updateShapesGame(){
+      const g=shapesGame;
+      if(!g||g.won) return;
+
+      const p=g.players[g.current];
+      updatePlayer(p,g.platforms,g.gravity,g.friction);
+
+      g.hazards.forEach(hz=>{
+        g.players.forEach(pl=>{
+          if(!pl.reached && rectIntersect({x:pl.x,y:pl.y,w:pl.w,h:pl.h},hz)){
+            pl.x=pl.startX; pl.y=pl.startY; pl.vx=0; pl.vy=0;
+            shapesMessage.textContent="A hazard touched one of the shapes. Try again gently.";
+          }
+        });
+      });
+
+      g.players.forEach(pl=>{
+        if(!pl.reached && rectIntersect({x:pl.x,y:pl.y,w:pl.w,h:pl.h},g.exit)){
+          pl.reached=true;
+          shapesMessage.textContent=`${pl.name} reached the light. Bring the others too.`;
+        }
+      });
+
+      const allReached=g.players.every(pl=>pl.reached);
+      if(allReached){
+        g.won=true;
+        shapesMessage.textContent="All the shapes reached the light. Some love is not about becoming the same shape — only about learning how to move gently enough to arrive together.";
+        setStat("statShapes","Shapes of Us: completed");
+        toast("Shapes of Us complete.");
+      }
+    }
+
+    function animateShapes(){ updateShapesGame(); drawShapesWorld(); shapesAnim=requestAnimationFrame(animateShapes); }
+    function shapesJump(){ if(!shapesGame||shapesGame.won) return; const p=shapesGame.players[shapesGame.current]; if(p.grounded) p.vy=-p.jump; }
+    function switchShape(){
+      if(!shapesGame||shapesGame.won) return;
+      let tries=0;
+      do{ shapesGame.current=(shapesGame.current+1)%shapesGame.players.length; tries++; }
+      while(shapesGame.players[shapesGame.current].reached && tries<20);
+      toast(`Now moving ${shapesGame.players[shapesGame.current].name}.`);
+    }
+
+    window.addEventListener("keydown",e=>{
+      keys[e.key]=true;
+      if(document.getElementById("shapesModal").classList.contains("show")){
+        if([" ","ArrowUp","w","W"].includes(e.key)){ e.preventDefault(); shapesJump(); }
+        if(e.key==="Tab"||e.key==="s"||e.key==="S"){ e.preventDefault(); switchShape(); }
+      }
+    });
+    window.addEventListener("keyup",e=>{ keys[e.key]=false; });
+    window.addEventListener("resize",()=>{ if(document.getElementById("shapesModal").classList.contains("show")) startShapesGame(); });
+
+    const crosswordAnswers={love:"LOVE",care:"CARE",smile:"SMILE"};
+    document.querySelectorAll("#crossGrid input").forEach(inp=>inp.addEventListener("input",()=>{ inp.value=inp.value.toUpperCase().replace(/[^A-Z]/g,""); }));
+    function checkCrossword(){
+      const inputs=document.querySelectorAll("#crossGrid input"); let allCorrect=true;
+      inputs.forEach(inp=>{
+        const word=inp.dataset.word, index=parseInt(inp.dataset.index,10), expected=crosswordAnswers[word][index];
+        inp.classList.remove("correct","wrong");
+        if(inp.value===expected) inp.classList.add("correct");
+        else { inp.classList.add("wrong"); allCorrect=false; }
+      });
+      const msg=document.getElementById("crosswordMessage");
+      if(allCorrect){
+        msg.innerHTML="You solved every word beautifully. <b>LOVE</b>, <b>CARE</b>, and your <b>SMILE</b> — honestly, that already feels like enough poetry for one page. ❤";
+        setStat("statCrossword","Crossword: solved beautifully");
+        toast("Crossword complete.");
+      }else msg.textContent="Some letters are still waiting, but nothing here is meant to rush you. You can take your time.";
+    }
+
+    const smokeCanvas=document.getElementById("smokeCanvas");
+    const sctx=smokeCanvas.getContext("2d");
+    let smokeAnim=null, smokeRunning=false;
+    function resizeSmokeCanvas(){ smokeCanvas.width=window.innerWidth; smokeCanvas.height=window.innerHeight; }
+    window.addEventListener("resize",resizeSmokeCanvas);
+    function closeSmokeScene(){ document.getElementById("smokeModal").classList.remove("show"); smokeRunning=false; cancelAnimationFrame(smokeAnim); stopAllExtraSongs(); if(loveSection.classList.contains("active")) mainSong.play().catch(()=>{}); }
+    function startSmokeScene(){
+      resizeSmokeCanvas(); smokeRunning=true;
+      let frame=0, dropY=-30, impact=false, steam=[], messageReady=false;
+      function spawnSteamBurst(){ for(let i=0;i<10;i++) steam.push({x:smokeCanvas.width/2+(Math.random()*30-15),y:smokeCanvas.height-155,vx:Math.random()*1.8-.9,vy:-(1.2+Math.random()*2.2),r:10+Math.random()*18,a:.5+Math.random()*.2}); }
+      function drawFire(x,y){
+        const grad=sctx.createRadialGradient(x,y,10,x,y,95);
+        grad.addColorStop(0,"rgba(255,255,190,1)"); grad.addColorStop(.18,"rgba(255,205,80,.9)"); grad.addColorStop(.5,"rgba(255,122,0,.55)"); grad.addColorStop(1,"rgba(255,80,0,0)");
+        sctx.fillStyle=grad; sctx.beginPath(); sctx.arc(x,y,95,0,Math.PI*2); sctx.fill();
+      }
+      function draw(){
+        if(!smokeRunning) return;
+        frame++; sctx.clearRect(0,0,smokeCanvas.width,smokeCanvas.height);
+        const fireX=smokeCanvas.width/2, fireY=smokeCanvas.height-120;
+        for(let i=0;i<44;i++){ const x=(i*137)%smokeCanvas.width, y=(i*91)%(smokeCanvas.height*.58); sctx.fillStyle="rgba(255,255,255,0.14)"; sctx.fillRect(x,y,2,2); }
+        drawFire(fireX,fireY);
+        if(!impact){
+          dropY+=7.2; sctx.fillStyle="rgba(46,168,255,0.95)"; sctx.beginPath(); sctx.ellipse(fireX,dropY,8,14,0,0,Math.PI*2); sctx.fill();
+          if(dropY>=fireY-22){ impact=true; toast("Water meets fire."); }
+        }
+        if(impact){ spawnSteamBurst(); if(frame>72) messageReady=true; }
+        steam.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.r+=.18; p.a-=.0035; });
+        steam=steam.filter(p=>p.a>0);
+        steam.forEach(p=>{ sctx.beginPath(); sctx.fillStyle=`rgba(235,225,255,${p.a})`; sctx.arc(p.x,p.y,p.r,0,Math.PI*2); sctx.fill(); });
+        if(messageReady){
+          sctx.textAlign="center"; sctx.shadowBlur=28; sctx.shadowColor="rgba(255,225,160,0.95)";
+          sctx.fillStyle="rgba(255,245,210,0.96)"; sctx.font="bold 42px Georgia"; sctx.fillText("Even the smoke writes your name in my sky.", smokeCanvas.width/2, smokeCanvas.height*.23);
+          sctx.shadowBlur=16; sctx.fillStyle="rgba(255,220,140,0.88)"; sctx.font="25px Georgia"; sctx.fillText("Some things rise only after they burn.", smokeCanvas.width/2, smokeCanvas.height*.29);
+          sctx.shadowBlur=0;
+        }
+        smokeAnim=requestAnimationFrame(draw);
+      }
+      draw();
+    }
+
+    const simonBtns=document.querySelectorAll(".simonBtn");
+    let simonSequence=[], playerSequence=[], simonLocked=true;
+    function flashSimon(idx){ const b=simonBtns[idx]; b.classList.add("active"); setTimeout(()=>b.classList.remove("active"),430); }
+    function startSimon(){ simonSequence=[]; playerSequence=[]; simonLocked=true; document.getElementById("simonStatus").textContent="Watch carefully..."; nextSimonRound(); }
+    function nextSimonRound(){
+      playerSequence=[]; simonLocked=true; simonSequence.push(Math.floor(Math.random()*4));
+      let i=0;
+      const interval=setInterval(()=>{
+        flashSimon(simonSequence[i]); i++;
+        if(i>=simonSequence.length){ clearInterval(interval); setTimeout(()=>{ simonLocked=false; document.getElementById("simonStatus").textContent="Your turn."; },550); }
+      },720);
+    }
+    simonBtns.forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        if(simonLocked) return;
+        const color=parseInt(btn.dataset.color,10);
+        playerSequence.push(color); flashSimon(color);
+        const idx=playerSequence.length-1;
+        if(playerSequence[idx]!==simonSequence[idx]){
+          simonLocked=true;
+          document.getElementById("simonStatus").textContent="Not this time. Still, if hearts were choosing, mine would not be cruel about mistakes.";
+          return;
+        }
+        if(playerSequence.length===simonSequence.length){
+          if(simonSequence.length>=4){
+            simonLocked=true;
+            document.getElementById("simonStatus").textContent="You remembered every light. That feels a little like being cared for carefully.";
+            setStat("statSimon","Simon: completed");
+            toast("Simon completed.");
+          }else{
+            document.getElementById("simonStatus").textContent="Beautiful. Next round...";
+            setTimeout(nextSimonRound,900);
+          }
+        }
+      });
+    });
+
+    function checkSudoku(){
+      const answers=["2","2","1","1"], ids=["s1","s2","s3","s4"]; let ok=true;
+      ids.forEach((id,i)=>{ const el=document.getElementById(id); if(el.value!==answers[i]) ok=false; });
+      const msg=document.getElementById("sudokuMsg");
+      if(ok){ msg.textContent="Perfect. Even a tiny pattern can feel comforting when everything falls into place gently."; setStat("statSudoku","Sudoku: completed"); toast("Sudoku complete."); }
+      else msg.textContent="Almost. The little grid still wants a bit more quiet attention.";
+    }
+
+    let starInterval=null, starRunning=false, starCaught=0;
+    const basket=document.getElementById("basket"), starArena=document.getElementById("starArena");
+    function resetStarGame(){ starArena.querySelectorAll(".fallStar").forEach(s=>s.remove()); starCaught=0; document.getElementById("starScore").textContent="Stars caught: 0 / 8"; document.getElementById("starMessage").textContent=""; starRunning=false; clearInterval(starInterval); }
+    function closeStarGame(){ resetStarGame(); closeModalWithMusic("starModal"); }
+    function moveBasket(clientX){ const rect=starArena.getBoundingClientRect(); const x=clientX-rect.left; basket.style.left=`${Math.max(64,Math.min(rect.width-64,x))}px`; }
+    starArena.addEventListener("mousemove",e=>moveBasket(e.clientX));
+    starArena.addEventListener("touchmove",e=>{ moveBasket(e.touches[0].clientX); e.preventDefault(); },{passive:false});
+    function startStarGame(){ resetStarGame(); starRunning=true; toast("Catch the stars."); starInterval=setInterval(()=>{ if(starRunning) spawnStar(); },650); }
+    function spawnStar(){
+      const rect=starArena.getBoundingClientRect();
+      const star=document.createElement("div"); star.className="fallStar"; star.innerHTML="✦";
+      const startX=20+Math.random()*(rect.width-40); star.style.left=startX+"px"; starArena.appendChild(star);
+      let y=-30; const speed=2+Math.random()*2.2;
+      const fall=setInterval(()=>{
+        y+=speed; star.style.top=y+"px";
+        const basketRect=basket.getBoundingClientRect(), sRect=star.getBoundingClientRect();
+        if(sRect.bottom>=basketRect.top && sRect.left<basketRect.right && sRect.right>basketRect.left){
+          clearInterval(fall); star.remove(); starCaught++; document.getElementById("starScore").textContent=`Stars caught: ${starCaught} / 8`;
+          if(starCaught>=8){
+            starRunning=false; clearInterval(starInterval);
+            document.getElementById("starMessage").textContent="You caught enough starlight. If I could, I would gather every gentle thing in the sky and leave it where your heart could rest.";
+            setStat("statStars","Falling Stars: completed"); toast("Falling Stars complete.");
+          }
+        }
+        if(y>rect.height+30){ clearInterval(fall); star.remove(); }
+      },16);
+    }
+
+    let memoryFirst=null, memoryLock=false, memoryMatches=0;
+    const memorySymbols=["❤","❤","✦","✦","☾","☾","❀","❀"];
+    function closeMemoryGame(){ closeModalWithMusic("memoryModal"); }
+    function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+    function startMemoryGame(){
+      const grid=document.getElementById("memoryGrid"), msg=document.getElementById("memoryMessage");
+      grid.innerHTML=""; msg.textContent=""; memoryFirst=null; memoryLock=false; memoryMatches=0;
+      shuffle(memorySymbols).forEach(symbol=>{
+        const card=document.createElement("div"); card.className="memoryCard"; card.dataset.symbol=symbol; card.textContent="?";
+        card.addEventListener("click",()=>{
+          if(memoryLock || card.classList.contains("matched") || card.classList.contains("flipped")) return;
+          card.classList.add("flipped"); card.textContent=symbol;
+          if(!memoryFirst){ memoryFirst=card; return; }
+          if(memoryFirst.dataset.symbol===card.dataset.symbol){
+            memoryFirst.classList.add("matched"); card.classList.add("matched"); memoryFirst=null; memoryMatches++;
+            if(memoryMatches===4){
+              msg.textContent="You matched them all. Maybe that is why this feels so tender — some things do not force belonging; they simply recognize it.";
+              setStat("statMemory","Memory Match: completed"); toast("Memory Match complete.");
+            }
+          }else{
+            memoryLock=true; const prev=memoryFirst; memoryFirst=null;
+            setTimeout(()=>{ prev.classList.remove("flipped"); card.classList.remove("flipped"); prev.textContent="?"; card.textContent="?"; memoryLock=false; },820);
+          }
+        });
+        grid.appendChild(card);
+      });
+    }
+
+    let meterValue=0, meterRunning=false, meterDecay=null;
+    const meterBarInner=document.getElementById("meterBarInner"), tapHeart=document.getElementById("tapHeart");
+    function closeMeterGame(){ resetMeterGame(); closeModalWithMusic("meterModal"); }
+    function resetMeterGame(){ meterValue=0; meterRunning=false; clearInterval(meterDecay); meterBarInner.style.width="0%"; document.getElementById("meterMessage").textContent=""; }
+    function startMeterGame(){ resetMeterGame(); meterRunning=true; toast("Tap the heart fast."); meterDecay=setInterval(()=>{ if(!meterRunning) return; meterValue=Math.max(0,meterValue-2); meterBarInner.style.width=meterValue+"%"; },120); }
+    function meterTap(){
+      if(!meterRunning) return;
+      meterValue=Math.min(100,meterValue+6);
+      meterBarInner.style.width=meterValue+"%";
+      if(meterValue>=100){
+        meterRunning=false; clearInterval(meterDecay);
+        document.getElementById("meterMessage").textContent="Full. If this were measured in feelings instead of light, I still think it would overflow into tenderness.";
+        setStat("statMeter","Love Meter: completed"); toast("Love Meter complete.");
+      }
+    }
+    tapHeart.addEventListener("click",meterTap);
+    tapHeart.addEventListener("touchstart",e=>{ meterTap(); e.preventDefault(); },{passive:false});
+
+    const finalText=`Maybe this page began like a final battle, but if you are still here with me now, then maybe endings are not always endings. Maybe some of them are only doors disguised as storms. And maybe what matters most is not the noise of the entrance, but the quiet of what waits after it: a place where love feels less like fear, less like guessing, less like pressure — and more like warmth, honesty, reassurance, and rest. If this page could leave one thing in your hands, I hope it would be that feeling.`;
+    function showFinalLine(){
+      const box=document.getElementById("finalTyping"); box.textContent="";
+      let i=0; const t=setInterval(()=>{ box.textContent+=finalText[i]; i++; if(i>=finalText.length) clearInterval(t); },20);
+      toast("The last door opens.");
+    }
+
+    const endStoryText=`If this story has reached its last page, I still do not want it to feel like a goodbye. I want it to feel like a quiet promise.
+
+A promise that love does not have to be loud to be real.
+A promise that care can be steady, patient, and safe.
+A promise that we do not need perfection in order to deserve tenderness.
+A promise that when life becomes heavy, we choose gentleness over pride, honesty over distance, and understanding over fear.
+
+If either of us ever feels tired, uncertain, or afraid, I hope we remember this:
+real love is not only found in grand gestures.
+It is also found in reassurance.
+In checking in.
+In listening carefully.
+In speaking softly.
+In staying kind when it would be easier to become cold.
+In making space for each other to be human.
+
+I hope what grows between us feels warm enough to rest in.
+Secure enough to trust.
+Gentle enough to breathe inside.
+And honest enough that neither of us has to shrink in order to be held.
+
+So if this is the end of one story, let it also be the beginning of a better one:
+one where we keep choosing care,
+keep choosing truth,
+keep choosing patience,
+and keep choosing each other with open hands and a softer heart.`;
+    function showEndStoryText(){
+      const box=document.getElementById("endStoryTyping"); box.textContent="";
+      let i=0; const t=setInterval(()=>{ box.textContent+=endStoryText[i]; i++; if(i>=endStoryText.length) clearInterval(t); },12);
+      toast("A softer ending appears.");
+    }
+  </script>
+</body>
+</html>
